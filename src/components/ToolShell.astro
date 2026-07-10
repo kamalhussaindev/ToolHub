@@ -1,0 +1,129 @@
+---
+import type { Tool } from '../data/tools';
+import type { Cluster } from '../data/clusters';
+import Breadcrumbs from './Breadcrumbs.astro';
+import AdSlot from './AdSlot.astro';
+import FaqAccordion from './FaqAccordion.astro';
+import RelatedTools from './RelatedTools.astro';
+
+export interface Props {
+  tool: Tool;
+  cluster: Cluster;
+}
+
+const { tool, cluster } = Astro.props;
+---
+
+<div class="tool-page container">
+  <Breadcrumbs
+    crumbs={[
+      { name: 'Home', path: '/' },
+      { name: cluster.name, path: `/${cluster.slug}/` },
+      { name: tool.title, path: `/${cluster.slug}/${tool.slug}/` },
+    ]}
+  />
+
+  <div class="tool-page__layout">
+    <div class="tool-page__main">
+      <h1>{tool.h1}</h1>
+      <p class="tool-page__intro">{tool.intro}</p>
+
+      <div class="tool-page__tool" style={`--card-accent: ${cluster.accent}`}>
+        <slot name="tool" />
+      </div>
+
+      <AdSlot slot="ad-after-result" />
+
+      {tool.howToUse.length > 0 && (
+        <section aria-labelledby="how-to-use-heading">
+          <h2 id="how-to-use-heading">How to use the {tool.title.toLowerCase()}</h2>
+          <ol>
+            {tool.howToUse.map((step) => <li>{step}</li>)}
+          </ol>
+        </section>
+      )}
+
+      {tool.howItWorks && (
+        <section aria-labelledby="how-it-works-heading">
+          <h2 id="how-it-works-heading">How it works</h2>
+          <p>{tool.howItWorks}</p>
+        </section>
+      )}
+
+      {tool.examples && tool.examples.length > 0 && (
+        <section aria-labelledby="examples-heading">
+          <h2 id="examples-heading">Examples</h2>
+          <div class="tool-page__table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Input</th>
+                  <th scope="col">Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tool.examples.map((example) => (
+                  <tr>
+                    <td>{example.input}</td>
+                    <td>{example.output}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      <FaqAccordion faqs={tool.faqs} />
+      <RelatedTools slug={tool.slug} />
+      <slot name="footer-note" />
+    </div>
+  </div>
+</div>
+
+<style>
+  .tool-page {
+    padding: var(--space-8) 0 var(--space-10);
+  }
+  .tool-page__layout {
+    display: flex;
+    gap: var(--space-8);
+  }
+  .tool-page__main {
+    max-width: var(--tool-width);
+    width: 100%;
+  }
+  .tool-page__intro {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+  .tool-page__tool {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--card-accent);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-6);
+  }
+  .tool-page__main section {
+    margin-top: var(--space-8);
+  }
+  .tool-page__table-wrap {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+  }
+  th,
+  td {
+    text-align: left;
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+  th {
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+</style>

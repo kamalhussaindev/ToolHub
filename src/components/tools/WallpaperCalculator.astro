@@ -1,0 +1,182 @@
+---
+import ResultPanel from '../ResultPanel.astro';
+---
+
+<div class="calc" id="wallpaper-calculator">
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="wallpaper-unit">Units</label>
+      <select id="wallpaper-unit">
+        <option value="metric">Metric (m / cm)</option>
+        <option value="imperial">Imperial (ft / in)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="wallpaper-wall-length">Wall length <span data-unit-big>(m)</span></label>
+      <input id="wallpaper-wall-length" type="number" inputmode="decimal" min="0" step="0.01" value="10" />
+    </div>
+    <div class="field">
+      <label for="wallpaper-wall-height">Wall height <span data-unit-big>(m)</span></label>
+      <input id="wallpaper-wall-height" type="number" inputmode="decimal" min="0" step="0.01" value="2.4" />
+    </div>
+  </div>
+
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="wallpaper-roll-length">Roll length <span data-unit-big>(m)</span></label>
+      <input id="wallpaper-roll-length" type="number" inputmode="decimal" min="0" step="0.01" value="10" />
+    </div>
+    <div class="field">
+      <label for="wallpaper-roll-width">Roll width <span data-unit-small>(cm)</span></label>
+      <input id="wallpaper-roll-width" type="number" inputmode="decimal" min="0" step="0.1" value="53" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="wallpaper-repeat">Pattern repeat <span data-unit-small>(cm)</span></label>
+    <input id="wallpaper-repeat" type="number" inputmode="decimal" min="0" step="0.1" value="0" />
+    <span class="hint">Enter 0 for plain or random-match paper.</span>
+  </div>
+
+  <p class="calc__error" id="wallpaper-error" role="alert" hidden></p>
+
+  <ResultPanel id="wallpaper-result" label="Rolls needed">
+    <span id="wallpaper-result-rolls">—</span>
+    <span class="calc__result-sub" id="wallpaper-result-detail"></span>
+  </ResultPanel>
+
+  <div class="calc__actions">
+    <button type="button" class="btn btn-secondary" id="wallpaper-copy">Copy result</button>
+    <button type="button" class="btn btn-secondary" id="wallpaper-reset">Reset</button>
+  </div>
+</div>
+
+<style>
+  .calc__field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-4);
+  }
+  .calc__error {
+    color: var(--color-error);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .calc__result-sub {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+  .calc__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+</style>
+
+<script>
+  const root = document.getElementById('wallpaper-calculator');
+  if (root) {
+    const unitSelect = root.querySelector<HTMLSelectElement>('#wallpaper-unit')!;
+    const wallLength = root.querySelector<HTMLInputElement>('#wallpaper-wall-length')!;
+    const wallHeight = root.querySelector<HTMLInputElement>('#wallpaper-wall-height')!;
+    const rollLength = root.querySelector<HTMLInputElement>('#wallpaper-roll-length')!;
+    const rollWidth = root.querySelector<HTMLInputElement>('#wallpaper-roll-width')!;
+    const repeat = root.querySelector<HTMLInputElement>('#wallpaper-repeat')!;
+    const errorEl = root.querySelector<HTMLParagraphElement>('#wallpaper-error')!;
+    const resultRolls = root.querySelector<HTMLSpanElement>('#wallpaper-result-rolls')!;
+    const resultDetail = root.querySelector<HTMLSpanElement>('#wallpaper-result-detail')!;
+    const copyBtn = root.querySelector<HTMLButtonElement>('#wallpaper-copy')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('#wallpaper-reset')!;
+    const bigUnitLabels = root.querySelectorAll<HTMLElement>('[data-unit-big]');
+    const smallUnitLabels = root.querySelectorAll<HTMLElement>('[data-unit-small]');
+
+    const defaults: Record<string, string> = {
+      'wallpaper-wall-length': '10',
+      'wallpaper-wall-height': '2.4',
+      'wallpaper-roll-length': '10',
+      'wallpaper-roll-width': '53',
+      'wallpaper-repeat': '0',
+    };
+
+    function updateUnitLabels() {
+      const metric = unitSelect.value === 'metric';
+      bigUnitLabels.forEach((el) => (el.textContent = metric ? '(m)' : '(ft)'));
+      smallUnitLabels.forEach((el) => (el.textContent = metric ? '(cm)' : '(in)'));
+    }
+
+    function calculate() {
+      const metric = unitSelect.value === 'metric';
+      const wLen = parseFloat(wallLength.value);
+      const wHeight = parseFloat(wallHeight.value);
+      const rLen = parseFloat(rollLength.value);
+      // roll width and pattern repeat are in the "small" unit (cm/in); convert to the big unit.
+      const smallToBig = metric ? 100 : 12;
+      const rWidth = parseFloat(rollWidth.value) / smallToBig;
+      const patternRepeat = parseFloat(repeat.value) / smallToBig;
+
+      const values = [wLen, wHeight, rLen, rWidth, patternRepeat];
+      if (values.some((v) => Number.isNaN(v) || v < 0) || rLen <= 0 || rWidth <= 0) {
+        errorEl.textContent = 'Please enter valid, positive numbers in every field.';
+        errorEl.hidden = false;
+        resultRolls.textContent = '—';
+        resultDetail.textContent = '';
+        return;
+      }
+      const dropLength = wHeight + patternRepeat;
+      if (dropLength <= 0 || dropLength > rLen) {
+        errorEl.textContent = 'Roll length must be greater than wall height plus pattern repeat.';
+        errorEl.hidden = false;
+        resultRolls.textContent = '—';
+        resultDetail.textContent = '';
+        return;
+      }
+      errorEl.hidden = true;
+
+      const dropsPerRoll = Math.max(Math.floor(rLen / dropLength), 1);
+      const totalDrops = Math.ceil(wLen / rWidth);
+      const rolls = Math.ceil(totalDrops / dropsPerRoll);
+
+      resultRolls.textContent = `${rolls} roll${rolls === 1 ? '' : 's'}`;
+      resultDetail.textContent = `${totalDrops} drops needed, ${dropsPerRoll} drop${dropsPerRoll === 1 ? '' : 's'} per roll`;
+    }
+
+    [wallLength, wallHeight, rollLength, rollWidth, repeat].forEach((input) => {
+      input.addEventListener('input', calculate);
+    });
+    unitSelect.addEventListener('change', () => {
+      updateUnitLabels();
+      calculate();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = `${resultRolls.textContent} — ${resultDetail.textContent}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      unitSelect.value = 'metric';
+      Object.entries(defaults).forEach(([id, value]) => {
+        const el = root.querySelector<HTMLInputElement>(`#${id}`);
+        if (el) el.value = value;
+      });
+      updateUnitLabels();
+      calculate();
+    });
+
+    updateUnitLabels();
+    calculate();
+  }
+</script>

@@ -1,0 +1,77 @@
+---
+import type { Faq } from '../data/tools';
+
+export interface Props {
+  faqs: Faq[];
+}
+
+const { faqs } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a,
+    },
+  })),
+};
+---
+
+{faqs.length > 0 && (
+  <section class="faq" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">Frequently asked questions</h2>
+    <div class="faq__list">
+      {faqs.map((faq) => (
+        <details class="faq__item" name="faq-group">
+          <summary>{faq.q}</summary>
+          <p>{faq.a}</p>
+        </details>
+      ))}
+    </div>
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+  </section>
+)}
+
+<style>
+  .faq {
+    margin-top: var(--space-10);
+  }
+  .faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .faq__item {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+  }
+  .faq__item summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-text);
+    list-style: none;
+  }
+  .faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq__item summary::before {
+    content: '+';
+    display: inline-block;
+    width: 1em;
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+  .faq__item[open] summary::before {
+    content: '\2212';
+  }
+  .faq__item p {
+    margin: var(--space-3) 0 0;
+    color: var(--color-text-body);
+  }
+</style>

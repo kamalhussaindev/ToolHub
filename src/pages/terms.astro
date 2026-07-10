@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Terms of Service — Tool Hub"
+  description="Terms of service for using Tool Hub's free calculators and converters."
+  canonicalPath="/terms/"
+>
+  <div class="container static-page">
+    <h1>Terms of Service</h1>
+    <p>
+      Tool Hub's calculators and converters are provided free of charge, "as is," for informational
+      purposes. While we take care to keep every formula accurate, results should not be treated as
+      professional, financial, medical, or religious advice — verify important calculations
+      independently before relying on them.
+    </p>
+    <p>
+      You may not use Tool Hub to violate applicable law, or attempt to disrupt or reverse engineer
+      the site beyond normal browser use.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .static-page {
+    max-width: var(--tool-width);
+    padding: var(--space-8) 0 var(--space-10);
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ToolCard from '../../components/ToolCard.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { clusters, getCluster } from '../../data/clusters';
+import { getToolsByCluster } from '../../data/tools';
+
+export function getStaticPaths() {
+  return clusters.map((cluster) => ({
+    params: { cluster: cluster.slug },
+  }));
+}
+
+const { cluster: clusterSlug } = Astro.params;
+const cluster = getCluster(clusterSlug)!;
+const clusterTools = getToolsByCluster(cluster.slug);
+const canonicalPath = `/${cluster.slug}/`;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: cluster.name,
+    description: cluster.description,
+    url: new URL(canonicalPath, Astro.site).toString(),
+  },
+];
+---
+
+<BaseLayout
+  title={`${cluster.name} — Free Online Calculators & Tools`}
+  description={cluster.description}
+  canonicalPath={canonicalPath}
+  jsonLd={jsonLd}
+>
+  <div class="container hub">
+    <Breadcrumbs crumbs={[{ name: 'Home', path: '/' }, { name: cluster.name, path: canonicalPath }]} />
+
+    <header class="hub__header" style={`--card-accent: ${cluster.accent}`}>
+      <h1>{cluster.name}</h1>
+      <p>{cluster.description}</p>
+    </header>
+
+    <div class="grid grid--tools hub__grid">
+      {clusterTools.map((tool) => <ToolCard tool={tool} />)}
+    </div>
+
+    <AdSlot slot={`hub-${cluster.slug}`} />
+
+    <section class="hub__intro">
+      <h2>About {cluster.name} tools</h2>
+      {cluster.introHtml ? (
+        <Fragment set:html={cluster.introHtml} />
+      ) : (
+        <p>{cluster.description} Every tool below runs instantly in your browser with live results as you type — no signup, no waiting, and no data ever leaves your device.</p>
+      )}
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hub {
+    padding: var(--space-8) 0 var(--space-10);
+  }
+  .hub__header {
+    border-left: 4px solid var(--card-accent);
+    padding-left: var(--space-5);
+    margin-bottom: var(--space-8);
+  }
+  .hub__header p {
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+  .hub__grid {
+    margin-bottom: var(--space-8);
+  }
+  .hub__intro {
+    max-width: var(--tool-width);
+  }
+</style>

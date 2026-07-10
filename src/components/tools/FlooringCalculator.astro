@@ -1,0 +1,164 @@
+---
+import ResultPanel from '../ResultPanel.astro';
+---
+
+<div class="calc" id="flooring-calculator">
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="flooring-unit">Units</label>
+      <select id="flooring-unit">
+        <option value="metric">Metric (m / m²)</option>
+        <option value="imperial">Imperial (ft / ft²)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="flooring-length">Room length <span data-unit-length>(m)</span></label>
+      <input id="flooring-length" type="number" inputmode="decimal" min="0" step="0.01" value="5" />
+    </div>
+    <div class="field">
+      <label for="flooring-width">Room width <span data-unit-length>(m)</span></label>
+      <input id="flooring-width" type="number" inputmode="decimal" min="0" step="0.01" value="4" />
+    </div>
+  </div>
+
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="flooring-coverage">Coverage per box <span data-unit-area>(m²)</span></label>
+      <input id="flooring-coverage" type="number" inputmode="decimal" min="0.01" step="0.01" value="2.2" />
+    </div>
+    <div class="field">
+      <label for="flooring-waste">Waste allowance (%)</label>
+      <input id="flooring-waste" type="number" inputmode="numeric" min="0" max="50" step="1" value="10" />
+    </div>
+  </div>
+
+  <p class="calc__error" id="flooring-error" role="alert" hidden></p>
+
+  <ResultPanel id="flooring-result" label="Flooring needed">
+    <span id="flooring-result-area">—</span>
+    <span class="calc__result-sub" id="flooring-result-boxes"></span>
+  </ResultPanel>
+
+  <div class="calc__actions">
+    <button type="button" class="btn btn-secondary" id="flooring-copy">Copy result</button>
+    <button type="button" class="btn btn-secondary" id="flooring-reset">Reset</button>
+  </div>
+</div>
+
+<style>
+  .calc__field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-4);
+  }
+  .calc__error {
+    color: var(--color-error);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .calc__result-sub {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+  .calc__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+</style>
+
+<script>
+  const root = document.getElementById('flooring-calculator');
+  if (root) {
+    const unitSelect = root.querySelector<HTMLSelectElement>('#flooring-unit')!;
+    const roomLength = root.querySelector<HTMLInputElement>('#flooring-length')!;
+    const roomWidth = root.querySelector<HTMLInputElement>('#flooring-width')!;
+    const coveragePerBox = root.querySelector<HTMLInputElement>('#flooring-coverage')!;
+    const waste = root.querySelector<HTMLInputElement>('#flooring-waste')!;
+    const errorEl = root.querySelector<HTMLParagraphElement>('#flooring-error')!;
+    const resultArea = root.querySelector<HTMLSpanElement>('#flooring-result-area')!;
+    const resultBoxes = root.querySelector<HTMLSpanElement>('#flooring-result-boxes')!;
+    const copyBtn = root.querySelector<HTMLButtonElement>('#flooring-copy')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('#flooring-reset')!;
+    const lengthLabels = root.querySelectorAll<HTMLElement>('[data-unit-length]');
+    const areaLabels = root.querySelectorAll<HTMLElement>('[data-unit-area]');
+
+    const defaults: Record<string, string> = {
+      'flooring-length': '5',
+      'flooring-width': '4',
+      'flooring-coverage': '2.2',
+      'flooring-waste': '10',
+    };
+
+    function updateUnitLabels() {
+      const metric = unitSelect.value === 'metric';
+      lengthLabels.forEach((el) => (el.textContent = metric ? '(m)' : '(ft)'));
+      areaLabels.forEach((el) => (el.textContent = metric ? '(m²)' : '(ft²)'));
+    }
+
+    function calculate() {
+      const metric = unitSelect.value === 'metric';
+      const length = parseFloat(roomLength.value);
+      const width = parseFloat(roomWidth.value);
+      const coverage = parseFloat(coveragePerBox.value);
+      const wastePct = parseFloat(waste.value);
+
+      const values = [length, width, coverage, wastePct];
+      if (values.some((v) => Number.isNaN(v) || v < 0) || coverage <= 0) {
+        errorEl.textContent = 'Please enter valid, positive numbers in every field.';
+        errorEl.hidden = false;
+        resultArea.textContent = '—';
+        resultBoxes.textContent = '';
+        return;
+      }
+      errorEl.hidden = true;
+
+      const roomArea = length * width;
+      const totalArea = roomArea * (1 + wastePct / 100);
+      const boxes = Math.ceil(totalArea / coverage);
+      const unitLabel = metric ? 'm²' : 'ft²';
+
+      resultArea.textContent = `${totalArea.toFixed(2)} ${unitLabel}`;
+      resultBoxes.textContent = `≈ ${boxes} box${boxes === 1 ? '' : 'es'} (room: ${roomArea.toFixed(2)} ${unitLabel})`;
+    }
+
+    [roomLength, roomWidth, coveragePerBox, waste].forEach((input) => {
+      input.addEventListener('input', calculate);
+    });
+    unitSelect.addEventListener('change', () => {
+      updateUnitLabels();
+      calculate();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = `${resultArea.textContent} — ${resultBoxes.textContent}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      unitSelect.value = 'metric';
+      Object.entries(defaults).forEach(([id, value]) => {
+        const el = root.querySelector<HTMLInputElement>(`#${id}`);
+        if (el) el.value = value;
+      });
+      updateUnitLabels();
+      calculate();
+    });
+
+    updateUnitLabels();
+    calculate();
+  }
+</script>

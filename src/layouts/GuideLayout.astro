@@ -1,0 +1,100 @@
+---
+import type { Guide } from '../data/guides';
+import { getTool } from '../data/tools';
+import { getGuide } from '../data/guides';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import DisclaimerNote from '../components/DisclaimerNote.astro';
+
+export interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+const canonicalPath = `/guides/${guide.slug}/`;
+const relatedTool = getTool(guide.relatedTool);
+const relatedGuides = guide.relatedGuides.map((s) => getGuide(s)).filter((g): g is Guide => Boolean(g));
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: guide.h1,
+  description: guide.metaDescription,
+  url: new URL(canonicalPath, Astro.site).toString(),
+};
+---
+
+<BaseLayout title={guide.metaTitle} description={guide.metaDescription} canonicalPath={canonicalPath} jsonLd={articleJsonLd}>
+  <article class="guide container">
+    <Breadcrumbs
+      crumbs={[
+        { name: 'Home', path: '/' },
+        { name: 'Guides', path: '/guides/' },
+        { name: guide.title, path: canonicalPath },
+      ]}
+    />
+
+    <h1>{guide.h1}</h1>
+    <p class="guide__intro">{guide.intro}</p>
+
+    {relatedTool && (
+      <a class="guide__cta" href={`/${relatedTool.cluster}/${relatedTool.slug}/`}>
+        Try the {relatedTool.title} →
+      </a>
+    )}
+
+    <div class="guide__body" set:html={guide.body} />
+
+    {relatedTool && (
+      <a class="guide__cta" href={`/${relatedTool.cluster}/${relatedTool.slug}/`}>
+        Try the {relatedTool.title} →
+      </a>
+    )}
+
+    <FaqAccordion faqs={guide.faqs} />
+
+    {guide.lastReviewed && <DisclaimerNote lastReviewed={guide.lastReviewed} />}
+
+    {relatedGuides.length > 0 && (
+      <section aria-labelledby="related-guides-heading">
+        <h2 id="related-guides-heading">Related guides</h2>
+        <ul>
+          {relatedGuides.map((g) => (
+            <li><a href={`/guides/${g.slug}/`}>{g.title}</a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .guide {
+    max-width: var(--tool-width);
+    padding: var(--space-8) 0 var(--space-10);
+  }
+  .guide__intro {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
+  .guide__body {
+    margin-top: var(--space-6);
+  }
+  .guide__body :global(h2) {
+    margin-top: var(--space-8);
+  }
+  .guide__cta {
+    display: inline-block;
+    margin-top: var(--space-6);
+    padding: var(--space-3) var(--space-5);
+    background: var(--color-primary);
+    color: #fff;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+  }
+  .guide__cta:hover {
+    background: var(--color-primary-hover);
+    text-decoration: none;
+  }
+</style>

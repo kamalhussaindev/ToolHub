@@ -1,0 +1,43 @@
+---
+import ToolLayout from '../../layouts/ToolLayout.astro';
+import DisclaimerNote from '../../components/DisclaimerNote.astro';
+import { getCluster } from '../../data/clusters';
+import { getLiveTools, getTool } from '../../data/tools';
+import { ISLAMIC_LAST_REVIEWED } from '../../data/islamic';
+
+import TileCalculator from '../../components/tools/TileCalculator.astro';
+import PaintCalculator from '../../components/tools/PaintCalculator.astro';
+import FlooringCalculator from '../../components/tools/FlooringCalculator.astro';
+import WallpaperCalculator from '../../components/tools/WallpaperCalculator.astro';
+import FabricCalculator from '../../components/tools/FabricCalculator.astro';
+import ZakatCalculator from '../../components/tools/ZakatCalculator.astro';
+import ZakatOnGoldCalculator from '../../components/tools/ZakatOnGoldCalculator.astro';
+import HijriDateConverter from '../../components/tools/HijriDateConverter.astro';
+
+const componentMap = {
+  TileCalculator,
+  PaintCalculator,
+  FlooringCalculator,
+  WallpaperCalculator,
+  FabricCalculator,
+  ZakatCalculator,
+  ZakatOnGoldCalculator,
+  HijriDateConverter,
+} as const;
+
+export function getStaticPaths() {
+  return getLiveTools().map((tool) => ({
+    params: { cluster: tool.cluster, tool: tool.slug },
+  }));
+}
+
+const { cluster: clusterSlug, tool: toolSlug } = Astro.params;
+const tool = getTool(toolSlug)!;
+const cluster = getCluster(clusterSlug)!;
+const ToolComponent = componentMap[tool.component as keyof typeof componentMap];
+---
+
+<ToolLayout tool={tool} cluster={cluster}>
+  <ToolComponent slot="tool" />
+  {tool.showDisclaimer && <DisclaimerNote slot="footer-note" lastReviewed={ISLAMIC_LAST_REVIEWED} />}
+</ToolLayout>

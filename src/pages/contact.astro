@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Contact — Tool Hub"
+  description="Get in touch with the Tool Hub team."
+  canonicalPath="/contact/"
+>
+  <div class="container static-page">
+    <h1>Contact</h1>
+    <p>
+      Spotted a bug, have a tool suggestion, or found an error in a calculation? We'd like to
+      hear about it — reach us at
+      <a href="mailto:hello@tool-hub.example">hello@tool-hub.example</a>.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .static-page {
+    max-width: var(--tool-width);
+    padding: var(--space-8) 0 var(--space-10);
+  }
+</style>

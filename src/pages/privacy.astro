@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Privacy Policy — Tool Hub"
+  description="How Tool Hub handles data, cookies, and advertising."
+  canonicalPath="/privacy/"
+>
+  <div class="container static-page">
+    <h1>Privacy Policy</h1>
+    <p>
+      All calculations on Tool Hub run locally in your browser. Numbers, text, or files you enter
+      into a calculator or converter are never sent to our servers.
+    </p>
+    <h2>Analytics</h2>
+    <p>
+      We may use privacy-respecting analytics to understand which tools are useful, in aggregate
+      and without identifying individual visitors.
+    </p>
+    <h2>Advertising</h2>
+    <p>
+      Tool Hub is supported by display advertising. Ad partners may use cookies to serve relevant
+      ads; you can control this through your browser or ad-network opt-out settings.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .static-page {
+    max-width: var(--tool-width);
+    padding: var(--space-8) 0 var(--space-10);
+  }
+</style>

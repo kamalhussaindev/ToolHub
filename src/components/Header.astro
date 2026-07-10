@@ -1,0 +1,81 @@
+---
+import { getSortedClusters } from '../data/clusters';
+import SearchBar from './SearchBar.astro';
+
+const clusters = getSortedClusters();
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-header__logo" href="/">Tool Hub</a>
+
+    <nav class="site-header__nav" aria-label="Categories">
+      <ul>
+        {clusters.map((cluster) => (
+          <li>
+            <a href={`/${cluster.slug}/`}>{cluster.name}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-header__search">
+      <SearchBar compact />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    height: 64px;
+  }
+  .site-header__logo {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    color: var(--color-text);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .site-header__nav {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+  }
+  .site-header__nav ul {
+    display: flex;
+    gap: var(--space-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+  }
+  .site-header__nav a {
+    color: var(--color-text-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .site-header__nav a:hover {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  .site-header__search {
+    width: 220px;
+    flex-shrink: 0;
+  }
+  @media (max-width: 720px) {
+    .site-header__search {
+      display: none;
+    }
+  }
+</style>

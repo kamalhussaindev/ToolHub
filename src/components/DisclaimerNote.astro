@@ -1,0 +1,31 @@
+---
+import Callout from './Callout.astro';
+
+export interface Props {
+  lastReviewed: string; // ISO date, e.g. "2026-07-11"
+}
+
+const { lastReviewed } = Astro.props;
+const formatted = new Date(lastReviewed).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Callout variant="note" title="Guidance tool, not a fatwa">
+  <p>
+    This calculator is a guidance tool based on widely accepted scholarly positions. Zakat rulings
+    can vary by school of thought (madhhab) and personal circumstance — consult a qualified scholar
+    for your situation.
+  </p>
+  <p class="disclaimer-note__reviewed">Last reviewed: {formatted}</p>
+</Callout>
+
+<style>
+  .disclaimer-note__reviewed {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+  }
+</style>

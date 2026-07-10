@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About — Tool Hub"
+  description="Tool Hub builds free, fast, no-signup calculators and converters for home improvement, finance, and everyday life."
+  canonicalPath="/about/"
+>
+  <div class="container static-page">
+    <h1>About Tool Hub</h1>
+    <p>
+      Tool Hub builds free, fast, no-signup calculators and converters. Every tool runs entirely
+      in your browser — nothing you type is ever uploaded to a server — and every result updates
+      live as you type, with no page reloads.
+    </p>
+    <p>
+      We aim to combine accurate, well-researched calculations with a clean, distraction-free
+      interface, so you can get your answer and get on with your project.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .static-page {
+    max-width: var(--tool-width);
+    padding: var(--space-8) 0 var(--space-10);
+  }
+</style>

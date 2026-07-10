@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Page Not Found — Tool Hub"
+  description="The page you're looking for doesn't exist."
+  canonicalPath="/404/"
+  noindex
+>
+  <div class="container not-found">
+    <h1>Page not found</h1>
+    <p>The page you're looking for doesn't exist or may have moved.</p>
+    <a class="btn btn-primary" href="/">Back to homepage</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: var(--tool-width);
+    padding: var(--space-12) 0;
+    text-align: center;
+  }
+  .not-found p {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+  }
+</style>

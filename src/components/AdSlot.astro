@@ -1,0 +1,54 @@
+---
+export interface Props {
+  slot: string; // ad unit identifier, e.g. "tool-after-result"
+  variant?: 'in-content' | 'sidebar';
+}
+
+const { slot, variant = 'in-content' } = Astro.props;
+---
+
+<div class:list={['ad-slot', `ad-slot--${variant}`]} data-ad-slot={slot} aria-hidden="true">
+  <span class="ad-slot__label">Advertisement</span>
+</div>
+
+<script>
+  // Ad scripts are lazy-initialized after the page is interactive so they
+  // never compete with the tool for input latency (INP) or block LCP.
+  function initAds() {
+    document.querySelectorAll<HTMLElement>('[data-ad-slot]').forEach((el) => {
+      if (el.dataset.adInit) return;
+      el.dataset.adInit = 'true';
+      // Real ad network script injection goes here once an ad account is wired up.
+    });
+  }
+  if (document.readyState === 'complete') {
+    initAds();
+  } else {
+    window.addEventListener('load', initAds, { once: true });
+  }
+</script>
+
+<style>
+  .ad-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-subtle);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    margin: var(--space-6) 0;
+  }
+  .ad-slot--in-content {
+    min-height: 250px;
+  }
+  @media (min-width: 640px) {
+    .ad-slot--in-content {
+      min-height: 280px;
+    }
+  }
+  .ad-slot--sidebar {
+    min-height: 600px;
+  }
+</style>

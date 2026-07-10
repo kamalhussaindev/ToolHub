@@ -1,0 +1,41 @@
+---
+import type { Tool } from '../data/tools';
+import type { Cluster } from '../data/clusters';
+import BaseLayout from './BaseLayout.astro';
+import ToolShell from '../components/ToolShell.astro';
+
+export interface Props {
+  tool: Tool;
+  cluster: Cluster;
+}
+
+const { tool, cluster } = Astro.props;
+const canonicalPath = `/${cluster.slug}/${tool.slug}/`;
+
+const webApplicationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: tool.title,
+  description: tool.metaDescription,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any',
+  url: new URL(canonicalPath, Astro.site).toString(),
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+};
+---
+
+<BaseLayout
+  title={tool.metaTitle}
+  description={tool.metaDescription}
+  canonicalPath={canonicalPath}
+  jsonLd={webApplicationJsonLd}
+>
+  <ToolShell tool={tool} cluster={cluster}>
+    <slot name="tool" slot="tool" />
+    <slot name="footer-note" slot="footer-note" />
+  </ToolShell>
+</BaseLayout>

@@ -1,0 +1,231 @@
+---
+import ResultPanel from '../ResultPanel.astro';
+import Callout from '../Callout.astro';
+---
+
+<div class="calc" id="zakat-calculator">
+  <div class="field">
+    <label for="zakat-currency">Currency label</label>
+    <input id="zakat-currency" type="text" maxlength="8" value="$" />
+    <span class="hint">Just a label for display — the math works in any currency.</span>
+  </div>
+
+  <h3 class="calc__group-heading">Zakatable assets</h3>
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="zakat-cash">Cash in hand</label>
+      <input id="zakat-cash" type="number" inputmode="decimal" min="0" step="1" value="0" />
+    </div>
+    <div class="field">
+      <label for="zakat-bank">Bank balances &amp; savings</label>
+      <input id="zakat-bank" type="number" inputmode="decimal" min="0" step="1" value="0" />
+    </div>
+  </div>
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="zakat-gold">Gold value</label>
+      <input id="zakat-gold" type="number" inputmode="decimal" min="0" step="1" value="0" />
+      <span class="hint">Use the <a href="/islamic/zakat-on-gold/">Zakat on Gold Calculator</a> to work this out by weight and karat.</span>
+    </div>
+    <div class="field">
+      <label for="zakat-silver">Silver value</label>
+      <input id="zakat-silver" type="number" inputmode="decimal" min="0" step="1" value="0" />
+    </div>
+  </div>
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="zakat-business">Business / merchandise inventory</label>
+      <input id="zakat-business" type="number" inputmode="decimal" min="0" step="1" value="0" />
+    </div>
+    <div class="field">
+      <label for="zakat-receivables">Money owed to you (likely repaid)</label>
+      <input id="zakat-receivables" type="number" inputmode="decimal" min="0" step="1" value="0" />
+    </div>
+  </div>
+  <div class="field">
+    <label for="zakat-investments">Other investments (zakatable portion)</label>
+    <input id="zakat-investments" type="number" inputmode="decimal" min="0" step="1" value="0" />
+  </div>
+
+  <h3 class="calc__group-heading">Liabilities</h3>
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="zakat-debts">Immediate debts &amp; bills due</label>
+      <input id="zakat-debts" type="number" inputmode="decimal" min="0" step="1" value="0" />
+    </div>
+    <div class="field">
+      <label for="zakat-shortterm">Other short-term liabilities</label>
+      <input id="zakat-shortterm" type="number" inputmode="decimal" min="0" step="1" value="0" />
+    </div>
+  </div>
+  <Callout variant="note" title="What to deduct">
+    <p>
+      Your primary residence and personal-use items are never zakatable, so don't include them
+      above. For a mortgage or long-term loan, generally only the amount currently due is
+      deducted here — not the full remaining balance (scholarly views differ on this point).
+    </p>
+  </Callout>
+
+  <h3 class="calc__group-heading">Nisab basis</h3>
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="zakat-nisab-basis">Calculate nisab using</label>
+      <select id="zakat-nisab-basis">
+        <option value="silver" selected>Silver (595 g) — recommended</option>
+        <option value="gold">Gold (85 g)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="zakat-price">Price per gram <span id="zakat-price-metal">(silver)</span></label>
+      <input id="zakat-price" type="number" inputmode="decimal" min="0" step="0.01" value="0.90" />
+    </div>
+  </div>
+  <Callout variant="info" title="Which nisab should I use?">
+    <p>
+      Nisab is the minimum wealth for zakat to apply — the value of 85g of gold or 595g of silver.
+      Many contemporary scholars and zakat institutions recommend the silver basis because its
+      lower threshold benefits recipients. Both are valid — this tool defaults to silver.
+    </p>
+  </Callout>
+
+  <p class="calc__error" id="zakat-error" role="alert" hidden></p>
+
+  <ResultPanel id="zakat-result" label="Zakat due (2.5%)">
+    <span id="zakat-result-due">—</span>
+    <span class="calc__result-sub" id="zakat-result-detail"></span>
+  </ResultPanel>
+
+  <Callout variant="note" title="Tracking your zakat year (hawl)">
+    <p>
+      Zakat is due on wealth you have held for one lunar (Hijri) year. Use our
+      <a href="/islamic/hijri-date-converter/">Hijri Date Converter</a> to track your zakat
+      anniversary against the Gregorian calendar.
+    </p>
+  </Callout>
+
+  <div class="calc__actions">
+    <button type="button" class="btn btn-secondary" id="zakat-copy">Copy result</button>
+    <button type="button" class="btn btn-secondary" id="zakat-reset">Reset</button>
+  </div>
+</div>
+
+<style>
+  .calc__group-heading {
+    font-size: var(--text-base);
+    margin: var(--space-6) 0 var(--space-3);
+  }
+  .calc__field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+  .calc__error {
+    color: var(--color-error);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .calc__result-sub {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+  .calc__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+</style>
+
+<script>
+  import { NISAB_GOLD_GRAMS, NISAB_SILVER_GRAMS, ZAKAT_RATE } from '../../data/islamic';
+
+  const root = document.getElementById('zakat-calculator');
+  if (root) {
+    const currencyInput = root.querySelector<HTMLInputElement>('#zakat-currency')!;
+    const assetIds = ['zakat-cash', 'zakat-bank', 'zakat-gold', 'zakat-silver', 'zakat-business', 'zakat-receivables', 'zakat-investments'];
+    const liabilityIds = ['zakat-debts', 'zakat-shortterm'];
+    const basisSelect = root.querySelector<HTMLSelectElement>('#zakat-nisab-basis')!;
+    const priceInput = root.querySelector<HTMLInputElement>('#zakat-price')!;
+    const priceMetalLabel = root.querySelector<HTMLElement>('#zakat-price-metal')!;
+    const errorEl = root.querySelector<HTMLParagraphElement>('#zakat-error')!;
+    const resultDue = root.querySelector<HTMLSpanElement>('#zakat-result-due')!;
+    const resultDetail = root.querySelector<HTMLSpanElement>('#zakat-result-detail')!;
+    const copyBtn = root.querySelector<HTMLButtonElement>('#zakat-copy')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('#zakat-reset')!;
+
+    const allInputs = [...assetIds, ...liabilityIds].map((id) => root.querySelector<HTMLInputElement>(`#${id}`)!);
+
+    function num(id: string): number {
+      const el = root!.querySelector<HTMLInputElement>(`#${id}`);
+      const v = parseFloat(el?.value ?? '');
+      return Number.isNaN(v) || v < 0 ? 0 : v;
+    }
+
+    function updateMetalLabel() {
+      priceMetalLabel.textContent = basisSelect.value === 'silver' ? '(silver)' : '(gold)';
+    }
+
+    function calculate() {
+      const currency = currencyInput.value.trim() || '$';
+      const assets = assetIds.reduce((sum, id) => sum + num(id), 0);
+      const liabilities = liabilityIds.reduce((sum, id) => sum + num(id), 0);
+      const price = parseFloat(priceInput.value);
+
+      if (Number.isNaN(price) || price <= 0) {
+        errorEl.textContent = 'Enter the current price per gram to calculate your nisab threshold.';
+        errorEl.hidden = false;
+        resultDue.textContent = '—';
+        resultDetail.textContent = '';
+        return;
+      }
+      errorEl.hidden = true;
+
+      const netWealth = assets - liabilities;
+      const nisabGrams = basisSelect.value === 'silver' ? NISAB_SILVER_GRAMS : NISAB_GOLD_GRAMS;
+      const nisabThreshold = nisabGrams * price;
+
+      if (netWealth < nisabThreshold) {
+        const shortfall = nisabThreshold - netWealth;
+        resultDue.textContent = `${currency}0`;
+        resultDetail.textContent = `Below the ${basisSelect.value} nisab of ${currency}${nisabThreshold.toFixed(2)} by ${currency}${shortfall.toFixed(2)} — no zakat is due this year.`;
+        return;
+      }
+
+      const zakatDue = netWealth * ZAKAT_RATE;
+      resultDue.textContent = `${currency}${zakatDue.toFixed(2)}`;
+      resultDetail.textContent = `Net zakatable wealth: ${currency}${netWealth.toFixed(2)} — nisab used: ${currency}${nisabThreshold.toFixed(2)} (${basisSelect.value})`;
+    }
+
+    [...allInputs, priceInput, currencyInput].forEach((input) => input.addEventListener('input', calculate));
+    basisSelect.addEventListener('change', () => {
+      updateMetalLabel();
+      calculate();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const text = `${resultDue.textContent} — ${resultDetail.textContent}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      currencyInput.value = '$';
+      allInputs.forEach((input) => (input.value = '0'));
+      basisSelect.value = 'silver';
+      priceInput.value = '0.90';
+      updateMetalLabel();
+      calculate();
+    });
+
+    updateMetalLabel();
+    calculate();
+  }
+</script>
