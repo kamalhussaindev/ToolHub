@@ -17,7 +17,10 @@
     "@fontsource/inter": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@fontsource/space-grotesk": "^5.2.10",
+    "@sindresorhus/slugify": "^3.0.0",
     "astro": "^7.0.7",
+    "fast-xml-parser": "^5.9.3",
+    "js-yaml": "^5.2.1",
     "preact": "^10.29.7"
   },
   "devDependencies": {

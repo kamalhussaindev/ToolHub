@@ -1,0 +1,347 @@
+---
+import ResultPanel from '../ResultPanel.astro';
+import Callout from '../Callout.astro';
+---
+
+<div class="calc" id="sitemap-validator">
+  <div class="field">
+    <label for="sitemap-mode">Input mode</label>
+    <select id="sitemap-mode">
+      <option value="paste" selected>Paste XML</option>
+      <option value="url">Fetch by URL</option>
+    </select>
+  </div>
+
+  <div id="sitemap-paste-fields" class="field">
+    <label for="sitemap-input">Sitemap XML</label>
+    <textarea id="sitemap-input" rows="12" class="sitemap-textarea"></textarea>
+  </div>
+
+  <div id="sitemap-url-fields" class="calc__field-row" hidden>
+    <div class="field">
+      <label for="sitemap-url">Sitemap URL</label>
+      <input id="sitemap-url" type="url" placeholder="https://example.com/sitemap.xml" />
+    </div>
+  </div>
+  <button type="button" class="btn btn-secondary" id="sitemap-fetch" hidden>Fetch &amp; validate</button>
+
+  <div class="calc__actions">
+    <button type="button" class="btn btn-secondary" id="sitemap-load-valid">Load valid example</button>
+    <button type="button" class="btn btn-secondary" id="sitemap-load-broken">Load broken example</button>
+    <button type="button" class="btn btn-secondary" id="sitemap-clear">Clear</button>
+  </div>
+
+  <p class="calc__error" id="sitemap-fetch-error" role="alert" hidden></p>
+
+  <ResultPanel id="sitemap-result" label="Validation result">
+    <span id="sitemap-status">—</span>
+    <span class="calc__result-sub" id="sitemap-stats"></span>
+  </ResultPanel>
+
+  <div id="sitemap-issues"></div>
+
+  <Callout variant="note" title="Cross-origin fetching (CORS)">
+    <p>
+      Fetching a sitemap by URL relies on the target site allowing cross-origin requests, which
+      most sites don't. If the fetch fails, paste the sitemap XML directly instead — that always
+      works since it's checked entirely in your browser.
+    </p>
+  </Callout>
+</div>
+
+<style>
+  .calc__field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-4);
+  }
+  .calc__field-row[hidden] {
+    display: none;
+  }
+  .sitemap-textarea {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    background: var(--color-bg-subtle);
+  }
+  .calc__error {
+    color: var(--color-error);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+  .calc__result-sub {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-text-muted);
+    margin-top: var(--space-1);
+  }
+  .calc__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin: var(--space-4) 0;
+  }
+  #sitemap-issues {
+    margin-top: var(--space-4);
+  }
+  .sitemap-issue-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .sitemap-issue-list li {
+    font-size: var(--text-sm);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--color-error);
+    background: var(--color-bg-subtle);
+  }
+  .sitemap-issue-list li.warning {
+    border-left-color: var(--color-warning);
+  }
+</style>
+
+<script>
+  const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+  const CHANGEFREQ_VALUES = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'];
+  // Constrains month to 01-12 and day to 01-31 (not full calendar validation,
+  // e.g. Feb 30 still passes) — enough to catch clearly out-of-range values.
+  const W3C_DATETIME_RE =
+    /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01])(T([01]\d|2[0-3]):[0-5]\d(:[0-5]\d(\.\d+)?)?(Z|[+-]([01]\d|2[0-3]):[0-5]\d)?)?)?)?$/;
+  const MAX_URLS = 50000;
+  const MAX_BYTES = 50 * 1024 * 1024;
+
+  interface ValidationResult {
+    ok: boolean;
+    errors: string[];
+    warnings: string[];
+    stats: { type: string; count: number; withLastmod: number };
+  }
+
+  function isValidAbsoluteUrl(value: string): boolean {
+    try {
+      const u = new URL(value);
+      return u.protocol === 'http:' || u.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
+
+  function validateSitemap(xmlString: string): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    const byteSize = new Blob([xmlString]).size;
+    if (byteSize > MAX_BYTES) {
+      warnings.push(`File is ${(byteSize / (1024 * 1024)).toFixed(1)} MB, exceeding the recommended 50 MB uncompressed limit.`);
+    }
+
+    const doc = new DOMParser().parseFromString(xmlString, 'application/xml');
+    const parserError = doc.querySelector('parsererror');
+    if (parserError) {
+      errors.push(`XML is not well-formed: ${parserError.textContent?.trim().slice(0, 200)}`);
+      return { ok: false, errors, warnings, stats: { type: 'unknown', count: 0, withLastmod: 0 } };
+    }
+
+    const root = doc.documentElement;
+    const localName = root.localName;
+    const namespaceOk = root.namespaceURI === SITEMAP_NS;
+
+    if (!namespaceOk) {
+      errors.push(`Root element namespace should be "${SITEMAP_NS}", found "${root.namespaceURI ?? 'none'}".`);
+    }
+
+    if (localName !== 'urlset' && localName !== 'sitemapindex') {
+      errors.push(`Root element must be <urlset> or <sitemapindex>, found <${localName}>.`);
+      return { ok: false, errors, warnings, stats: { type: localName, count: 0, withLastmod: 0 } };
+    }
+
+    const entryTag = localName === 'urlset' ? 'url' : 'sitemap';
+    const entries = Array.from(root.getElementsByTagNameNS(SITEMAP_NS, entryTag));
+    const entriesFallback = entries.length > 0 ? entries : Array.from(root.getElementsByTagName(entryTag));
+
+    let withLastmod = 0;
+
+    entriesFallback.forEach((entry, index) => {
+      const locEl = entry.getElementsByTagName('loc')[0];
+      const label = `${entryTag} #${index + 1}`;
+
+      if (!locEl || !locEl.textContent?.trim()) {
+        errors.push(`${label}: missing required <loc> element.`);
+      } else if (!isValidAbsoluteUrl(locEl.textContent.trim())) {
+        errors.push(`${label}: <loc> is not a valid absolute URL — "${locEl.textContent.trim()}".`);
+      }
+
+      const lastmodEl = entry.getElementsByTagName('lastmod')[0];
+      if (lastmodEl && lastmodEl.textContent?.trim()) {
+        withLastmod++;
+        if (!W3C_DATETIME_RE.test(lastmodEl.textContent.trim())) {
+          errors.push(`${label}: <lastmod> "${lastmodEl.textContent.trim()}" is not a valid W3C datetime.`);
+        }
+      }
+
+      if (entryTag === 'url') {
+        const changefreqEl = entry.getElementsByTagName('changefreq')[0];
+        if (changefreqEl && changefreqEl.textContent?.trim()) {
+          const value = changefreqEl.textContent.trim().toLowerCase();
+          if (!CHANGEFREQ_VALUES.includes(value)) {
+            errors.push(`${label}: <changefreq> "${value}" is not one of the allowed values.`);
+          }
+        }
+
+        const priorityEl = entry.getElementsByTagName('priority')[0];
+        if (priorityEl && priorityEl.textContent?.trim()) {
+          const value = parseFloat(priorityEl.textContent.trim());
+          if (Number.isNaN(value) || value < 0 || value > 1) {
+            errors.push(`${label}: <priority> "${priorityEl.textContent.trim()}" must be between 0.0 and 1.0.`);
+          }
+        }
+      }
+    });
+
+    if (entriesFallback.length > MAX_URLS) {
+      warnings.push(`Sitemap has ${entriesFallback.length} entries, exceeding the recommended limit of ${MAX_URLS.toLocaleString()} per file.`);
+    }
+
+    return {
+      ok: errors.length === 0,
+      errors,
+      warnings,
+      stats: { type: localName, count: entriesFallback.length, withLastmod },
+    };
+  }
+
+  const VALID_EXAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://example.com/</loc>
+    <lastmod>2026-06-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://example.com/about/</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>`;
+
+  const BROKEN_EXAMPLE = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>not-an-absolute-url</loc>
+    <lastmod>2026-13-40</lastmod>
+    <changefreq>often</changefreq>
+    <priority>3.5</priority>
+  </url>
+  <url>
+    <lastmod>2026-06-01</lastmod>
+  </url>
+</urlset>`;
+
+  const root = document.getElementById('sitemap-validator');
+  if (root) {
+    const modeSelect = root.querySelector<HTMLSelectElement>('#sitemap-mode')!;
+    const pasteFields = root.querySelector<HTMLElement>('#sitemap-paste-fields')!;
+    const urlFields = root.querySelector<HTMLElement>('#sitemap-url-fields')!;
+    const fetchBtn = root.querySelector<HTMLButtonElement>('#sitemap-fetch')!;
+    const input = root.querySelector<HTMLTextAreaElement>('#sitemap-input')!;
+    const urlInput = root.querySelector<HTMLInputElement>('#sitemap-url')!;
+    const loadValidBtn = root.querySelector<HTMLButtonElement>('#sitemap-load-valid')!;
+    const loadBrokenBtn = root.querySelector<HTMLButtonElement>('#sitemap-load-broken')!;
+    const clearBtn = root.querySelector<HTMLButtonElement>('#sitemap-clear')!;
+    const fetchError = root.querySelector<HTMLParagraphElement>('#sitemap-fetch-error')!;
+    const statusEl = root.querySelector<HTMLSpanElement>('#sitemap-status')!;
+    const statsEl = root.querySelector<HTMLSpanElement>('#sitemap-stats')!;
+    const issuesEl = root.querySelector<HTMLDivElement>('#sitemap-issues')!;
+
+    function render() {
+      const xml = input.value;
+      if (!xml.trim()) {
+        statusEl.textContent = '—';
+        statsEl.textContent = '';
+        issuesEl.innerHTML = '';
+        return;
+      }
+
+      const result = validateSitemap(xml);
+      statusEl.textContent = result.ok ? '✅ Valid sitemap' : '❌ Invalid sitemap';
+      statsEl.textContent = `Type: ${result.stats.type} — ${result.stats.count} entries, ${result.stats.withLastmod} with <lastmod>`;
+
+      const items = [
+        ...result.errors.map((e) => ({ text: e, cls: '' })),
+        ...result.warnings.map((w) => ({ text: w, cls: 'warning' })),
+      ];
+
+      if (items.length === 0) {
+        issuesEl.innerHTML = '';
+      } else {
+        const list = document.createElement('ul');
+        list.className = 'sitemap-issue-list';
+        items.forEach((item) => {
+          const li = document.createElement('li');
+          li.textContent = item.text;
+          if (item.cls) li.className = item.cls;
+          list.appendChild(li);
+        });
+        issuesEl.innerHTML = '';
+        issuesEl.appendChild(list);
+      }
+    }
+
+    function updateModeVisibility() {
+      const isPaste = modeSelect.value === 'paste';
+      pasteFields.hidden = !isPaste;
+      loadValidBtn.hidden = !isPaste;
+      loadBrokenBtn.hidden = !isPaste;
+      clearBtn.hidden = !isPaste;
+      urlFields.hidden = isPaste;
+      fetchBtn.hidden = isPaste;
+      fetchError.hidden = true;
+    }
+
+    modeSelect.addEventListener('change', updateModeVisibility);
+    input.addEventListener('input', render);
+
+    loadValidBtn.addEventListener('click', () => {
+      input.value = VALID_EXAMPLE;
+      render();
+    });
+    loadBrokenBtn.addEventListener('click', () => {
+      input.value = BROKEN_EXAMPLE;
+      render();
+    });
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      render();
+    });
+
+    fetchBtn.addEventListener('click', async () => {
+      const url = urlInput.value.trim();
+      if (!url) return;
+      fetchError.hidden = true;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+        const text = await res.text();
+        modeSelect.value = 'paste';
+        updateModeVisibility();
+        input.value = text;
+        render();
+      } catch {
+        fetchError.textContent =
+          'This site blocks cross-origin requests (CORS), or the URL could not be reached. Paste the sitemap XML directly instead.';
+        fetchError.hidden = false;
+      }
+    });
+
+    updateModeVisibility();
+    input.value = VALID_EXAMPLE;
+    render();
+  }
+</script>

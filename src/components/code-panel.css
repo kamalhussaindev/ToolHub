@@ -1,0 +1,105 @@
+.code-panel__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.code-panel__options label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 500;
+  color: var(--color-text-body);
+}
+
+.code-panel__options input[type='text'],
+.code-panel__options input[type='number'] {
+  width: auto;
+  min-width: 90px;
+  padding: var(--space-1) var(--space-2);
+}
+
+.code-panel__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 900px) {
+  .code-panel__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.code-panel__pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.code-panel__pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.code-panel__pane-header label,
+.code-panel__pane-header span {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.code-panel__pane textarea {
+  width: 100%;
+  min-height: 280px;
+  resize: vertical;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  color: var(--color-text);
+  tab-size: 2;
+}
+
+.code-panel__pane textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.code-panel__pane textarea[readonly] {
+  color: var(--color-text-body);
+}
+
+.code-panel__error {
+  color: var(--color-error);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin: var(--space-3) 0 0;
+  white-space: pre-wrap;
+}
+
+.code-panel__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.code-panel__copy-btn {
+  font-size: var(--text-xs);
+  padding: var(--space-1) var(--space-3);
+}
+
+.code-panel__trust {
+  margin-top: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}

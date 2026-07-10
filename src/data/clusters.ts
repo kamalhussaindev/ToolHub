@@ -57,6 +57,24 @@ export const clusters: Cluster[] = [
     accent: 'var(--accent-dev)',
     icon: 'code',
     order: 3,
+    introHtml: `
+      <p>These tools are built for engineers who need a quick, correct conversion without spinning
+      up a script or trusting a random online form. The
+      <a href="/developer/xml-to-json/">XML to JSON</a>,
+      <a href="/developer/yaml-to-json/">YAML to JSON</a>, and
+      <a href="/developer/json-to-xml/">JSON to XML</a> converters all use real parser
+      libraries — not regex — so attributes, nested arrays, namespaces, and YAML anchors convert
+      correctly instead of silently breaking on edge cases. Each documents its exact conversion
+      convention on the page, so output is predictable and the XML ⇄ JSON converters round-trip
+      cleanly with each other.</p>
+      <p>The <a href="/developer/uuid-generator/">UUID / GUID Generator</a> produces
+      cryptographically secure v4 UUIDs (and time-ordered v7s) in bulk using the browser's native
+      crypto API — a GUID is just Microsoft's name for the same value. The
+      <a href="/developer/slug-generator/">Slug Generator</a> handles accented Latin text cleanly,
+      and the <a href="/developer/sitemap-validator/">Sitemap Validator</a> checks your XML against
+      the sitemaps.org protocol before you submit it to Search Console. Every tool here runs
+      entirely client-side: nothing you paste is ever uploaded.</p>
+    `,
   },
   {
     slug: 'academic',

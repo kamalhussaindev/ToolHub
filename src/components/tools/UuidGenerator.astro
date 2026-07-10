@@ -1,0 +1,156 @@
+---
+import ResultPanel from '../ResultPanel.astro';
+import Callout from '../Callout.astro';
+---
+
+<div class="calc" id="uuid-generator">
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="uuid-version">Version</label>
+      <select id="uuid-version">
+        <option value="v4" selected>UUID v4 (random)</option>
+        <option value="v7">UUID v7 (time-ordered)</option>
+        <option value="nil">Nil UUID</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="uuid-quantity">Quantity</label>
+      <input id="uuid-quantity" type="number" inputmode="numeric" min="1" max="500" step="1" value="1" />
+    </div>
+  </div>
+
+  <div class="calc__field-row">
+    <div class="field">
+      <label><input type="checkbox" id="uuid-uppercase" /> Uppercase</label>
+    </div>
+    <div class="field">
+      <label><input type="checkbox" id="uuid-hyphens" checked /> Include hyphens</label>
+    </div>
+  </div>
+
+  <ResultPanel id="uuid-result" label="Generated UUIDs">
+    <textarea id="uuid-output" class="uuid-output" readonly rows="8" aria-label="Generated UUIDs"></textarea>
+  </ResultPanel>
+
+  <div class="calc__actions">
+    <button type="button" class="btn btn-primary" id="uuid-generate">Regenerate</button>
+    <button type="button" class="btn btn-secondary" id="uuid-copy">Copy all</button>
+  </div>
+
+  <Callout variant="info" title="A GUID is a UUID">
+    <p>
+      GUID (Globally Unique Identifier) is Microsoft's name for the same concept as a UUID
+      (Universally Unique Identifier). A v4 UUID and a "GUID" are the same 128-bit value — this
+      generator produces both under one name.
+    </p>
+  </Callout>
+</div>
+
+<style>
+  .calc__field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-4);
+  }
+  .uuid-output {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    background: transparent;
+    border: none;
+    resize: vertical;
+    color: var(--color-text);
+    padding: 0;
+  }
+  .uuid-output:focus {
+    outline: none;
+  }
+  .calc__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+</style>
+
+<script>
+  const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+
+  function uuidV7(): string {
+    const bytes = new Uint8Array(16);
+    const now = BigInt(Date.now());
+    bytes[0] = Number((now >> 40n) & 0xffn);
+    bytes[1] = Number((now >> 32n) & 0xffn);
+    bytes[2] = Number((now >> 24n) & 0xffn);
+    bytes[3] = Number((now >> 16n) & 0xffn);
+    bytes[4] = Number((now >> 8n) & 0xffn);
+    bytes[5] = Number(now & 0xffn);
+
+    const rand = crypto.getRandomValues(new Uint8Array(10));
+    bytes[6] = 0x70 | (rand[0] & 0x0f); // version 7
+    bytes[7] = rand[1];
+    bytes[8] = 0x80 | (rand[2] & 0x3f); // variant 10
+    bytes[9] = rand[3];
+    bytes[10] = rand[4];
+    bytes[11] = rand[5];
+    bytes[12] = rand[6];
+    bytes[13] = rand[7];
+    bytes[14] = rand[8];
+    bytes[15] = rand[9];
+
+    const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
+
+  const root = document.getElementById('uuid-generator');
+  if (root) {
+    const versionSelect = root.querySelector<HTMLSelectElement>('#uuid-version')!;
+    const quantityInput = root.querySelector<HTMLInputElement>('#uuid-quantity')!;
+    const uppercaseCheckbox = root.querySelector<HTMLInputElement>('#uuid-uppercase')!;
+    const hyphensCheckbox = root.querySelector<HTMLInputElement>('#uuid-hyphens')!;
+    const output = root.querySelector<HTMLTextAreaElement>('#uuid-output')!;
+    const generateBtn = root.querySelector<HTMLButtonElement>('#uuid-generate')!;
+    const copyBtn = root.querySelector<HTMLButtonElement>('#uuid-copy')!;
+
+    function generateOne(): string {
+      switch (versionSelect.value) {
+        case 'v7':
+          return uuidV7();
+        case 'nil':
+          return NIL_UUID;
+        default:
+          return crypto.randomUUID();
+      }
+    }
+
+    function format(uuid: string): string {
+      let result = uuid;
+      if (!hyphensCheckbox.checked) result = result.replaceAll('-', '');
+      if (uppercaseCheckbox.checked) result = result.toUpperCase();
+      return result;
+    }
+
+    function generate() {
+      const quantity = Math.min(Math.max(parseInt(quantityInput.value, 10) || 1, 1), 500);
+      const uuids = Array.from({ length: quantity }, () => format(generateOne()));
+      output.value = uuids.join('\n');
+    }
+
+    generateBtn.addEventListener('click', generate);
+    versionSelect.addEventListener('change', generate);
+    quantityInput.addEventListener('input', generate);
+    uppercaseCheckbox.addEventListener('change', generate);
+    hyphensCheckbox.addEventListener('change', generate);
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(output.value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy all'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    generate();
+  }
+</script>

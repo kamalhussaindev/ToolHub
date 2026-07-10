@@ -1,0 +1,143 @@
+---
+import ResultPanel from '../ResultPanel.astro';
+import Callout from '../Callout.astro';
+---
+
+<div class="calc" id="slug-generator">
+  <div class="field">
+    <label for="slug-input">Text to slugify</label>
+    <textarea id="slug-input" rows="3">10 Best Café Recipes — Ünïcode & Accents!</textarea>
+  </div>
+
+  <div class="calc__field-row">
+    <div class="field">
+      <label for="slug-separator">Separator</label>
+      <select id="slug-separator">
+        <option value="-" selected>Hyphen (-)</option>
+        <option value="_">Underscore (_)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="slug-maxlength">Max length <span class="hint-inline">(optional)</span></label>
+      <input id="slug-maxlength" type="number" inputmode="numeric" min="1" step="1" placeholder="No limit" />
+    </div>
+  </div>
+
+  <div class="calc__field-row">
+    <div class="field">
+      <label><input type="checkbox" id="slug-lowercase" checked /> Lowercase</label>
+    </div>
+    <div class="field">
+      <label><input type="checkbox" id="slug-stopwords" /> Strip common stopwords</label>
+    </div>
+  </div>
+
+  <ResultPanel id="slug-result" label="Slug">
+    <span id="slug-output">—</span>
+  </ResultPanel>
+
+  <div class="calc__actions">
+    <button type="button" class="btn btn-secondary" id="slug-copy">Copy slug</button>
+    <button type="button" class="btn btn-secondary" id="slug-reset">Reset</button>
+  </div>
+
+  <Callout variant="note" title="A note on non-Latin scripts">
+    <p>
+      Latin-based text with accents is handled cleanly — <code>é → e</code>, <code>ü → u</code>.
+      Non-Latin scripts (Arabic, Chinese, and others) may transliterate imperfectly or be dropped
+      entirely, since a slug is meant to stay within the URL-safe ASCII character set.
+    </p>
+  </Callout>
+</div>
+
+<style>
+  .calc__field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-4);
+  }
+  .hint-inline {
+    font-weight: 400;
+    color: var(--color-text-muted);
+  }
+  #slug-output {
+    font-family: var(--font-mono);
+    word-break: break-all;
+  }
+  .calc__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+</style>
+
+<script>
+  import slugify from '@sindresorhus/slugify';
+
+  const STOPWORDS = new Set([
+    'a', 'an', 'the', 'and', 'or', 'but', 'of', 'in', 'on', 'at', 'to', 'for',
+    'with', 'by', 'is', 'it', 'this', 'that', 'as', 'be', 'are',
+  ]);
+
+  function stripStopwords(text: string): string {
+    return text
+      .split(/\s+/)
+      .filter((word) => !STOPWORDS.has(word.toLowerCase()))
+      .join(' ');
+  }
+
+  const root = document.getElementById('slug-generator');
+  if (root) {
+    const input = root.querySelector<HTMLTextAreaElement>('#slug-input')!;
+    const separatorSelect = root.querySelector<HTMLSelectElement>('#slug-separator')!;
+    const maxLengthInput = root.querySelector<HTMLInputElement>('#slug-maxlength')!;
+    const lowercaseCheckbox = root.querySelector<HTMLInputElement>('#slug-lowercase')!;
+    const stopwordsCheckbox = root.querySelector<HTMLInputElement>('#slug-stopwords')!;
+    const output = root.querySelector<HTMLSpanElement>('#slug-output')!;
+    const copyBtn = root.querySelector<HTMLButtonElement>('#slug-copy')!;
+    const resetBtn = root.querySelector<HTMLButtonElement>('#slug-reset')!;
+
+    function calculate() {
+      const separator = separatorSelect.value;
+      const raw = stopwordsCheckbox.checked ? stripStopwords(input.value) : input.value;
+
+      let slug = slugify(raw, {
+        separator,
+        lowercase: lowercaseCheckbox.checked,
+      });
+
+      const maxLength = parseInt(maxLengthInput.value, 10);
+      if (!Number.isNaN(maxLength) && maxLength > 0 && slug.length > maxLength) {
+        slug = slug.slice(0, maxLength).replace(new RegExp(`\\${separator}+$`), '');
+      }
+
+      output.textContent = slug || '—';
+    }
+
+    [input].forEach((el) => el.addEventListener('input', calculate));
+    [separatorSelect].forEach((el) => el.addEventListener('change', calculate));
+    [maxLengthInput].forEach((el) => el.addEventListener('input', calculate));
+    [lowercaseCheckbox, stopwordsCheckbox].forEach((el) => el.addEventListener('change', calculate));
+
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(output.textContent ?? '');
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy slug'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      input.value = '10 Best Café Recipes — Ünïcode & Accents!';
+      separatorSelect.value = '-';
+      maxLengthInput.value = '';
+      lowercaseCheckbox.checked = true;
+      stopwordsCheckbox.checked = false;
+      calculate();
+    });
+
+    calculate();
+  }
+</script>

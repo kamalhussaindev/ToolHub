@@ -13,8 +13,12 @@ import FabricCalculator from '../../components/tools/FabricCalculator.astro';
 import ZakatCalculator from '../../components/tools/ZakatCalculator.astro';
 import ZakatOnGoldCalculator from '../../components/tools/ZakatOnGoldCalculator.astro';
 import HijriDateConverter from '../../components/tools/HijriDateConverter.astro';
+import UuidGenerator from '../../components/tools/UuidGenerator.astro';
+import SlugGenerator from '../../components/tools/SlugGenerator.astro';
+import SitemapValidator from '../../components/tools/SitemapValidator.astro';
 
-const componentMap = {
+// Astro (vanilla) components, rendered with no client directive.
+const astroComponentMap = {
   TileCalculator,
   PaintCalculator,
   FlooringCalculator,
@@ -23,7 +27,18 @@ const componentMap = {
   ZakatCalculator,
   ZakatOnGoldCalculator,
   HijriDateConverter,
+  UuidGenerator,
+  SlugGenerator,
+  SitemapValidator,
 } as const;
+
+// Preact islands — these are JS-heavy converters that need client:visible to
+// hydrate, which Astro only allows on framework components, not .astro ones.
+import XmlToJson from '../../components/tools/XmlToJson';
+import YamlToJson from '../../components/tools/YamlToJson';
+import JsonToXml from '../../components/tools/JsonToXml';
+
+const PREACT_COMPONENTS = ['XmlToJson', 'YamlToJson', 'JsonToXml'];
 
 export function getStaticPaths() {
   return getLiveTools().map((tool) => ({
@@ -34,10 +49,19 @@ export function getStaticPaths() {
 const { cluster: clusterSlug, tool: toolSlug } = Astro.params;
 const tool = getTool(toolSlug)!;
 const cluster = getCluster(clusterSlug)!;
-const ToolComponent = componentMap[tool.component as keyof typeof componentMap];
+const ToolComponent = astroComponentMap[tool.component as keyof typeof astroComponentMap];
+const isPreact = PREACT_COMPONENTS.includes(tool.component);
 ---
 
 <ToolLayout tool={tool} cluster={cluster}>
-  <ToolComponent slot="tool" />
+  {isPreact ? (
+    <Fragment slot="tool">
+      {tool.component === 'XmlToJson' && <XmlToJson client:visible />}
+      {tool.component === 'YamlToJson' && <YamlToJson client:visible />}
+      {tool.component === 'JsonToXml' && <JsonToXml client:visible />}
+    </Fragment>
+  ) : (
+    <ToolComponent slot="tool" />
+  )}
   {tool.showDisclaimer && <DisclaimerNote slot="footer-note" lastReviewed={ISLAMIC_LAST_REVIEWED} />}
 </ToolLayout>
