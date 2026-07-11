@@ -1,10 +1,12 @@
 ---
 import type { Tool } from '../data/tools';
 import type { Cluster } from '../data/clusters';
+import { getRelated } from '../data/tools';
+import { getCluster } from '../data/clusters';
+import { icon } from '../data/icons';
 import Breadcrumbs from './Breadcrumbs.astro';
 import AdSlot from './AdSlot.astro';
 import FaqAccordion from './FaqAccordion.astro';
-import RelatedTools from './RelatedTools.astro';
 
 export interface Props {
   tool: Tool;
@@ -12,118 +14,145 @@ export interface Props {
 }
 
 const { tool, cluster } = Astro.props;
+const related = getRelated(tool.slug);
+
+const tocItems = [
+  { href: '#calculator-heading', label: 'Calculator' },
+  ...(tool.howToUse.length > 0 ? [{ href: '#how-to-use-heading', label: 'How to use it' }] : []),
+  ...(tool.howItWorks ? [{ href: '#how-it-works-heading', label: 'Formula and explanation' }] : []),
+  ...(tool.examples && tool.examples.length > 0 ? [{ href: '#examples-heading', label: 'Examples' }] : []),
+  ...(tool.faqs.length > 0 ? [{ href: '#faq-heading', label: 'FAQ' }] : []),
+  ...(related.length > 0 ? [{ href: '#related-heading', label: 'Related tools' }] : []),
+];
 ---
 
-<div class="tool-page container">
-  <Breadcrumbs
-    crumbs={[
-      { name: 'Home', path: '/' },
-      { name: cluster.name, path: `/${cluster.slug}/` },
-      { name: tool.title, path: `/${cluster.slug}/${tool.slug}/` },
-    ]}
-  />
+<section class="tool-page">
+  <div class="shell">
+    <Breadcrumbs
+      crumbs={[
+        { name: 'Home', path: '/' },
+        { name: cluster.name, path: `/${cluster.slug}/` },
+        { name: tool.title, path: `/${cluster.slug}/${tool.slug}/` },
+      ]}
+    />
 
-  <div class="tool-page__layout">
-    <div class="tool-page__main">
-      <h1>{tool.h1}</h1>
-      <p class="tool-page__intro">{tool.intro}</p>
-
-      <div class="tool-page__tool" style={`--card-accent: ${cluster.accent}`}>
-        <slot name="tool" />
+    <div class="tool-heading">
+      <div>
+        <h1 id="calculator-heading">{tool.h1}</h1>
+        <p>{tool.intro}</p>
       </div>
+      <div class="tool-actions">
+        <button class="small-btn" data-fav={tool.slug} type="button">
+          <span set:html={icon('bookmark')} /> Save
+        </button>
+        <button class="small-btn" id="shareTool" type="button">
+          <span set:html={icon('share')} /> Share
+        </button>
+      </div>
+    </div>
 
-      <AdSlot slot="ad-after-result" />
+    <slot name="tool" />
 
-      {tool.howToUse.length > 0 && (
-        <section aria-labelledby="how-to-use-heading">
-          <h2 id="how-to-use-heading">How to use the {tool.title.toLowerCase()}</h2>
-          <ol>
-            {tool.howToUse.map((step) => <li>{step}</li>)}
-          </ol>
-        </section>
-      )}
+    <AdSlot slot={`tool-${cluster.slug}-${tool.slug}`} />
 
-      {tool.howItWorks && (
-        <section aria-labelledby="how-it-works-heading">
-          <h2 id="how-it-works-heading">How it works</h2>
-          <p>{tool.howItWorks}</p>
-        </section>
-      )}
+    <div class="content-layout">
+      <article class="content-card">
+        {tool.howToUse.length > 0 && (
+          <>
+            <h2 id="how-to-use-heading">How to use the {tool.title.toLowerCase()}</h2>
+            <ol>
+              {tool.howToUse.map((step) => <li>{step}</li>)}
+            </ol>
+          </>
+        )}
 
-      {tool.examples && tool.examples.length > 0 && (
-        <section aria-labelledby="examples-heading">
-          <h2 id="examples-heading">Examples</h2>
-          <div class="tool-page__table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">Input</th>
-                  <th scope="col">Result</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tool.examples.map((example) => (
-                  <tr>
-                    <td>{example.input}</td>
-                    <td>{example.output}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      )}
+        {tool.howItWorks && (
+          <>
+            <h3 id="how-it-works-heading">How it works</h3>
+            <p>{tool.howItWorks}</p>
+          </>
+        )}
 
-      <FaqAccordion faqs={tool.faqs} />
-      <RelatedTools slug={tool.slug} />
-      <slot name="footer-note" />
+        {tool.examples && tool.examples.length > 0 && (
+          <>
+            <h3 id="examples-heading">Examples</h3>
+            <div class="formula-table-wrap">
+              <table>
+                <thead>
+                  <tr><th scope="col">Input</th><th scope="col">Result</th></tr>
+                </thead>
+                <tbody>
+                  {tool.examples.map((example) => (
+                    <tr><td>{example.input}</td><td>{example.output}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        <FaqAccordion faqs={tool.faqs} />
+
+        {related.length > 0 && (
+          <>
+            <h3 id="related-heading">Related tools</h3>
+            <div class="cat-list">
+              {related.map((r) => {
+                const relatedCluster = getCluster(r.cluster);
+                return (
+                  <a class="cat-tool" href={`/${r.cluster}/${r.slug}/`}>
+                    <div class="tool-ico" style={`--tool:${relatedCluster?.color};--tool-soft:${relatedCluster?.soft}`} set:html={icon(r.icon)} />
+                    <div><h3>{r.title}</h3><p>{r.intro}</p></div>
+                  </a>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        <slot name="footer-note" />
+      </article>
+
+      <aside class="toc">
+        <b>On this page</b>
+        {tocItems.map((item) => <a href={item.href}>{item.label}</a>)}
+      </aside>
     </div>
   </div>
-</div>
+</section>
 
 <style>
-  .tool-page {
-    padding: var(--space-8) 0 var(--space-10);
-  }
-  .tool-page__layout {
-    display: flex;
-    gap: var(--space-8);
-  }
-  .tool-page__main {
-    max-width: var(--tool-width);
-    width: 100%;
-  }
-  .tool-page__intro {
-    font-size: var(--text-lg);
-    color: var(--color-text-muted);
-  }
-  .tool-page__tool {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-top: 3px solid var(--card-accent);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    padding: var(--space-6);
-  }
-  .tool-page__main section {
-    margin-top: var(--space-8);
-  }
-  .tool-page__table-wrap {
+  .formula-table-wrap {
     overflow-x: auto;
   }
-  table {
+  .formula-table-wrap table {
     width: 100%;
     border-collapse: collapse;
-    font-size: var(--text-sm);
+    font-size: 13px;
   }
-  th,
-  td {
+  .formula-table-wrap th,
+  .formula-table-wrap td {
     text-align: left;
-    padding: var(--space-3);
-    border-bottom: 1px solid var(--color-border);
+    padding: 10px;
+    border-bottom: 1px solid var(--line);
   }
-  th {
-    color: var(--color-text-muted);
+  .formula-table-wrap th {
+    color: var(--muted);
     font-weight: 600;
   }
+  .cat-tool h3 {
+    text-decoration: none;
+  }
 </style>
+
+<script>
+  const shareBtn = document.getElementById('shareTool');
+  shareBtn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      (window as any).__toolhubToast?.('Page link copied');
+    } catch {
+      // Clipboard API unavailable; silently ignore.
+    }
+  });
+</script>

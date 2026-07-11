@@ -1,0 +1,117 @@
+---
+import { getLiveTools } from '../data/tools';
+import { getCluster } from '../data/clusters';
+import { icon } from '../data/icons';
+
+const index = getLiveTools().map((tool) => ({
+  slug: tool.slug,
+  cluster: tool.cluster,
+  title: tool.title,
+  desc: tool.intro,
+  keywords: tool.keywords,
+  iconSvg: icon(tool.icon),
+  clusterName: getCluster(tool.cluster)?.name ?? '',
+  color: getCluster(tool.cluster)?.color ?? '#5567f2',
+  soft: getCluster(tool.cluster)?.soft ?? '#eef0ff',
+}));
+---
+
+<div class="overlay" id="overlay">
+  <div class="command">
+    <div class="command-input">
+      <span set:html={icon('search')} />
+      <input id="commandInput" placeholder="Search for a calculator or converter…" autocomplete="off" />
+      <span class="kbd">ESC</span>
+    </div>
+    <div class="command-results" id="commandResults"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="application/json" id="searchIndex" is:inline set:html={JSON.stringify(index)} />
+
+<script>
+  interface SearchItem {
+    slug: string;
+    cluster: string;
+    title: string;
+    desc: string;
+    keywords: string[];
+    iconSvg: string;
+    clusterName: string;
+    color: string;
+    soft: string;
+  }
+
+  const overlay = document.getElementById('overlay');
+  const commandInput = document.getElementById('commandInput') as HTMLInputElement | null;
+  const commandResults = document.getElementById('commandResults');
+  const indexEl = document.getElementById('searchIndex');
+  const items: SearchItem[] = indexEl ? JSON.parse(indexEl.textContent || '[]') : [];
+
+  function renderResults(q = '') {
+    if (!commandResults) return;
+    const term = q.toLowerCase().trim();
+    const list = (
+      term
+        ? items.filter((t) => `${t.title} ${t.desc} ${t.clusterName} ${t.keywords.join(' ')}`.toLowerCase().includes(term))
+        : items
+    ).slice(0, 12);
+
+    if (list.length === 0) {
+      commandResults.innerHTML = '<div class="command-empty">No matching tools found.</div>';
+      return;
+    }
+
+    commandResults.innerHTML = list
+      .map(
+        (t) => `
+        <a class="command-result" href="/${t.cluster}/${t.slug}/">
+          <span class="tool-ico" style="--tool:${t.color};--tool-soft:${t.soft}">${t.iconSvg}</span>
+          <span><b>${t.title}</b><span>${t.clusterName} · ${t.desc}</span></span>
+        </a>`
+      )
+      .join('');
+  }
+
+  export function openSearch() {
+    overlay?.classList.add('open');
+    commandInput?.focus();
+    renderResults(commandInput?.value ?? '');
+  }
+
+  export function closeSearch() {
+    overlay?.classList.remove('open');
+  }
+
+  (window as any).__toolhubOpenSearch = openSearch;
+  (window as any).__toolhubCloseSearch = closeSearch;
+
+  document.querySelectorAll<HTMLElement>('[data-open-search]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      openSearch();
+    });
+  });
+
+  overlay?.addEventListener('click', (e) => {
+    if (e.target === overlay) closeSearch();
+  });
+  commandInput?.addEventListener('input', (e) => renderResults((e.target as HTMLInputElement).value));
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      openSearch();
+    }
+    if (e.key === 'Escape') closeSearch();
+  });
+
+  function showToast(msg: string) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1700);
+  }
+  (window as any).__toolhubToast = showToast;
+</script>

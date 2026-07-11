@@ -1,139 +1,92 @@
 ---
-import ResultPanel from '../ResultPanel.astro';
+import CalcShell from '../CalcShell.astro';
 import Callout from '../Callout.astro';
 ---
 
-<div class="calc" id="zakat-gold-calculator">
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="zgold-weight">Weight</label>
-      <input id="zgold-weight" type="number" inputmode="decimal" min="0" step="0.001" value="100" />
+<div class="calc-shell" id="zakat-gold-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Gold weight &amp; purity</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="zgWeight">Weight</label>
+          <div class="input-wrap">
+            <input id="zgWeight" type="number" value="100" min="0" step="0.001" />
+            <select id="zgUnit" aria-label="Weight unit"><option value="grams" selected>Grams</option><option value="tola">Tola</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="zgKarat">Karat</label>
+          <div class="input-wrap">
+            <select id="zgKarat" style="border:0;flex:1">
+              <option value="24">24k (pure)</option>
+              <option value="22" selected>22k</option>
+              <option value="21">21k</option>
+              <option value="18">18k</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="field">
-      <label for="zgold-unit">Unit</label>
-      <select id="zgold-unit">
-        <option value="grams" selected>Grams</option>
-        <option value="tola">Tola (11.664 g)</option>
-      </select>
+
+    <div class="calc-block">
+      <h2><span class="step">2</span>Price &amp; currency</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="zgPrice">Price per gram of 24k gold</label>
+          <div class="input-wrap"><input id="zgPrice" type="number" value="70" min="0" step="0.01" /></div>
+        </div>
+        <div class="field">
+          <label for="zgCurrency">Currency label</label>
+          <div class="input-wrap"><input id="zgCurrency" type="text" maxlength="8" value="$" /></div>
+        </div>
+      </div>
+      <Callout variant="note" title="Jewelry worn for personal use">
+        <p>
+          The Hanafi school considers all gold zakatable, including worn jewelry, while the
+          Maliki, Shafiʿi, and Hanbali schools generally exempt jewelry in regular personal use.
+        </p>
+      </Callout>
     </div>
-  </div>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="zgold-karat">Karat</label>
-      <select id="zgold-karat">
-        <option value="24">24k (pure)</option>
-        <option value="22" selected>22k</option>
-        <option value="21">21k</option>
-        <option value="18">18k</option>
-      </select>
+    <button class="calc-cta" id="calculateZakatGold" type="button">Calculate zakat</button>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Zakat due (2.5%)</h2><span class="status">Live estimate</span></div>
+    <div class="primary-result"><span>Amount due</span><strong id="zgDue" aria-live="polite">$160.42</strong></div>
+    <div class="result-grid">
+      <div class="result-stat"><span>Pure gold</span><b id="zgPureGrams">91.67 g</b></div>
+      <div class="result-stat"><span>Gold value</span><b id="zgValue">$6416.67</b></div>
     </div>
-    <div class="field">
-      <label for="zgold-currency">Currency label</label>
-      <input id="zgold-currency" type="text" maxlength="8" value="$" />
-    </div>
-  </div>
-
-  <div class="field">
-    <label for="zgold-price">Price per gram of 24k gold</label>
-    <input id="zgold-price" type="number" inputmode="decimal" min="0" step="0.01" value="70" />
-    <span class="hint">Enter today's price — this tool never assumes a price for you.</span>
-  </div>
-
-  <p class="calc__error" id="zgold-error" role="alert" hidden></p>
-
-  <ResultPanel id="zgold-result" label="Zakat due (2.5%)">
-    <span id="zgold-result-due">—</span>
-    <span class="calc__result-sub" id="zgold-result-detail"></span>
-  </ResultPanel>
-
-  <p class="calc__nisab-note" id="zgold-nisab-note"></p>
-
-  <Callout variant="note" title="Jewelry worn for personal use">
-    <p>
-      Schools of thought differ on jewelry worn for personal use: the Hanafi school considers all
-      gold and silver zakatable, including worn jewelry, while the Maliki, Shafiʿi, and Hanbali
-      schools generally exempt jewelry in regular personal use. Follow your school or consult a
-      scholar.
-    </p>
-  </Callout>
-
-  <Callout variant="info" title="Zakat on gold is usually part of your total wealth">
-    <p>
-      Zakat is normally assessed on your total zakatable wealth, not gold in isolation. Use the
-      <a href="/islamic/zakat-calculator/">Zakat Calculator</a> to combine this with your cash,
-      silver, and other assets.
-    </p>
-  </Callout>
-
-  <div class="calc__actions">
-    <button type="button" class="btn btn-secondary" id="zgold-copy">Copy result</button>
-    <button type="button" class="btn btn-secondary" id="zgold-reset">Reset</button>
-  </div>
+    <p class="result-note" id="zgNisabNote"></p>
+    <Callout variant="info" title="Part of your total wealth">
+      <p>
+        Zakat is normally assessed on total zakatable wealth. Use the
+        <a href="/islamic/zakat-calculator/">Zakat Calculator</a> to combine this with cash and other assets.
+      </p>
+    </Callout>
+  </aside>
 </div>
 
-<style>
-  .calc__field-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--space-4);
-  }
-  .calc__error {
-    color: var(--color-error);
-    font-size: var(--text-sm);
-    font-weight: 600;
-  }
-  .calc__result-sub {
-    display: block;
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
-    font-weight: 400;
-    color: var(--color-text-muted);
-    margin-top: var(--space-1);
-  }
-  .calc__nisab-note {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-  }
-  .calc__actions {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: var(--space-5);
-  }
-</style>
+<CalcShell label="Zakat due" valueSelector="#zgDue" />
 
 <script>
   import { KARAT_PURITY, NISAB_GOLD_GRAMS, TOLA_IN_GRAMS, ZAKAT_RATE } from '../../data/islamic';
 
   const root = document.getElementById('zakat-gold-calculator');
   if (root) {
-    const weightInput = root.querySelector<HTMLInputElement>('#zgold-weight')!;
-    const unitSelect = root.querySelector<HTMLSelectElement>('#zgold-unit')!;
-    const karatSelect = root.querySelector<HTMLSelectElement>('#zgold-karat')!;
-    const currencyInput = root.querySelector<HTMLInputElement>('#zgold-currency')!;
-    const priceInput = root.querySelector<HTMLInputElement>('#zgold-price')!;
-    const errorEl = root.querySelector<HTMLParagraphElement>('#zgold-error')!;
-    const resultDue = root.querySelector<HTMLSpanElement>('#zgold-result-due')!;
-    const resultDetail = root.querySelector<HTMLSpanElement>('#zgold-result-detail')!;
-    const nisabNote = root.querySelector<HTMLParagraphElement>('#zgold-nisab-note')!;
-    const copyBtn = root.querySelector<HTMLButtonElement>('#zgold-copy')!;
-    const resetBtn = root.querySelector<HTMLButtonElement>('#zgold-reset')!;
+    const weightInput = root.querySelector<HTMLInputElement>('#zgWeight')!;
+    const unitSelect = root.querySelector<HTMLSelectElement>('#zgUnit')!;
+    const karatSelect = root.querySelector<HTMLSelectElement>('#zgKarat')!;
+    const currencyInput = root.querySelector<HTMLInputElement>('#zgCurrency')!;
+    const priceInput = root.querySelector<HTMLInputElement>('#zgPrice')!;
 
     function calculate() {
       const currency = currencyInput.value.trim() || '$';
-      const weight = parseFloat(weightInput.value);
+      const weight = Math.max(0, parseFloat(weightInput.value) || 0);
       const karat = parseInt(karatSelect.value, 10);
-      const price = parseFloat(priceInput.value);
-
-      if (Number.isNaN(weight) || weight < 0 || Number.isNaN(price) || price <= 0) {
-        errorEl.textContent = 'Please enter a valid weight and price per gram.';
-        errorEl.hidden = false;
-        resultDue.textContent = '—';
-        resultDetail.textContent = '';
-        nisabNote.textContent = '';
-        return;
-      }
-      errorEl.hidden = true;
+      const price = Math.max(0, parseFloat(priceInput.value) || 0);
 
       const weightGrams = unitSelect.value === 'tola' ? weight * TOLA_IN_GRAMS : weight;
       const purity = KARAT_PURITY[karat] ?? 1;
@@ -141,38 +94,20 @@ import Callout from '../Callout.astro';
       const goldValue = pureGoldGrams * price;
       const zakatDue = goldValue * ZAKAT_RATE;
 
-      resultDue.textContent = `${currency}${zakatDue.toFixed(2)}`;
-      resultDetail.textContent = `${pureGoldGrams.toFixed(2)} g pure gold × ${currency}${price}/g = ${currency}${goldValue.toFixed(2)} value`;
+      document.getElementById('zgDue')!.textContent = `${currency}${zakatDue.toFixed(2)}`;
+      document.getElementById('zgPureGrams')!.textContent = `${pureGoldGrams.toFixed(2)} g`;
+      document.getElementById('zgValue')!.textContent = `${currency}${goldValue.toFixed(2)}`;
 
-      nisabNote.textContent =
+      document.getElementById('zgNisabNote')!.textContent =
         weightGrams >= NISAB_GOLD_GRAMS
           ? `This weight (${weightGrams.toFixed(2)} g) meets the gold nisab of ${NISAB_GOLD_GRAMS} g on its own.`
-          : `This weight (${weightGrams.toFixed(2)} g) is below the gold nisab of ${NISAB_GOLD_GRAMS} g by itself — it may still be zakatable when combined with your other wealth.`;
+          : `This weight (${weightGrams.toFixed(2)} g) is below the ${NISAB_GOLD_GRAMS} g gold nisab alone — it may still be zakatable combined with other wealth.`;
     }
 
-    [weightInput, priceInput, currencyInput].forEach((input) => input.addEventListener('input', calculate));
+    root.querySelectorAll('input').forEach((el) => el.addEventListener('input', calculate));
     unitSelect.addEventListener('change', calculate);
     karatSelect.addEventListener('change', calculate);
-
-    copyBtn.addEventListener('click', async () => {
-      const text = `${resultDue.textContent} — ${resultDetail.textContent}`;
-      try {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
-      } catch {
-        // Clipboard API unavailable; silently ignore.
-      }
-    });
-
-    resetBtn.addEventListener('click', () => {
-      weightInput.value = '100';
-      unitSelect.value = 'grams';
-      karatSelect.value = '22';
-      currencyInput.value = '$';
-      priceInput.value = '70';
-      calculate();
-    });
+    document.getElementById('calculateZakatGold')?.addEventListener('click', calculate);
 
     calculate();
   }

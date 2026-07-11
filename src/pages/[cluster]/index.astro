@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import ToolCard from '../../components/ToolCard.astro';
 import AdSlot from '../../components/AdSlot.astro';
-import { clusters, getCluster } from '../../data/clusters';
+import { clusters, getCluster, getSortedClusters } from '../../data/clusters';
 import { getToolsByCluster } from '../../data/tools';
+import { icon } from '../../data/icons';
 
 export function getStaticPaths() {
   return clusters.map((cluster) => ({
@@ -15,6 +15,8 @@ export function getStaticPaths() {
 const { cluster: clusterSlug } = Astro.params;
 const cluster = getCluster(clusterSlug)!;
 const clusterTools = getToolsByCluster(cluster.slug);
+const allClusters = getSortedClusters();
+const groups = [...new Set(clusterTools.map((t) => t.group))];
 const canonicalPath = `/${cluster.slug}/`;
 
 const jsonLd = [
@@ -26,6 +28,16 @@ const jsonLd = [
     url: new URL(canonicalPath, Astro.site).toString(),
   },
 ];
+
+// For the client-side in-category search filter.
+const searchIndex = clusterTools.map((t) => ({
+  slug: t.slug,
+  title: t.title,
+  desc: t.intro,
+  group: t.group,
+  status: t.status,
+  iconSvg: icon(t.icon),
+}));
 ---
 
 <BaseLayout
@@ -34,49 +46,147 @@ const jsonLd = [
   canonicalPath={canonicalPath}
   jsonLd={jsonLd}
 >
-  <div class="container hub">
-    <Breadcrumbs crumbs={[{ name: 'Home', path: '/' }, { name: cluster.name, path: canonicalPath }]} />
-
-    <header class="hub__header" style={`--card-accent: ${cluster.accent}`}>
-      <h1>{cluster.name}</h1>
-      <p>{cluster.description}</p>
-    </header>
-
-    <div class="grid grid--tools hub__grid">
-      {clusterTools.map((tool) => <ToolCard tool={tool} />)}
+  <section class="page-hero">
+    <div class="shell">
+      <Breadcrumbs crumbs={[{ name: 'Home', path: '/' }, { name: cluster.name, path: canonicalPath }]} />
+      <div class="category-title">
+        <div>
+          <h1>{cluster.name} calculators</h1>
+          <p>{cluster.description}</p>
+        </div>
+        <div class="category-count">
+          <strong>{clusterTools.length}</strong>
+          <span>tools in this category</span>
+        </div>
+      </div>
     </div>
+  </section>
 
+  <section class="section">
+    <div class="shell category-layout">
+      <aside class="category-side">
+        <div class="side-title">Categories</div>
+        {allClusters.map((c) => (
+          <a class={`side-link ${c.slug === cluster.slug ? 'active' : ''}`} href={`/${c.slug}/`}>
+            <span>{c.name}</span>
+            <span>{getToolsByCluster(c.slug).length}</span>
+          </a>
+        ))}
+      </aside>
+      <div>
+        <div class="hero-search" style="margin:0 0 32px;max-width:none">
+          <span class="search-ico" set:html={icon('search')} />
+          <input id="categorySearch" placeholder={`Search within ${cluster.name.toLowerCase()}…`} />
+          <button type="button" data-open-search>Search</button>
+        </div>
+        <div id="categorySections">
+          {groups.map((group) => {
+            const groupTools = clusterTools.filter((t) => t.group === group);
+            return (
+              <section class="cat-section">
+                <div class="cat-section-head">
+                  <h2>{group}</h2>
+                  <span>{groupTools.length} tools</span>
+                </div>
+                <div class="cat-list">
+                  {groupTools.map((t) =>
+                    t.status === 'live' ? (
+                      <a class="cat-tool" href={`/${cluster.slug}/${t.slug}/`}>
+                        <div class="tool-ico" style={`--tool:${cluster.color};--tool-soft:${cluster.soft}`} set:html={icon(t.icon)} />
+                        <div><h3>{t.title}</h3><p>{t.intro}</p></div>
+                      </a>
+                    ) : (
+                      <div class="cat-tool cat-tool--disabled" aria-disabled="true">
+                        <div class="tool-ico" style={`--tool:${cluster.color};--tool-soft:${cluster.soft}`} set:html={icon(t.icon)} />
+                        <div><h3>{t.title} <span class="badge">Coming soon</span></h3><p>{t.intro}</p></div>
+                      </div>
+                    )
+                  )}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="shell">
     <AdSlot slot={`hub-${cluster.slug}`} />
+  </div>
 
-    <section class="hub__intro">
+  <section class="section white">
+    <div class="shell hub-intro">
       <h2>About {cluster.name} tools</h2>
       {cluster.introHtml ? (
         <Fragment set:html={cluster.introHtml} />
       ) : (
         <p>{cluster.description} Every tool below runs instantly in your browser with live results as you type — no signup, no waiting, and no data ever leaves your device.</p>
       )}
-    </section>
-  </div>
+    </div>
+  </section>
 </BaseLayout>
 
+<script type="application/json" id="categoryToolIndex" is:inline set:html={JSON.stringify(searchIndex)} />
+
 <style>
-  .hub {
-    padding: var(--space-8) 0 var(--space-10);
+  .cat-tool--disabled {
+    opacity: 0.65;
   }
-  .hub__header {
-    border-left: 4px solid var(--card-accent);
-    padding-left: var(--space-5);
-    margin-bottom: var(--space-8);
+  .cat-tool--disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--line);
   }
-  .hub__header p {
-    color: var(--color-text-muted);
-    font-size: var(--text-lg);
-    margin: 0;
-  }
-  .hub__grid {
-    margin-bottom: var(--space-8);
-  }
-  .hub__intro {
+  .hub-intro {
     max-width: var(--tool-width);
   }
+  .hub-intro h2 {
+    font-size: 24px;
+    letter-spacing: -0.03em;
+    margin: 0 0 12px;
+  }
+  .hub-intro p {
+    color: #56606d;
+  }
 </style>
+
+<script>
+  interface CatToolItem {
+    slug: string;
+    title: string;
+    desc: string;
+    group: string;
+    status: 'live' | 'coming-soon';
+    iconSvg: string;
+  }
+
+  const searchInput = document.getElementById('categorySearch') as HTMLInputElement | null;
+  const sectionsEl = document.getElementById('categorySections');
+  const indexEl = document.getElementById('categoryToolIndex');
+  const items: CatToolItem[] = indexEl ? JSON.parse(indexEl.textContent || '[]') : [];
+  const originalHtml = sectionsEl?.innerHTML ?? '';
+  const clusterSlugAttr = window.location.pathname.split('/').filter(Boolean)[0] ?? '';
+
+  function toolCardHtml(t: CatToolItem): string {
+    if (t.status === 'live') {
+      return `<a class="cat-tool" href="/${clusterSlugAttr}/${t.slug}/"><div class="tool-ico">${t.iconSvg}</div><div><h3>${t.title}</h3><p>${t.desc}</p></div></a>`;
+    }
+    return `<div class="cat-tool cat-tool--disabled" aria-disabled="true"><div class="tool-ico">${t.iconSvg}</div><div><h3>${t.title} <span class="badge">Coming soon</span></h3><p>${t.desc}</p></div></div>`;
+  }
+
+  searchInput?.addEventListener('input', (e) => {
+    const q = (e.target as HTMLInputElement).value.toLowerCase().trim();
+    if (!sectionsEl) return;
+    if (!q) {
+      sectionsEl.innerHTML = originalHtml;
+      return;
+    }
+    const filtered = items.filter((t) => `${t.title} ${t.desc}`.toLowerCase().includes(q));
+    sectionsEl.innerHTML = `
+      <section class="cat-section">
+        <div class="cat-section-head"><h2>Search results</h2><span>${filtered.length} tools</span></div>
+        <div class="cat-list">${filtered.map(toolCardHtml).join('') || '<p>No matching tools found.</p>'}</div>
+      </section>`;
+  });
+</script>

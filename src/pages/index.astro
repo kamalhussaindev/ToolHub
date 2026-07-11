@@ -1,11 +1,70 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SearchBar from '../components/SearchBar.astro';
+import CategoryCard from '../components/CategoryCard.astro';
 import ToolCard from '../components/ToolCard.astro';
-import { getSortedClusters } from '../data/clusters';
-import { getToolsByCluster } from '../data/tools';
+import AdSlot from '../components/AdSlot.astro';
+import { getSortedClusters, getCluster } from '../data/clusters';
+import { getLiveTools, getTool } from '../data/tools';
+import { icon } from '../data/icons';
 
 const clusters = getSortedClusters();
+const liveTools = getLiveTools();
+const popularTools = liveTools.filter((t) => t.popular);
+const popularClusters = clusters.filter((c) => popularTools.some((t) => t.cluster === c.slug));
+
+const quickSearch = ['tile-calculator', 'zakat-calculator', 'xml-to-json', 'uuid-generator']
+  .map((slug) => getTool(slug))
+  .filter((t): t is NonNullable<typeof t> => Boolean(t));
+
+const spotlightMinis = ['zakat-calculator', 'xml-to-json', 'hijri-date-converter']
+  .map((slug) => getTool(slug))
+  .filter((t): t is NonNullable<typeof t> => Boolean(t));
+
+// Recent-tools lookup for returning visitors (client-personalized — see script below).
+const recentLookup = liveTools.map((t) => ({
+  slug: t.slug,
+  cluster: t.cluster,
+  title: t.title,
+  iconSvg: icon(t.icon),
+  clusterName: getCluster(t.cluster)?.name ?? '',
+  color: getCluster(t.cluster)?.color ?? '#5567f2',
+  soft: getCluster(t.cluster)?.soft ?? '#eef0ff',
+}));
+
+const guides = [
+  {
+    type: 'Guide',
+    typeIcon: 'book',
+    title: 'How to calculate zakat',
+    desc: 'Understand eligible assets, liabilities and the 2.5% rate.',
+    time: '6 min read',
+    href: '/guides/how-to-calculate-zakat/',
+  },
+  {
+    type: 'Guide',
+    typeIcon: 'book',
+    title: 'How many tiles do I need?',
+    desc: 'The waste-allowance formula and box-rounding logic explained.',
+    time: '4 min read',
+    href: '/home-improvement/tile-calculator/',
+  },
+  {
+    type: 'Compare',
+    typeIcon: 'code',
+    title: 'XML vs JSON: the @_ convention',
+    desc: 'How attributes and repeated elements map between formats.',
+    time: '4 min read',
+    href: '/developer/xml-to-json/',
+  },
+  {
+    type: 'Guide',
+    typeIcon: 'chart',
+    title: 'UUID v4 vs v7: what changes?',
+    desc: 'Random vs time-ordered identifiers, and when each one wins.',
+    time: '3 min read',
+    href: '/developer/uuid-generator/',
+  },
+];
 
 const jsonLd = [
   {
@@ -35,105 +94,282 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <section class="hero">
-    <div class="container hero__inner">
-      <h1>Free Online Tools &amp; Calculators</h1>
-      <p>Fast, accurate, no signup required — every calculation runs right in your browser.</p>
-      <SearchBar />
+    <div class="shell hero-inner">
+      <span class="eyebrow">{liveTools.length} free tools · no sign-up needed</span>
+      <h1>Useful tools for everyday<br /><span>questions and decisions.</span></h1>
+      <p>Find calculators, converters and generators for home projects, money, study, development and daily life — then get a clear answer in seconds.</p>
+
+      <div class="hero-search">
+        <span class="search-ico" set:html={icon('search')} />
+        <input id="heroSearch" placeholder="What do you want to calculate or convert?" />
+        <button type="button" data-open-search>Find a tool</button>
+      </div>
+
+      <div class="quick-search">
+        <span>Try:</span>
+        {quickSearch.map((t) => <a href={`/${t.cluster}/${t.slug}/`}>{t.title.toLowerCase()}</a>)}
+      </div>
+
+      <div class="hero-intents">
+        <button class="intent-chip" type="button" data-open-search><span set:html={icon('calculator')} /> Calculate</button>
+        <a class="intent-chip" href="/developer/"><span set:html={icon('code')} /> Convert data</a>
+        <a class="intent-chip" href="/finance/"><span set:html={icon('wallet')} /> Plan money</a>
+        <a class="intent-chip" href="/academic/"><span set:html={icon('cap')} /> Study smarter</a>
+      </div>
+
+      <div class="hero-metrics">
+        <div class="hero-metric"><b>{liveTools.length} tools live now</b><span>More added regularly</span></div>
+        <div class="hero-metric"><b>Instant results</b><span>No waiting or setup</span></div>
+        <div class="hero-metric"><b>Mobile ready</b><span>Designed for small screens</span></div>
+        <div class="hero-metric"><b>Private by design</b><span>Most work in your browser</span></div>
+      </div>
     </div>
   </section>
 
-  {clusters.map((cluster) => {
-    const clusterTools = getToolsByCluster(cluster.slug);
-    return (
-      <section class="category-section" style={`--card-accent: ${cluster.accent}`}>
-        <div class="container">
-          <div class="category-section__header">
-            <h2>{cluster.name}</h2>
-            <a class="category-section__link" href={`/${cluster.slug}/`}>View all →</a>
-          </div>
-          <p class="category-section__tagline">{cluster.tagline}</p>
-          <div class="grid grid--tools">
-            {clusterTools.map((tool) => <ToolCard tool={tool} />)}
-          </div>
-        </div>
-      </section>
-    );
-  })}
+  <section class="category-rail">
+    <div class="shell">
+      <div class="section-head" style="margin-bottom:18px">
+        <div><h2>Browse by category</h2><p>Start with a subject, then choose the exact calculator or converter.</p></div>
+        <button class="text-link" type="button" data-open-search>View all tools →</button>
+      </div>
+      <div class="category-grid">
+        {clusters.map((cluster) => <CategoryCard cluster={cluster} />)}
+      </div>
+    </div>
+  </section>
 
-  <section class="section trust-strip">
-    <div class="container trust-strip__grid">
-      <div>
-        <h3>⚡ Fast</h3>
-        <p>Instant, live results — no page reloads, no waiting.</p>
+  <section class="section compact white">
+    <div class="shell">
+      <div class="recent-wrap">
+        <div class="recent-head">
+          <h3 set:html={`${icon('clock')} <span id="recentHeading">Good places to start</span>`} />
+          <span id="recentSubheading">Popular with new visitors</span>
+        </div>
+        <div class="recent-grid" id="recentGrid">
+          {popularTools.slice(0, 4).map((t) => {
+            const c = getCluster(t.cluster);
+            return (
+              <a class="recent-item" href={`/${t.cluster}/${t.slug}/`}>
+                <span class="tool-ico" style={`--tool:${c?.color};--tool-soft:${c?.soft}`} set:html={icon(t.icon)} />
+                <span><b>{t.title}</b><small>{c?.name}</small></span>
+              </a>
+            );
+          })}
+        </div>
       </div>
-      <div>
-        <h3>🆓 Free</h3>
-        <p>Every tool is free to use, with no account required.</p>
+    </div>
+  </section>
+
+  <script type="application/json" id="recentLookup" is:inline set:html={JSON.stringify(recentLookup)} />
+
+  <section class="section">
+    <div class="shell">
+      <div class="section-head">
+        <div><h2>Most popular tools</h2><p>The calculators and converters visitors open most often.</p></div>
+        <button class="text-link" type="button" data-open-search>Search all tools →</button>
       </div>
-      <div>
-        <h3>📱 Works anywhere</h3>
-        <p>Fully responsive and keyboard-friendly on any device.</p>
+      <div class="tabs" id="popularTabs">
+        <button class="tab active" data-filter="all" type="button">All tools</button>
+        {popularClusters.map((c) => <button class="tab" data-filter={c.slug} type="button">{c.name}</button>)}
       </div>
-      <div>
-        <h3>🔒 Private</h3>
-        <p>Calculations run in your browser — your data is never uploaded.</p>
+      <div class="tools-grid" id="popularGrid">
+        {popularTools.map((t) => (
+          <div class="popular-grid-item" data-cluster={t.cluster}>
+            <ToolCard tool={t} />
+          </div>
+        ))}
+      </div>
+      <AdSlot slot="home-popular-tools" />
+    </div>
+  </section>
+
+  <section class="section spotlight">
+    <div class="shell">
+      <div class="section-head">
+        <div><h2>Featured this week</h2><p>A practical calculator worth trying, plus a few quick favourites.</p></div>
+      </div>
+      <div class="spotlight-grid">
+        <article class="spotlight-main">
+          <span class="spotlight-kicker" set:html={`${icon('spark')} Home project favourite`} />
+          <h3>Plan your tiles before you shop.</h3>
+          <p>Estimate room area, tile quantity, boxes and waste allowance with one simple calculator.</p>
+          <div class="spotlight-result">
+            <small>Example estimate</small>
+            <strong>44 tiles</strong>
+            <span>9 boxes · includes 10% waste</span>
+          </div>
+          <div class="spotlight-actions">
+            <a class="spotlight-btn" href="/home-improvement/tile-calculator/">Open Tile Calculator</a>
+            <a class="spotlight-ghost" href="/home-improvement/">More home tools</a>
+          </div>
+        </article>
+        <div class="spotlight-side">
+          {spotlightMinis.map((t) => {
+            const c = getCluster(t.cluster);
+            return (
+              <a class="spotlight-mini" href={`/${t.cluster}/${t.slug}/`}>
+                <span class="tool-ico" style={`--tool:${c?.color};--tool-soft:${c?.soft}`} set:html={icon(t.icon)} />
+                <span><b>{t.title}</b><span>{t.intro}</span></span>
+                <i>→</i>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="section-head">
+        <div><h2>Explore by what you want to do</h2><p>Task-based shortcuts make it easier to find the right starting point.</p></div>
+      </div>
+      <div class="goal-grid">
+        <a class="goal-card" href="/home-improvement/" style="--goal:#f28b36;--goal-soft:#fff2e9">
+          <span class="goal-icon" set:html={icon('home')} />
+          <h3>Plan a home project</h3>
+          <p>Measure rooms, estimate materials and prepare renovation costs.</p>
+          <footer><span>Home improvement tools</span><span>→</span></footer>
+        </a>
+        <a class="goal-card" href="/finance/" style="--goal:#168db8;--goal-soft:#eaf7fb">
+          <span class="goal-icon" set:html={icon('wallet')} />
+          <h3>Make a money decision</h3>
+          <p>Convert bank statement PDFs into clean spreadsheets.</p>
+          <footer><span>Finance tools</span><span>→</span></footer>
+        </a>
+        <a class="goal-card" href="/academic/" style="--goal:#8a5de8;--goal-soft:#f3efff">
+          <span class="goal-icon" set:html={icon('cap')} />
+          <h3>Check study progress</h3>
+          <p>Convert grades, monitor attendance and plan academic targets.</p>
+          <footer><span>Academic tools</span><span>→</span></footer>
+        </a>
+        <a class="goal-card" href="/developer/" style="--goal:#5869ef;--goal-soft:#eef0ff">
+          <span class="goal-icon" set:html={icon('code')} />
+          <h3>Transform developer data</h3>
+          <p>Convert formats, generate identifiers and validate technical files.</p>
+          <footer><span>Developer tools</span><span>→</span></footer>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section white">
+    <div class="shell">
+      <div class="promise">
+        <div class="promise-item"><span class="promise-icon" set:html={icon('calculator')} /><div><b>Purpose-built tools</b><span>Clear inputs and useful results</span></div></div>
+        <div class="promise-item"><span class="promise-icon" set:html={icon('shield')} /><div><b>Private by design</b><span>Most tools run in your browser</span></div></div>
+        <div class="promise-item"><span class="promise-icon" set:html={icon('bolt')} /><div><b>Fast to use</b><span>No setup or account required</span></div></div>
+        <div class="promise-item"><span class="promise-icon" set:html={icon('user')} /><div><b>Easy to understand</b><span>Simple explanations and examples</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="section-head">
+        <div><h2>Guides, formulas and explanations</h2><p>Use the answer quickly, then understand how it was calculated.</p></div>
+        <a class="text-link" href="/guides/">Browse all guides →</a>
+      </div>
+      <div class="guide-grid">
+        {guides.map((g) => (
+          <a class="guide-card" href={g.href}>
+            <span class="guide-type" set:html={`${icon(g.typeIcon)} ${g.type}`} />
+            <h3>{g.title}</h3>
+            <p>{g.desc}</p>
+            <footer><span>{g.time}</span><span>Open →</span></footer>
+          </a>
+        ))}
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .hero {
-    background: var(--color-bg-subtle);
-    border-bottom: 1px solid var(--color-border);
+  .goal-card,
+  .spotlight-mini,
+  .guide-card {
+    text-decoration: none;
   }
-  .hero__inner {
-    max-width: 640px;
-    text-align: center;
-    padding: var(--space-10) var(--space-5);
+  .popular-grid-item {
+    display: contents;
   }
-  .hero h1 {
-    font-size: var(--text-3xl);
+  .quick-search a {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 6px 10px;
+    color: #4d5562;
   }
-  .hero p {
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-6);
-  }
-  .category-section {
-    padding: var(--space-8) 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-  .category-section__header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-4);
-  }
-  .category-section__header h2 {
-    border-left: 4px solid var(--card-accent);
-    padding-left: var(--space-3);
-  }
-  .category-section__link {
-    font-size: var(--text-sm);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .category-section__tagline {
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-5);
-  }
-  .trust-strip__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-6);
-    text-align: center;
-  }
-  .trust-strip__grid h3 {
-    font-size: var(--text-base);
-  }
-  .trust-strip__grid p {
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
-    margin: 0;
+  .quick-search a:hover {
+    border-color: #b9c0ff;
+    color: var(--brand);
+    background: var(--brand-soft);
   }
 </style>
+
+<script>
+  const heroSearch = document.getElementById('heroSearch') as HTMLInputElement | null;
+  heroSearch?.addEventListener('focus', () => (window as any).__toolhubOpenSearch?.());
+  heroSearch?.addEventListener('input', () => {
+    (window as any).__toolhubOpenSearch?.();
+    const commandInput = document.getElementById('commandInput') as HTMLInputElement | null;
+    if (commandInput) {
+      commandInput.value = heroSearch.value;
+      commandInput.dispatchEvent(new Event('input'));
+    }
+  });
+
+  // Tab filtering — show/hide pre-rendered cards rather than re-generating
+  // markup, since every card is already server-rendered with real content.
+  document.querySelectorAll<HTMLButtonElement>('#popularTabs .tab').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#popularTabs .tab').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll<HTMLElement>('#popularGrid .popular-grid-item').forEach((item) => {
+        item.classList.toggle('hidden', filter !== 'all' && item.dataset.cluster !== filter);
+      });
+    });
+  });
+
+  // Personalize the "recent tools" section for returning visitors.
+  interface RecentLookupItem {
+    slug: string;
+    cluster: string;
+    title: string;
+    iconSvg: string;
+    clusterName: string;
+    color: string;
+    soft: string;
+  }
+  const lookupEl = document.getElementById('recentLookup');
+  const lookup: RecentLookupItem[] = lookupEl ? JSON.parse(lookupEl.textContent || '[]') : [];
+  let recentIds: string[] = [];
+  try {
+    recentIds = JSON.parse(localStorage.getItem('toolhub-recents') || '[]');
+  } catch {
+    recentIds = [];
+  }
+  if (recentIds.length > 0) {
+    const recentTools = recentIds.map((id) => lookup.find((t) => t.slug === id)).filter((t): t is RecentLookupItem => Boolean(t));
+    if (recentTools.length > 0) {
+      const grid = document.getElementById('recentGrid');
+      const heading = document.getElementById('recentHeading');
+      const subheading = document.getElementById('recentSubheading');
+      if (heading) heading.textContent = 'Recently opened';
+      if (subheading) subheading.textContent = 'Saved on this device';
+      if (grid) {
+        grid.innerHTML = recentTools
+          .slice(0, 4)
+          .map(
+            (t) => `
+            <a class="recent-item" href="/${t.cluster}/${t.slug}/">
+              <span class="tool-ico" style="--tool:${t.color};--tool-soft:${t.soft}">${t.iconSvg}</span>
+              <span><b>${t.title}</b><small>${t.clusterName}</small></span>
+            </a>`
+          )
+          .join('');
+      }
+    }
+  }
+</script>

@@ -1,0 +1,67 @@
+---
+import { getSortedClusters } from '../data/clusters';
+
+const clusters = getSortedClusters();
+---
+
+<nav class="mobile-dock" aria-label="Mobile navigation">
+  <a href="/"><span>⌂</span>Home</a>
+  <button id="mobileCategoriesBtn" type="button"><span>▦</span>Categories</button>
+  <button class="primary" data-open-search type="button"><span>⌕</span>Search</button>
+  <button id="mobileSavedBtn" type="button"><span>♡</span>Saved</button>
+</nav>
+
+<div class="mobile-sheet" id="mobileSheet">
+  <div class="mobile-sheet-head">
+    <h3>Browse Tool Hub</h3>
+    <button class="mobile-sheet-close" id="mobileSheetClose" aria-label="Close">×</button>
+  </div>
+  <button class="mobile-sheet-search" data-open-search type="button">⌕ &nbsp; Search all calculators and tools</button>
+  <div class="mobile-sheet-grid">
+    {clusters.map((cluster) => (
+      <a class="mobile-sheet-link" href={`/${cluster.slug}/`}>
+        <b>{cluster.name}</b>
+        <span>{cluster.tagline}</span>
+      </a>
+    ))}
+  </div>
+</div>
+
+<script>
+  const mobileSheet = document.getElementById('mobileSheet');
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileCategoriesBtn = document.getElementById('mobileCategoriesBtn');
+  const mobileSheetClose = document.getElementById('mobileSheetClose');
+  const mobileSavedBtn = document.getElementById('mobileSavedBtn');
+
+  function openMobileSheet() {
+    mobileSheet?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileSheet() {
+    mobileSheet?.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  mobileMenuBtn?.addEventListener('click', openMobileSheet);
+  mobileCategoriesBtn?.addEventListener('click', openMobileSheet);
+  mobileSheetClose?.addEventListener('click', closeMobileSheet);
+
+  mobileSheet?.querySelectorAll('[data-open-search]').forEach((el) => {
+    el.addEventListener('click', () => closeMobileSheet());
+  });
+
+  mobileSavedBtn?.addEventListener('click', () => {
+    let favorites: string[] = [];
+    try {
+      favorites = JSON.parse(localStorage.getItem('toolhub-favs') || '[]');
+    } catch {
+      favorites = [];
+    }
+    if (favorites.length) {
+      (window as any).__toolhubToast?.(`${favorites.length} saved tool${favorites.length === 1 ? '' : 's'}`);
+    } else {
+      (window as any).__toolhubToast?.('No saved tools yet');
+    }
+  });
+</script>

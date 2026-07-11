@@ -3,8 +3,9 @@ export interface Cluster {
   name: string;
   tagline: string;
   description: string;
-  accent: string;
-  icon: string;
+  color: string; // hex, used as --cat / --tool / --goal custom props (preview.html convention)
+  soft: string; // hex, the tinted background paired with `color`
+  icon: string; // key into src/data/icons.ts
   order: number;
   introHtml?: string; // optional longer-form hub intro (HTML); falls back to `description` when absent
 }
@@ -16,7 +17,8 @@ export const clusters: Cluster[] = [
     tagline: 'Material calculators for renovation and decorating projects',
     description:
       'Work out exactly how much tile, paint, flooring, wallpaper, or fabric you need before you buy — with waste built in so you never come up short or overspend.',
-    accent: 'var(--accent-home)',
+    color: '#f28b36',
+    soft: '#fff2e9',
     icon: 'home',
     order: 1,
   },
@@ -26,8 +28,9 @@ export const clusters: Cluster[] = [
     tagline: 'Zakat calculators and Hijri date conversion',
     description:
       'Calculate zakat on cash, gold, and business assets against current nisab, and convert dates between the Hijri and Gregorian calendars.',
-    accent: 'var(--accent-islamic)',
-    icon: 'moon-star',
+    color: '#13a67b',
+    soft: '#eaf9f4',
+    icon: 'moon',
     order: 2,
     introHtml: `
       <p>Zakat is one of the five pillars of Islam, and getting the calculation right matters —
@@ -54,7 +57,8 @@ export const clusters: Cluster[] = [
     tagline: 'Data format converters and generators for engineers',
     description:
       'Convert between JSON, XML, and YAML, generate UUIDs and slugs, and validate sitemaps — all client-side, nothing leaves your browser.',
-    accent: 'var(--accent-dev)',
+    color: '#5869ef',
+    soft: '#eef0ff',
     icon: 'code',
     order: 3,
     introHtml: `
@@ -82,8 +86,9 @@ export const clusters: Cluster[] = [
     tagline: 'Grade, percentage, and attendance calculators for students',
     description:
       'Convert CGPA and SGPA to percentage using the right scale for your institution, work out marks percentage, and track attendance requirements.',
-    accent: 'var(--accent-academic)',
-    icon: 'graduation-cap',
+    color: '#8a5de8',
+    soft: '#f3efff',
+    icon: 'cap',
     order: 4,
   },
   {
@@ -92,8 +97,9 @@ export const clusters: Cluster[] = [
     tagline: 'Document conversion tools for financial data',
     description:
       'Turn bank statement PDFs into clean, structured spreadsheets ready for bookkeeping or analysis.',
-    accent: 'var(--accent-finance)',
-    icon: 'file-spreadsheet',
+    color: '#168db8',
+    soft: '#eaf7fb',
+    icon: 'wallet',
     order: 5,
   },
   {
@@ -102,8 +108,9 @@ export const clusters: Cluster[] = [
     tagline: 'Fun and practical calculators for daily life',
     description:
       'From your dog\'s real age to your homebrew\'s alcohol content, quick calculators for everyday questions.',
-    accent: 'var(--accent-everyday)',
-    icon: 'sparkles',
+    color: '#e66a8a',
+    soft: '#fff0f4',
+    icon: 'spark',
     order: 6,
   },
 ];

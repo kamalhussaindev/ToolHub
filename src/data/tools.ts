@@ -26,6 +26,9 @@ export interface Tool {
   related: string[];
   status: 'live' | 'coming-soon';
   showDisclaimer?: boolean; // YMYL content: renders a DisclaimerNote near the bottom of the page
+  icon: string; // key into src/data/icons.ts
+  group: string; // sub-group label shown on the category page (e.g. "Materials")
+  popular?: boolean; // featured in the homepage "Most popular tools" grid
 }
 
 export const tools: Tool[] = [
@@ -86,6 +89,9 @@ export const tools: Tool[] = [
     ],
     related: ['flooring-calculator', 'paint-calculator', 'wallpaper-calculator', 'fabric-calculator'],
     status: 'live',
+    icon: 'calculator',
+    group: 'Materials',
+    popular: true,
   },
   {
     slug: 'paint-calculator',
@@ -137,6 +143,9 @@ export const tools: Tool[] = [
     ],
     related: ['wallpaper-calculator', 'tile-calculator', 'flooring-calculator', 'fabric-calculator'],
     status: 'live',
+    icon: 'home',
+    group: 'Room & surface',
+    popular: true,
   },
   {
     slug: 'flooring-calculator',
@@ -188,6 +197,8 @@ export const tools: Tool[] = [
     ],
     related: ['tile-calculator', 'wallpaper-calculator', 'paint-calculator', 'fabric-calculator'],
     status: 'live',
+    icon: 'home',
+    group: 'Materials',
   },
   {
     slug: 'wallpaper-calculator',
@@ -239,6 +250,8 @@ export const tools: Tool[] = [
     ],
     related: ['paint-calculator', 'fabric-calculator', 'tile-calculator', 'flooring-calculator'],
     status: 'live',
+    icon: 'home',
+    group: 'Materials',
   },
   {
     slug: 'fabric-calculator',
@@ -290,6 +303,8 @@ export const tools: Tool[] = [
     ],
     related: ['wallpaper-calculator', 'paint-calculator', 'tile-calculator', 'flooring-calculator'],
     status: 'live',
+    icon: 'home',
+    group: 'Materials',
   },
 
   // ---------------------------------------------------------------------
@@ -349,6 +364,9 @@ export const tools: Tool[] = [
     related: ['zakat-on-gold', 'hijri-date-converter'],
     status: 'live',
     showDisclaimer: true,
+    icon: 'moon',
+    group: 'Zakat',
+    popular: true,
   },
   {
     slug: 'zakat-on-gold',
@@ -395,6 +413,8 @@ export const tools: Tool[] = [
     related: ['zakat-calculator', 'hijri-date-converter'],
     status: 'live',
     showDisclaimer: true,
+    icon: 'moon',
+    group: 'Zakat',
   },
   {
     slug: 'hijri-date-converter',
@@ -428,6 +448,9 @@ export const tools: Tool[] = [
     related: ['zakat-calculator', 'zakat-on-gold'],
     status: 'live',
     showDisclaimer: true,
+    icon: 'moon',
+    group: 'Calendar',
+    popular: true,
   },
 
   // ---------------------------------------------------------------------
@@ -480,6 +503,9 @@ export const tools: Tool[] = [
     ],
     related: ['json-to-xml', 'yaml-to-json', 'sitemap-validator'],
     status: 'live',
+    icon: 'code',
+    group: 'Converters',
+    popular: true,
   },
   {
     slug: 'yaml-to-json',
@@ -528,6 +554,8 @@ export const tools: Tool[] = [
     ],
     related: ['xml-to-json', 'json-to-xml', 'sitemap-validator'],
     status: 'live',
+    icon: 'code',
+    group: 'Converters',
   },
   {
     slug: 'json-to-xml',
@@ -576,6 +604,8 @@ export const tools: Tool[] = [
     ],
     related: ['xml-to-json', 'yaml-to-json', 'sitemap-validator'],
     status: 'live',
+    icon: 'code',
+    group: 'Converters',
   },
   {
     slug: 'uuid-generator',
@@ -624,6 +654,9 @@ export const tools: Tool[] = [
     ],
     related: ['slug-generator', 'sitemap-validator', 'xml-to-json'],
     status: 'live',
+    icon: 'code',
+    group: 'Generators',
+    popular: true,
   },
   {
     slug: 'slug-generator',
@@ -668,6 +701,8 @@ export const tools: Tool[] = [
     ],
     related: ['uuid-generator', 'sitemap-validator', 'json-to-xml'],
     status: 'live',
+    icon: 'code',
+    group: 'Generators',
   },
   {
     slug: 'sitemap-validator',
@@ -708,6 +743,8 @@ export const tools: Tool[] = [
     ],
     related: ['xml-to-json', 'uuid-generator', 'slug-generator'],
     status: 'live',
+    icon: 'code',
+    group: 'Validators',
   },
 
   // ---------------------------------------------------------------------
@@ -729,6 +766,8 @@ export const tools: Tool[] = [
     faqs: [],
     related: ['sgpa-to-percentage', 'marks-percentage-calculator'],
     status: 'coming-soon',
+    icon: 'cap',
+    group: 'Grades',
   },
   {
     slug: 'sgpa-to-percentage',
@@ -746,6 +785,8 @@ export const tools: Tool[] = [
     faqs: [],
     related: ['cgpa-to-percentage', 'marks-percentage-calculator'],
     status: 'coming-soon',
+    icon: 'cap',
+    group: 'Grades',
   },
   {
     slug: 'marks-percentage-calculator',
@@ -763,6 +804,8 @@ export const tools: Tool[] = [
     faqs: [],
     related: ['cgpa-to-percentage', 'attendance-calculator'],
     status: 'coming-soon',
+    icon: 'calculator',
+    group: 'Grades',
   },
   {
     slug: 'attendance-calculator',
@@ -780,6 +823,8 @@ export const tools: Tool[] = [
     faqs: [],
     related: ['marks-percentage-calculator', 'cgpa-to-percentage'],
     status: 'coming-soon',
+    icon: 'cap',
+    group: 'Attendance',
   },
 
   // ---------------------------------------------------------------------
@@ -801,6 +846,8 @@ export const tools: Tool[] = [
     faqs: [],
     related: [],
     status: 'coming-soon',
+    icon: 'wallet',
+    group: 'Documents',
   },
 
   // ---------------------------------------------------------------------
@@ -822,6 +869,8 @@ export const tools: Tool[] = [
     faqs: [],
     related: ['flames-calculator', 'abv-calculator'],
     status: 'coming-soon',
+    icon: 'spark',
+    group: 'Lifestyle',
   },
   {
     slug: 'flames-calculator',
@@ -839,6 +888,8 @@ export const tools: Tool[] = [
     faqs: [],
     related: ['dog-age-calculator', 'abv-calculator'],
     status: 'coming-soon',
+    icon: 'spark',
+    group: 'Fun',
   },
   {
     slug: 'abv-calculator',
@@ -856,6 +907,8 @@ export const tools: Tool[] = [
     faqs: [],
     related: ['dog-age-calculator', 'flames-calculator'],
     status: 'coming-soon',
+    icon: 'calculator',
+    group: 'Utility',
   },
 ];
 

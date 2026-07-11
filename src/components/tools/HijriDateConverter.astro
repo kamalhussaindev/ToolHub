@@ -1,89 +1,77 @@
 ---
-import ResultPanel from '../ResultPanel.astro';
 import Callout from '../Callout.astro';
 ---
 
-<div class="calc" id="hijri-converter">
-  <div class="field">
-    <label for="hijri-direction">Direction</label>
-    <select id="hijri-direction">
-      <option value="g2h" selected>Gregorian → Hijri</option>
-      <option value="h2g">Hijri → Gregorian</option>
-    </select>
-  </div>
-
-  <div id="hijri-g2h-fields" class="calc__field-row">
-    <div class="field">
-      <label for="hijri-greg-date">Gregorian date</label>
-      <input id="hijri-greg-date" type="date" />
+<div class="calc-shell" id="hijri-converter">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Choose a direction</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="hijriDirection">Direction</label>
+          <div class="input-wrap">
+            <select id="hijriDirection" style="border:0;flex:1">
+              <option value="g2h" selected>Gregorian → Hijri</option>
+              <option value="h2g">Hijri → Gregorian</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div id="hijri-h2g-fields" class="calc__field-row" hidden>
-    <div class="field">
-      <label for="hijri-h-day">Day</label>
-      <input id="hijri-h-day" type="number" inputmode="numeric" min="1" max="30" step="1" value="1" />
+    <div class="calc-block">
+      <h2><span class="step">2</span>Enter the date</h2>
+      <div id="hijriG2hFields" class="form-grid">
+        <div class="field">
+          <label for="hijriGregDate">Gregorian date</label>
+          <div class="input-wrap"><input id="hijriGregDate" type="date" /></div>
+        </div>
+      </div>
+      <div id="hijriH2gFields" class="form-grid" hidden>
+        <div class="field">
+          <label for="hijriDay">Day</label>
+          <div class="input-wrap"><input id="hijriDay" type="number" value="1" min="1" max="30" step="1" /></div>
+        </div>
+        <div class="field">
+          <label for="hijriMonth">Month</label>
+          <div class="input-wrap">
+            <select id="hijriMonth" style="border:0;flex:1">
+              <option value="1">1 — Muharram</option>
+              <option value="2">2 — Safar</option>
+              <option value="3">3 — Rabi' al-awwal</option>
+              <option value="4">4 — Rabi' al-thani</option>
+              <option value="5">5 — Jumada al-awwal</option>
+              <option value="6">6 — Jumada al-thani</option>
+              <option value="7">7 — Rajab</option>
+              <option value="8">8 — Sha'ban</option>
+              <option value="9">9 — Ramadan</option>
+              <option value="10">10 — Shawwal</option>
+              <option value="11">11 — Dhu al-Qi'dah</option>
+              <option value="12">12 — Dhu al-Hijjah</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="hijriYear">Year (AH)</label>
+          <div class="input-wrap"><input id="hijriYear" type="number" value="1447" min="1" step="1" /></div>
+        </div>
+      </div>
+      <button class="calc-cta" id="hijriToday" type="button" style="margin-top:16px">Today</button>
     </div>
-    <div class="field">
-      <label for="hijri-h-month">Month</label>
-      <select id="hijri-h-month">
-        <option value="1">1 — Muharram</option>
-        <option value="2">2 — Safar</option>
-        <option value="3">3 — Rabi' al-awwal</option>
-        <option value="4">4 — Rabi' al-thani</option>
-        <option value="5">5 — Jumada al-awwal</option>
-        <option value="6">6 — Jumada al-thani</option>
-        <option value="7">7 — Rajab</option>
-        <option value="8">8 — Sha'ban</option>
-        <option value="9">9 — Ramadan</option>
-        <option value="10">10 — Shawwal</option>
-        <option value="11">11 — Dhu al-Qi'dah</option>
-        <option value="12">12 — Dhu al-Hijjah</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="hijri-h-year">Year (AH)</label>
-      <input id="hijri-h-year" type="number" inputmode="numeric" min="1" step="1" value="1447" />
-    </div>
-  </div>
+  </section>
 
-  <button type="button" class="btn btn-secondary" id="hijri-today">Today</button>
-
-  <p class="calc__error" id="hijri-error" role="alert" hidden></p>
-
-  <ResultPanel id="hijri-result" label="Converted date">
-    <span id="hijri-result-value">—</span>
-  </ResultPanel>
-
-  <Callout variant="note" title="Umm al-Qura calendar">
-    <p>
-      This converter uses the Umm al-Qura calendar. Because Islamic months can also begin with the
-      local sighting of the moon, the actual date observed in your country may differ by about a
-      day.
-    </p>
-  </Callout>
+  <aside class="result-card">
+    <div class="result-head"><h2>Converted date</h2><span class="status">Live estimate</span></div>
+    <div class="primary-result"><span id="hijriResultLabel">Hijri date</span><strong id="hijriResult" style="font-size:30px" aria-live="polite">—</strong></div>
+    <p class="result-note" id="hijriError"></p>
+    <Callout variant="note" title="Umm al-Qura calendar">
+      <p>
+        Because Islamic months can also begin with the local sighting of the moon, the actual
+        date observed in your country may differ by about a day.
+      </p>
+    </Callout>
+  </aside>
 </div>
-
-<style>
-  .calc__field-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--space-4);
-    margin-top: var(--space-4);
-  }
-  .calc__error {
-    color: var(--color-error);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    margin-top: var(--space-4);
-  }
-  #hijri-today {
-    margin-top: var(--space-4);
-  }
-  .calc__field-row[hidden] {
-    display: none;
-  }
-</style>
 
 <script>
   const HIJRI_MONTH_NAMES = [
@@ -107,9 +95,6 @@ import Callout from '../Callout.astro';
   }
 
   function estimateGregorianFromHijri(hy: number, hm: number, hd: number): Date {
-    // 1 Muharram 1 AH corresponds to 622-07-19 in the proleptic Gregorian calendar
-    // used internally here. This is only a seed for the day-by-day search below,
-    // so historical Julian/Gregorian drift doesn't matter.
     const epoch = Date.UTC(622, 6, 19);
     const daysSinceEpoch = (hy - 1) * 354.367 + (hm - 1) * 29.5306 + (hd - 1);
     return new Date(epoch + Math.round(daysSinceEpoch) * 86400000);
@@ -137,16 +122,17 @@ import Callout from '../Callout.astro';
 
   const root = document.getElementById('hijri-converter');
   if (root) {
-    const directionSelect = root.querySelector<HTMLSelectElement>('#hijri-direction')!;
-    const g2hFields = root.querySelector<HTMLElement>('#hijri-g2h-fields')!;
-    const h2gFields = root.querySelector<HTMLElement>('#hijri-h2g-fields')!;
-    const gregDateInput = root.querySelector<HTMLInputElement>('#hijri-greg-date')!;
-    const hDayInput = root.querySelector<HTMLInputElement>('#hijri-h-day')!;
-    const hMonthSelect = root.querySelector<HTMLSelectElement>('#hijri-h-month')!;
-    const hYearInput = root.querySelector<HTMLInputElement>('#hijri-h-year')!;
-    const todayBtn = root.querySelector<HTMLButtonElement>('#hijri-today')!;
-    const errorEl = root.querySelector<HTMLParagraphElement>('#hijri-error')!;
-    const resultValue = root.querySelector<HTMLSpanElement>('#hijri-result-value')!;
+    const directionSelect = root.querySelector<HTMLSelectElement>('#hijriDirection')!;
+    const g2hFields = document.getElementById('hijriG2hFields')!;
+    const h2gFields = document.getElementById('hijriH2gFields')!;
+    const gregDateInput = root.querySelector<HTMLInputElement>('#hijriGregDate')!;
+    const hDayInput = root.querySelector<HTMLInputElement>('#hijriDay')!;
+    const hMonthSelect = root.querySelector<HTMLSelectElement>('#hijriMonth')!;
+    const hYearInput = root.querySelector<HTMLInputElement>('#hijriYear')!;
+    const todayBtn = document.getElementById('hijriToday')!;
+    const errorEl = document.getElementById('hijriError')!;
+    const resultValue = document.getElementById('hijriResult')!;
+    const resultLabel = document.getElementById('hijriResultLabel')!;
 
     function todayUTC(): Date {
       const now = new Date();
@@ -157,6 +143,7 @@ import Callout from '../Callout.astro';
       const isG2h = directionSelect.value === 'g2h';
       g2hFields.hidden = !isG2h;
       h2gFields.hidden = isG2h;
+      resultLabel.textContent = isG2h ? 'Hijri date' : 'Gregorian date';
     }
 
     function calculate() {
@@ -165,13 +152,12 @@ import Callout from '../Callout.astro';
       if (isG2h) {
         if (!gregDateInput.value) {
           errorEl.textContent = 'Please choose a Gregorian date.';
-          errorEl.hidden = false;
           resultValue.textContent = '—';
           return;
         }
         const [y, m, d] = gregDateInput.value.split('-').map(Number);
         const date = new Date(Date.UTC(y, m - 1, d));
-        errorEl.hidden = true;
+        errorEl.textContent = '';
         resultValue.textContent = formatHijri(getHijriParts(date));
       } else {
         const day = parseInt(hDayInput.value, 10);
@@ -180,7 +166,6 @@ import Callout from '../Callout.astro';
 
         if (Number.isNaN(day) || day < 1 || day > 30 || Number.isNaN(year) || year < 1) {
           errorEl.textContent = 'Please enter a valid Hijri day (1–30) and year.';
-          errorEl.hidden = false;
           resultValue.textContent = '—';
           return;
         }
@@ -188,11 +173,10 @@ import Callout from '../Callout.astro';
         const gregorian = hijriToGregorian(year, month, day);
         if (!gregorian) {
           errorEl.textContent = "Couldn't match that date — check the day is valid for that Hijri month.";
-          errorEl.hidden = false;
           resultValue.textContent = '—';
           return;
         }
-        errorEl.hidden = true;
+        errorEl.textContent = '';
         resultValue.textContent = formatGregorian(gregorian);
       }
     }
@@ -221,7 +205,6 @@ import Callout from '../Callout.astro';
     });
 
     updateFieldVisibility();
-    // Seed with today's date so the tool shows a live result immediately.
     todayBtn.click();
   }
 </script>

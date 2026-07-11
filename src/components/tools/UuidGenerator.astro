@@ -1,74 +1,67 @@
 ---
-import ResultPanel from '../ResultPanel.astro';
 import Callout from '../Callout.astro';
 ---
 
-<div class="calc" id="uuid-generator">
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="uuid-version">Version</label>
-      <select id="uuid-version">
-        <option value="v4" selected>UUID v4 (random)</option>
-        <option value="v7">UUID v7 (time-ordered)</option>
-        <option value="nil">Nil UUID</option>
-      </select>
+<div class="calc-shell" id="uuid-generator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Options</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="uuidVersion">Version</label>
+          <div class="input-wrap">
+            <select id="uuidVersion" style="border:0;flex:1">
+              <option value="v4" selected>UUID v4 (random)</option>
+              <option value="v7">UUID v7 (time-ordered)</option>
+              <option value="nil">Nil UUID</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="uuidQuantity">Quantity</label>
+          <div class="input-wrap"><input id="uuidQuantity" type="number" value="1" min="1" max="500" step="1" /></div>
+        </div>
+      </div>
+      <div class="form-grid" style="margin-top:13px">
+        <div class="field"><label><input type="checkbox" id="uuidUppercase" /> Uppercase</label></div>
+        <div class="field"><label><input type="checkbox" id="uuidHyphens" checked /> Include hyphens</label></div>
+      </div>
     </div>
-    <div class="field">
-      <label for="uuid-quantity">Quantity</label>
-      <input id="uuid-quantity" type="number" inputmode="numeric" min="1" max="500" step="1" value="1" />
-    </div>
-  </div>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label><input type="checkbox" id="uuid-uppercase" /> Uppercase</label>
-    </div>
-    <div class="field">
-      <label><input type="checkbox" id="uuid-hyphens" checked /> Include hyphens</label>
-    </div>
-  </div>
+    <button class="calc-cta" id="uuidGenerate" type="button">Regenerate</button>
 
-  <ResultPanel id="uuid-result" label="Generated UUIDs">
-    <textarea id="uuid-output" class="uuid-output" readonly rows="8" aria-label="Generated UUIDs"></textarea>
-  </ResultPanel>
+    <Callout variant="info" title="A GUID is a UUID">
+      <p>
+        GUID (Globally Unique Identifier) is Microsoft's name for the same concept as a UUID. A v4
+        UUID and a "GUID" are the same 128-bit value — this generator produces both under one name.
+      </p>
+    </Callout>
+  </section>
 
-  <div class="calc__actions">
-    <button type="button" class="btn btn-primary" id="uuid-generate">Regenerate</button>
-    <button type="button" class="btn btn-secondary" id="uuid-copy">Copy all</button>
-  </div>
-
-  <Callout variant="info" title="A GUID is a UUID">
-    <p>
-      GUID (Globally Unique Identifier) is Microsoft's name for the same concept as a UUID
-      (Universally Unique Identifier). A v4 UUID and a "GUID" are the same 128-bit value — this
-      generator produces both under one name.
-    </p>
-  </Callout>
+  <aside class="result-card">
+    <div class="result-head"><h2>Generated UUIDs</h2><span class="status">Live</span></div>
+    <div class="primary-result"><span>Quantity generated</span><strong id="uuidCount" aria-live="polite">1</strong></div>
+    <textarea id="uuidOutput" class="uuid-output" readonly rows="8" aria-label="Generated UUIDs"></textarea>
+    <button class="calc-cta" id="uuidCopy" type="button" style="margin-top:12px">Copy all</button>
+  </aside>
 </div>
 
 <style>
-  .calc__field-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--space-4);
-  }
   .uuid-output {
     width: 100%;
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    background: transparent;
-    border: none;
+    font-size: 12.5px;
+    background: var(--canvas);
+    border: 1px solid var(--line);
+    border-radius: 9px;
     resize: vertical;
-    color: var(--color-text);
-    padding: 0;
+    color: var(--ink);
+    padding: 10px;
+    margin-top: 4px;
   }
   .uuid-output:focus {
     outline: none;
-  }
-  .calc__actions {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: var(--space-5);
+    border-color: var(--brand);
   }
 </style>
 
@@ -86,9 +79,9 @@ import Callout from '../Callout.astro';
     bytes[5] = Number(now & 0xffn);
 
     const rand = crypto.getRandomValues(new Uint8Array(10));
-    bytes[6] = 0x70 | (rand[0] & 0x0f); // version 7
+    bytes[6] = 0x70 | (rand[0] & 0x0f);
     bytes[7] = rand[1];
-    bytes[8] = 0x80 | (rand[2] & 0x3f); // variant 10
+    bytes[8] = 0x80 | (rand[2] & 0x3f);
     bytes[9] = rand[3];
     bytes[10] = rand[4];
     bytes[11] = rand[5];
@@ -103,13 +96,12 @@ import Callout from '../Callout.astro';
 
   const root = document.getElementById('uuid-generator');
   if (root) {
-    const versionSelect = root.querySelector<HTMLSelectElement>('#uuid-version')!;
-    const quantityInput = root.querySelector<HTMLInputElement>('#uuid-quantity')!;
-    const uppercaseCheckbox = root.querySelector<HTMLInputElement>('#uuid-uppercase')!;
-    const hyphensCheckbox = root.querySelector<HTMLInputElement>('#uuid-hyphens')!;
-    const output = root.querySelector<HTMLTextAreaElement>('#uuid-output')!;
-    const generateBtn = root.querySelector<HTMLButtonElement>('#uuid-generate')!;
-    const copyBtn = root.querySelector<HTMLButtonElement>('#uuid-copy')!;
+    const versionSelect = root.querySelector<HTMLSelectElement>('#uuidVersion')!;
+    const quantityInput = root.querySelector<HTMLInputElement>('#uuidQuantity')!;
+    const uppercaseCheckbox = root.querySelector<HTMLInputElement>('#uuidUppercase')!;
+    const hyphensCheckbox = root.querySelector<HTMLInputElement>('#uuidHyphens')!;
+    const output = root.querySelector<HTMLTextAreaElement>('#uuidOutput')!;
+    const copyBtn = document.getElementById('uuidCopy') as HTMLButtonElement;
 
     function generateOne(): string {
       switch (versionSelect.value) {
@@ -133,9 +125,10 @@ import Callout from '../Callout.astro';
       const quantity = Math.min(Math.max(parseInt(quantityInput.value, 10) || 1, 1), 500);
       const uuids = Array.from({ length: quantity }, () => format(generateOne()));
       output.value = uuids.join('\n');
+      document.getElementById('uuidCount')!.textContent = String(quantity);
     }
 
-    generateBtn.addEventListener('click', generate);
+    document.getElementById('uuidGenerate')?.addEventListener('click', generate);
     versionSelect.addEventListener('change', generate);
     quantityInput.addEventListener('input', generate);
     uppercaseCheckbox.addEventListener('change', generate);

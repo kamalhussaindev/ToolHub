@@ -1,101 +1,64 @@
 ---
-import ResultPanel from '../ResultPanel.astro';
+import CalcShell from '../CalcShell.astro';
 ---
 
-<div class="calc" id="flooring-calculator">
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="flooring-unit">Units</label>
-      <select id="flooring-unit">
-        <option value="metric">Metric (m / m²)</option>
-        <option value="imperial">Imperial (ft / ft²)</option>
-      </select>
+<div class="calc-shell" id="flooring-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Room dimensions</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="floorLength">Room length <span data-unit-length>(m)</span></label>
+          <div class="input-wrap"><input id="floorLength" type="number" value="5" min="0" step="0.01" /></div>
+        </div>
+        <div class="field">
+          <label for="floorWidth">Room width <span data-unit-length>(m)</span></label>
+          <div class="input-wrap"><input id="floorWidth" type="number" value="4" min="0" step="0.01" /></div>
+        </div>
+        <div class="field">
+          <label for="floorUnit">Units</label>
+          <div class="input-wrap"><select id="floorUnit" style="border:0;flex:1"><option value="metric">Metric</option><option value="imperial">Imperial</option></select></div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="flooring-length">Room length <span data-unit-length>(m)</span></label>
-      <input id="flooring-length" type="number" inputmode="decimal" min="0" step="0.01" value="5" />
+    <div class="calc-block">
+      <h2><span class="step">2</span>Flooring &amp; waste</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="floorCoverage">Coverage per box <span data-unit-area>(m²)</span></label>
+          <div class="input-wrap"><input id="floorCoverage" type="number" value="2.2" min="0.01" step="0.01" /></div>
+        </div>
+        <div class="field">
+          <label for="floorWaste">Waste allowance (%)</label>
+          <div class="input-wrap"><input id="floorWaste" type="number" value="10" min="0" max="50" step="1" /></div>
+        </div>
+      </div>
     </div>
-    <div class="field">
-      <label for="flooring-width">Room width <span data-unit-length>(m)</span></label>
-      <input id="flooring-width" type="number" inputmode="decimal" min="0" step="0.01" value="4" />
+
+    <button class="calc-cta" id="calculateFloor" type="button">Calculate flooring</button>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Flooring needed</h2><span class="status">Live estimate</span></div>
+    <div class="primary-result"><span>Boxes to buy</span><strong id="floorBoxes" aria-live="polite">10</strong></div>
+    <div class="result-grid">
+      <div class="result-stat"><span>Room area</span><b id="floorRoomArea">20.00 m²</b></div>
+      <div class="result-stat"><span>Total with waste</span><b id="floorTotalArea">22.00 m²</b></div>
     </div>
-  </div>
-
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="flooring-coverage">Coverage per box <span data-unit-area>(m²)</span></label>
-      <input id="flooring-coverage" type="number" inputmode="decimal" min="0.01" step="0.01" value="2.2" />
-    </div>
-    <div class="field">
-      <label for="flooring-waste">Waste allowance (%)</label>
-      <input id="flooring-waste" type="number" inputmode="numeric" min="0" max="50" step="1" value="10" />
-    </div>
-  </div>
-
-  <p class="calc__error" id="flooring-error" role="alert" hidden></p>
-
-  <ResultPanel id="flooring-result" label="Flooring needed">
-    <span id="flooring-result-area">—</span>
-    <span class="calc__result-sub" id="flooring-result-boxes"></span>
-  </ResultPanel>
-
-  <div class="calc__actions">
-    <button type="button" class="btn btn-secondary" id="flooring-copy">Copy result</button>
-    <button type="button" class="btn btn-secondary" id="flooring-reset">Reset</button>
-  </div>
+    <p class="result-note">Boxes are rounded up — you can only buy whole boxes.</p>
+  </aside>
 </div>
 
-<style>
-  .calc__field-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--space-4);
-  }
-  .calc__error {
-    color: var(--color-error);
-    font-size: var(--text-sm);
-    font-weight: 600;
-  }
-  .calc__result-sub {
-    display: block;
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
-    font-weight: 400;
-    color: var(--color-text-muted);
-    margin-top: var(--space-1);
-  }
-  .calc__actions {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: var(--space-5);
-  }
-</style>
+<CalcShell label="Boxes to buy" valueSelector="#floorBoxes" />
 
 <script>
   const root = document.getElementById('flooring-calculator');
   if (root) {
-    const unitSelect = root.querySelector<HTMLSelectElement>('#flooring-unit')!;
-    const roomLength = root.querySelector<HTMLInputElement>('#flooring-length')!;
-    const roomWidth = root.querySelector<HTMLInputElement>('#flooring-width')!;
-    const coveragePerBox = root.querySelector<HTMLInputElement>('#flooring-coverage')!;
-    const waste = root.querySelector<HTMLInputElement>('#flooring-waste')!;
-    const errorEl = root.querySelector<HTMLParagraphElement>('#flooring-error')!;
-    const resultArea = root.querySelector<HTMLSpanElement>('#flooring-result-area')!;
-    const resultBoxes = root.querySelector<HTMLSpanElement>('#flooring-result-boxes')!;
-    const copyBtn = root.querySelector<HTMLButtonElement>('#flooring-copy')!;
-    const resetBtn = root.querySelector<HTMLButtonElement>('#flooring-reset')!;
+    const v = (id: string) => parseFloat((root.querySelector(`#${id}`) as HTMLInputElement).value) || 0;
+    const unitSelect = root.querySelector<HTMLSelectElement>('#floorUnit')!;
     const lengthLabels = root.querySelectorAll<HTMLElement>('[data-unit-length]');
     const areaLabels = root.querySelectorAll<HTMLElement>('[data-unit-area]');
-
-    const defaults: Record<string, string> = {
-      'flooring-length': '5',
-      'flooring-width': '4',
-      'flooring-coverage': '2.2',
-      'flooring-waste': '10',
-    };
 
     function updateUnitLabels() {
       const metric = unitSelect.value === 'metric';
@@ -105,58 +68,27 @@ import ResultPanel from '../ResultPanel.astro';
 
     function calculate() {
       const metric = unitSelect.value === 'metric';
-      const length = parseFloat(roomLength.value);
-      const width = parseFloat(roomWidth.value);
-      const coverage = parseFloat(coveragePerBox.value);
-      const wastePct = parseFloat(waste.value);
-
-      const values = [length, width, coverage, wastePct];
-      if (values.some((v) => Number.isNaN(v) || v < 0) || coverage <= 0) {
-        errorEl.textContent = 'Please enter valid, positive numbers in every field.';
-        errorEl.hidden = false;
-        resultArea.textContent = '—';
-        resultBoxes.textContent = '';
-        return;
-      }
-      errorEl.hidden = true;
+      const length = v('floorLength');
+      const width = v('floorWidth');
+      const coverage = Math.max(0.01, v('floorCoverage'));
+      const waste = v('floorWaste');
 
       const roomArea = length * width;
-      const totalArea = roomArea * (1 + wastePct / 100);
-      const boxes = Math.ceil(totalArea / coverage);
+      const totalArea = roomArea * (1 + waste / 100);
+      const boxes = Math.ceil(Math.round((totalArea / coverage) * 1e6) / 1e6);
       const unitLabel = metric ? 'm²' : 'ft²';
 
-      resultArea.textContent = `${totalArea.toFixed(2)} ${unitLabel}`;
-      resultBoxes.textContent = `≈ ${boxes} box${boxes === 1 ? '' : 'es'} (room: ${roomArea.toFixed(2)} ${unitLabel})`;
+      document.getElementById('floorBoxes')!.textContent = boxes.toLocaleString();
+      document.getElementById('floorRoomArea')!.textContent = `${roomArea.toFixed(2)} ${unitLabel}`;
+      document.getElementById('floorTotalArea')!.textContent = `${totalArea.toFixed(2)} ${unitLabel}`;
     }
 
-    [roomLength, roomWidth, coveragePerBox, waste].forEach((input) => {
-      input.addEventListener('input', calculate);
-    });
+    root.querySelectorAll('input').forEach((el) => el.addEventListener('input', calculate));
     unitSelect.addEventListener('change', () => {
       updateUnitLabels();
       calculate();
     });
-
-    copyBtn.addEventListener('click', async () => {
-      const text = `${resultArea.textContent} — ${resultBoxes.textContent}`;
-      try {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
-      } catch {
-        // Clipboard API unavailable; silently ignore.
-      }
-    });
-
-    resetBtn.addEventListener('click', () => {
-      unitSelect.value = 'metric';
-      Object.entries(defaults).forEach(([id, value]) => {
-        const el = root.querySelector<HTMLInputElement>(`#${id}`);
-        if (el) el.value = value;
-      });
-      updateUnitLabels();
-      calculate();
-    });
+    document.getElementById('calculateFloor')?.addEventListener('click', calculate);
 
     updateUnitLabels();
     calculate();

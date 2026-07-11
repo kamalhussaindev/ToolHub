@@ -38,7 +38,7 @@ export default function CodePanel({
   }
 
   return (
-    <div>
+    <div class="code-panel-card">
       {children && <div class="code-panel__options">{children}</div>}
 
       <div class="code-panel__grid">

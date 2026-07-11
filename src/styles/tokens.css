@@ -1,37 +1,61 @@
 :root {
-  /* Brand + interactive */
-  --color-primary: #3b6ef2;
-  --color-primary-hover: #2f5ad4;
-  --color-primary-soft: #eef3fe;
+  /* ── preview.html design system (source of truth for visuals) ── */
+  --brand: #5567f2;
+  --brand-2: #7557e8;
+  --brand-soft: #eef0ff;
 
-  /* Neutrals (slate) */
-  --color-bg: #ffffff;
-  --color-bg-subtle: #f7f8fa;
-  --color-surface: #ffffff;
-  --color-border: #e5e8ee;
-  --color-text: #14181f;
+  --ink: #20252d;
+  --muted: #667085;
+  --muted-2: #8b93a4;
+
+  --line: #e7eaf0;
+  --line-strong: #d9dde7;
+
+  --canvas: #f6f7fb;
+  --surface: #fff;
+
+  --success: #18a66a;
+  --warning: #f59e0b;
+
+  --shadow: 0 12px 36px rgba(22, 28, 45, 0.08);
+  --shadow-sm: 0 4px 14px rgba(22, 28, 45, 0.06);
+
+  --r: 14px;
+  --r-lg: 22px;
+
+  --max: 1180px;
+  --nav-h: 68px;
+
+  /* ── legacy tokens (Phase A–D components) — aligned to the palette above
+       so nothing already built regresses when preview.html's system is added.
+       New/ported components should prefer the tokens above. ── */
+  --color-primary: var(--brand);
+  --color-primary-hover: #4257ea;
+  --color-primary-soft: var(--brand-soft);
+
+  --color-bg: var(--surface);
+  --color-bg-subtle: var(--canvas);
+  --color-surface: var(--surface);
+  --color-border: var(--line);
+  --color-text: var(--ink);
   --color-text-body: #3a4150;
-  --color-text-muted: #6b7280;
+  --color-text-muted: var(--muted);
 
-  /* Semantic */
-  --color-success: #10b981;
+  --color-success: var(--success);
   --color-error: #dc2626;
-  --color-warning: #f59e0b;
+  --color-warning: var(--warning);
 
-  /* Cluster accents (used on hub pages + homepage cards, NOT on core buttons) */
-  --accent-home: #f59e0b;
-  --accent-islamic: #10b981;
-  --accent-dev: #6366f1;
-  --accent-academic: #0ea5e9;
-  --accent-finance: #14b8a6;
-  --accent-everyday: #f43f5e;
+  --accent-home: #f28b36;
+  --accent-islamic: #13a67b;
+  --accent-dev: #5869ef;
+  --accent-academic: #8a5de8;
+  --accent-finance: #168db8;
+  --accent-everyday: #e66a8a;
 
-  /* Typography */
-  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-heading: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
 
-  /* Type scale (fluid-ish) */
   --text-xs: 0.8125rem;
   --text-sm: 0.9rem;
   --text-base: 1rem;
@@ -40,7 +64,6 @@
   --text-2xl: 1.9rem;
   --text-3xl: 2.5rem;
 
-  /* Spacing scale */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -51,15 +74,13 @@
   --space-10: 64px;
   --space-12: 96px;
 
-  /* Radius + shadow */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 22px;
-  --shadow-sm: 0 1px 2px rgba(20, 24, 31, 0.05);
-  --shadow-md: 0 4px 16px rgba(20, 24, 31, 0.07);
-  --shadow-lg: 0 12px 32px rgba(20, 24, 31, 0.1);
+  --shadow-md: var(--shadow-sm);
+  --shadow-lg: var(--shadow);
 
-  --container: 1140px;
+  --container: var(--max);
   --tool-width: 720px;
 }

@@ -65,3 +65,15 @@ const isPreact = PREACT_COMPONENTS.includes(tool.component);
   )}
   {tool.showDisclaimer && <DisclaimerNote slot="footer-note" lastReviewed={ISLAMIC_LAST_REVIEWED} />}
 </ToolLayout>
+
+<script define:vars={{ toolSlug: tool.slug }} is:inline>
+  // Track this tool visit for the homepage's "recently opened" section.
+  try {
+    const KEY = 'toolhub-recents';
+    const existing = JSON.parse(localStorage.getItem(KEY) || '[]');
+    const next = [toolSlug, ...existing.filter((id) => id !== toolSlug)].slice(0, 6);
+    localStorage.setItem(KEY, JSON.stringify(next));
+  } catch {
+    // localStorage unavailable — recents personalization simply won't apply.
+  }
+</script>

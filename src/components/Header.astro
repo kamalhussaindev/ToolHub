@@ -1,81 +1,90 @@
 ---
 import { getSortedClusters } from '../data/clusters';
-import SearchBar from './SearchBar.astro';
+import { icon } from '../data/icons';
 
 const clusters = getSortedClusters();
+
+// Preview.html's nav shows a curated 4-link subset, not all 6 clusters —
+// the rest are reachable via the "Categories" mega nav dropdown below.
+const quickLinks = [
+  { slug: 'home-improvement', label: 'Calculators' },
+  { slug: 'developer', label: 'Converters' },
+  { slug: 'finance', label: 'Finance' },
+  { slug: 'academic', label: 'Academic' },
+];
 ---
 
-<header class="site-header">
-  <div class="container site-header__inner">
-    <a class="site-header__logo" href="/">Tool Hub</a>
-
-    <nav class="site-header__nav" aria-label="Categories">
-      <ul>
-        {clusters.map((cluster) => (
-          <li>
-            <a href={`/${cluster.slug}/`}>{cluster.name}</a>
-          </li>
-        ))}
-      </ul>
+<header class="topbar">
+  <div class="shell nav">
+    <a class="brand" href="/"><span class="brand-mark" set:html={icon('grid')} /><span>Tool Hub</span></a>
+    <nav class="navlinks" aria-label="Categories">
+      <button class="navlink" id="categoriesBtn" aria-expanded="false" aria-controls="mega">Categories <span>⌄</span></button>
+      {quickLinks.map((link) => (
+        <a class="navlink" href={`/${link.slug}/`}>{link.label}</a>
+      ))}
     </nav>
-
-    <div class="site-header__search">
-      <SearchBar compact />
-    </div>
+    <div class="nav-spacer"></div>
+    <button class="nav-search" data-open-search type="button">
+      <span set:html={icon('search')} />
+      <span>Search calculators and tools</span>
+      <span class="kbd">⌘ K</span>
+    </button>
+    <button class="icon-btn" title="Favorites" id="favNav" aria-label="Favorites" type="button" set:html={icon('heart')} />
+    <a class="nav-primary" href="#" data-open-search>Browse tools <span>→</span></a>
+    <button class="icon-btn mobile-menu" id="mobileMenuBtn" aria-label="Open menu" type="button" set:html={icon('menu')} />
   </div>
 </header>
 
+<div class="update-bar">
+  <div class="shell update-inner">
+    <span class="update-pill">New</span>
+    <span>More calculators, clearer category pages and faster tool search.</span>
+    <a href="/developer/uuid-generator/">Try UUID Generator →</a>
+  </div>
+</div>
+
+<div class="mega" id="mega">
+  <div class="shell mega-grid">
+    {clusters.map((cluster) => (
+      <a
+        class="mega-card"
+        href={`/${cluster.slug}/`}
+        style={`border:1px solid var(--line);text-align:left`}
+      >
+        <span class="mega-ico" style={`background:${cluster.soft};color:${cluster.color}`} set:html={icon(cluster.icon)} />
+        <span><strong>{cluster.name}</strong><small>{cluster.tagline}</small></span>
+      </a>
+    ))}
+  </div>
+</div>
+
 <style>
-  .site-header {
-    border-bottom: 1px solid var(--color-border);
-    background: var(--color-bg);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-  .site-header__inner {
-    display: flex;
-    align-items: center;
-    gap: var(--space-6);
-    height: 64px;
-  }
-  .site-header__logo {
-    font-family: var(--font-heading);
+  .update-inner a {
+    color: #cbd3ff;
     font-weight: 700;
-    font-size: var(--text-lg);
-    color: var(--color-text);
-    text-decoration: none;
-    white-space: nowrap;
   }
-  .site-header__nav {
-    flex: 1;
-    min-width: 0;
-    overflow-x: auto;
+  .update-inner a:hover {
+    color: #fff;
   }
-  .site-header__nav ul {
-    display: flex;
-    gap: var(--space-5);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    white-space: nowrap;
-  }
-  .site-header__nav a {
-    color: var(--color-text-body);
-    font-size: var(--text-sm);
-    font-weight: 600;
-  }
-  .site-header__nav a:hover {
-    color: var(--color-primary);
-    text-decoration: none;
-  }
-  .site-header__search {
-    width: 220px;
-    flex-shrink: 0;
-  }
-  @media (max-width: 720px) {
-    .site-header__search {
-      display: none;
-    }
+  .brand span:last-child {
+    margin-left: 2px;
   }
 </style>
+
+<script>
+  const categoriesBtn = document.getElementById('categoriesBtn');
+  const mega = document.getElementById('mega');
+
+  categoriesBtn?.addEventListener('click', () => {
+    const isOpen = mega?.classList.toggle('open');
+    categoriesBtn.setAttribute('aria-expanded', String(Boolean(isOpen)));
+  });
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('#categoriesBtn') && !target.closest('#mega')) {
+      mega?.classList.remove('open');
+      categoriesBtn?.setAttribute('aria-expanded', 'false');
+    }
+  });
+</script>

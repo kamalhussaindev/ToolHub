@@ -1,111 +1,70 @@
 ---
-import ResultPanel from '../ResultPanel.astro';
+import CalcShell from '../CalcShell.astro';
 ---
 
-<div class="calc" id="paint-calculator">
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="paint-unit">Units</label>
-      <select id="paint-unit">
-        <option value="metric">Metric (m, m², litres)</option>
-        <option value="imperial">Imperial (ft, ft², gallons)</option>
-      </select>
+<div class="calc-shell" id="paint-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Wall dimensions</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="paintPerimeter">Wall perimeter <span data-unit-length>(m)</span></label>
+          <div class="input-wrap"><input id="paintPerimeter" type="number" value="14" min="0" step="0.1" /></div>
+        </div>
+        <div class="field">
+          <label for="paintHeight">Wall height <span data-unit-length>(m)</span></label>
+          <div class="input-wrap"><input id="paintHeight" type="number" value="2.4" min="0" step="0.1" /></div>
+        </div>
+        <div class="field">
+          <label for="paintUnit">Units</label>
+          <div class="input-wrap"><select id="paintUnit" style="border:0;flex:1"><option value="metric">Metric</option><option value="imperial">Imperial</option></select></div>
+        </div>
+        <div class="field">
+          <label for="paintOpenings">Doors &amp; windows area <span data-unit-area>(m²)</span></label>
+          <div class="input-wrap"><input id="paintOpenings" type="number" value="3" min="0" step="0.1" /></div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="paint-perimeter">Wall perimeter <span data-unit-length>(m)</span></label>
-      <input id="paint-perimeter" type="number" inputmode="decimal" min="0" step="0.1" value="14" />
-      <span class="hint">Sum of the lengths of all walls you're painting.</span>
+    <div class="calc-block">
+      <h2><span class="step">2</span>Coverage &amp; coats</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="paintCoats">Number of coats</label>
+          <div class="input-wrap"><input id="paintCoats" type="number" value="2" min="1" step="1" /></div>
+        </div>
+        <div class="field">
+          <label for="paintCoverage">Coverage <span data-unit-coverage>(m² per litre)</span></label>
+          <div class="input-wrap"><input id="paintCoverage" type="number" value="10" min="0.1" step="0.1" /></div>
+        </div>
+      </div>
     </div>
-    <div class="field">
-      <label for="paint-height">Wall height <span data-unit-length>(m)</span></label>
-      <input id="paint-height" type="number" inputmode="decimal" min="0" step="0.1" value="2.4" />
+
+    <button class="calc-cta" id="calculatePaint" type="button">Calculate paint</button>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Paint needed</h2><span class="status">Live estimate</span></div>
+    <div class="primary-result"><span>Volume required</span><strong id="paintVolume" aria-live="polite">6.1 litres</strong></div>
+    <div class="result-grid">
+      <div class="result-stat"><span>Net paintable area</span><b id="paintArea">30.6 m²</b></div>
+      <div class="result-stat"><span>Coats</span><b id="paintCoatsResult">2</b></div>
     </div>
-  </div>
-
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="paint-openings">Doors &amp; windows area <span data-unit-area>(m²)</span></label>
-      <input id="paint-openings" type="number" inputmode="decimal" min="0" step="0.1" value="3" />
-    </div>
-    <div class="field">
-      <label for="paint-coats">Number of coats</label>
-      <input id="paint-coats" type="number" inputmode="numeric" min="1" step="1" value="2" />
-    </div>
-  </div>
-
-  <div class="field">
-    <label for="paint-coverage">Paint coverage <span data-unit-coverage>(m² per litre)</span></label>
-    <input id="paint-coverage" type="number" inputmode="decimal" min="0.1" step="0.1" value="10" />
-    <span class="hint">Check the tin — most interior emulsion covers 10–12 m² per litre (350–400 ft² per gallon).</span>
-  </div>
-
-  <p class="calc__error" id="paint-error" role="alert" hidden></p>
-
-  <ResultPanel id="paint-result" label="Paint needed">
-    <span id="paint-result-volume">—</span>
-    <span class="calc__result-sub" id="paint-result-area"></span>
-  </ResultPanel>
-
-  <div class="calc__actions">
-    <button type="button" class="btn btn-secondary" id="paint-copy">Copy result</button>
-    <button type="button" class="btn btn-secondary" id="paint-reset">Reset</button>
-  </div>
+    <p class="result-note" id="paintNote">Check the tin — most interior emulsion covers 10–12 m² per litre (350–400 ft² per gallon).</p>
+  </aside>
 </div>
 
-<style>
-  .calc__field-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--space-4);
-  }
-  .calc__error {
-    color: var(--color-error);
-    font-size: var(--text-sm);
-    font-weight: 600;
-  }
-  .calc__result-sub {
-    display: block;
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
-    font-weight: 400;
-    color: var(--color-text-muted);
-    margin-top: var(--space-1);
-  }
-  .calc__actions {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: var(--space-5);
-  }
-</style>
+<CalcShell label="Paint needed" valueSelector="#paintVolume" />
 
 <script>
   const root = document.getElementById('paint-calculator');
   if (root) {
-    const unitSelect = root.querySelector<HTMLSelectElement>('#paint-unit')!;
-    const perimeter = root.querySelector<HTMLInputElement>('#paint-perimeter')!;
-    const height = root.querySelector<HTMLInputElement>('#paint-height')!;
-    const openings = root.querySelector<HTMLInputElement>('#paint-openings')!;
-    const coats = root.querySelector<HTMLInputElement>('#paint-coats')!;
-    const coverage = root.querySelector<HTMLInputElement>('#paint-coverage')!;
-    const errorEl = root.querySelector<HTMLParagraphElement>('#paint-error')!;
-    const resultVolume = root.querySelector<HTMLSpanElement>('#paint-result-volume')!;
-    const resultArea = root.querySelector<HTMLSpanElement>('#paint-result-area')!;
-    const copyBtn = root.querySelector<HTMLButtonElement>('#paint-copy')!;
-    const resetBtn = root.querySelector<HTMLButtonElement>('#paint-reset')!;
+    const v = (id: string) => parseFloat((root.querySelector(`#${id}`) as HTMLInputElement).value) || 0;
+    const unitSelect = root.querySelector<HTMLSelectElement>('#paintUnit')!;
     const lengthLabels = root.querySelectorAll<HTMLElement>('[data-unit-length]');
     const areaLabels = root.querySelectorAll<HTMLElement>('[data-unit-area]');
     const coverageLabels = root.querySelectorAll<HTMLElement>('[data-unit-coverage]');
-
-    const defaults: Record<string, string> = {
-      'paint-perimeter': '14',
-      'paint-height': '2.4',
-      'paint-openings': '3',
-      'paint-coats': '2',
-      'paint-coverage': '10',
-    };
+    const noteEl = document.getElementById('paintNote')!;
 
     function updateUnitLabels() {
       const metric = unitSelect.value === 'metric';
@@ -116,67 +75,32 @@ import ResultPanel from '../ResultPanel.astro';
 
     function calculate() {
       const metric = unitSelect.value === 'metric';
-      const p = parseFloat(perimeter.value);
-      const h = parseFloat(height.value);
-      const o = parseFloat(openings.value);
-      const c = parseFloat(coats.value);
-      const cov = parseFloat(coverage.value);
+      const perimeter = v('paintPerimeter');
+      const height = v('paintHeight');
+      const openings = v('paintOpenings');
+      const coats = Math.max(1, v('paintCoats'));
+      const coverage = Math.max(0.1, v('paintCoverage'));
 
-      const values = [p, h, o, c, cov];
-      if (values.some((v) => Number.isNaN(v) || v < 0) || cov <= 0 || c <= 0) {
-        errorEl.textContent = 'Please enter valid, positive numbers in every field.';
-        errorEl.hidden = false;
-        resultVolume.textContent = '—';
-        resultArea.textContent = '';
-        return;
-      }
-
-      const grossArea = p * h;
-      const netArea = Math.max(grossArea - o, 0);
-      if (netArea <= 0) {
-        errorEl.textContent = 'Doors & windows area can\'t exceed the total wall area.';
-        errorEl.hidden = false;
-        resultVolume.textContent = '—';
-        resultArea.textContent = '';
-        return;
-      }
-      errorEl.hidden = true;
-
-      const volume = (netArea * c) / cov;
+      const grossArea = perimeter * height;
+      const netArea = Math.max(grossArea - openings, 0);
+      const volume = (netArea * coats) / coverage;
       const unitLabel = metric ? 'litres' : 'gallons';
       const areaLabel = metric ? 'm²' : 'ft²';
-      resultVolume.textContent = `${volume.toFixed(1)} ${unitLabel}`;
-      resultArea.textContent = `${netArea.toFixed(1)} ${areaLabel} net paintable area, ${c} coat${c === 1 ? '' : 's'}`;
+
+      document.getElementById('paintVolume')!.textContent = `${volume.toFixed(1)} ${unitLabel}`;
+      document.getElementById('paintArea')!.textContent = `${netArea.toFixed(1)} ${areaLabel}`;
+      document.getElementById('paintCoatsResult')!.textContent = String(coats);
+      noteEl.textContent = metric
+        ? 'Check the tin — most interior emulsion covers 10–12 m² per litre.'
+        : 'Check the tin — most interior emulsion covers 350–400 ft² per gallon.';
     }
 
-    [perimeter, height, openings, coats, coverage].forEach((input) => {
-      input.addEventListener('input', calculate);
-    });
+    root.querySelectorAll('input').forEach((el) => el.addEventListener('input', calculate));
     unitSelect.addEventListener('change', () => {
       updateUnitLabels();
       calculate();
     });
-
-    copyBtn.addEventListener('click', async () => {
-      const text = `${resultVolume.textContent} — ${resultArea.textContent}`;
-      try {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
-      } catch {
-        // Clipboard API unavailable; silently ignore.
-      }
-    });
-
-    resetBtn.addEventListener('click', () => {
-      unitSelect.value = 'metric';
-      Object.entries(defaults).forEach(([id, value]) => {
-        const el = root.querySelector<HTMLInputElement>(`#${id}`);
-        if (el) el.value = value;
-      });
-      updateUnitLabels();
-      calculate();
-    });
+    document.getElementById('calculatePaint')?.addEventListener('click', calculate);
 
     updateUnitLabels();
     calculate();

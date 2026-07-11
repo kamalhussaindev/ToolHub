@@ -1,140 +1,90 @@
 ---
-import ResultPanel from '../ResultPanel.astro';
+import CalcShell from '../CalcShell.astro';
 ---
 
-<div class="calc" id="fabric-calculator">
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="fabric-project">Project type</label>
-      <select id="fabric-project">
-        <option value="curtains">Curtains</option>
-        <option value="upholstery">Upholstery / cushions</option>
-      </select>
+<div class="calc-shell" id="fabric-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Project &amp; dimensions</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="fabProject">Project type</label>
+          <div class="input-wrap"><select id="fabProject" style="border:0;flex:1"><option value="curtains">Curtains</option><option value="upholstery">Upholstery / cushions</option></select></div>
+        </div>
+        <div class="field">
+          <label for="fabUnit">Units</label>
+          <div class="input-wrap"><select id="fabUnit" style="border:0;flex:1"><option value="metric">Metric (m / cm)</option><option value="imperial">Imperial (ft / in)</option></select></div>
+        </div>
+        <div class="field">
+          <label id="fabWidthLabel" for="fabWidth">Track width <span data-unit-big>(m)</span></label>
+          <div class="input-wrap"><input id="fabWidth" type="number" value="3" min="0" step="0.01" /></div>
+        </div>
+        <div class="field">
+          <label id="fabDropLabel" for="fabDrop">Finished drop <span data-unit-big>(m)</span></label>
+          <div class="input-wrap"><input id="fabDrop" type="number" value="2.4" min="0" step="0.01" /></div>
+        </div>
+      </div>
     </div>
-    <div class="field">
-      <label for="fabric-unit">Units</label>
-      <select id="fabric-unit">
-        <option value="metric">Metric (m / cm)</option>
-        <option value="imperial">Imperial (ft / in)</option>
-      </select>
-    </div>
-  </div>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label id="fabric-width-label" for="fabric-width">Track width <span data-unit-big>(m)</span></label>
-      <input id="fabric-width" type="number" inputmode="decimal" min="0" step="0.01" value="3" />
+    <div class="calc-block">
+      <h2><span class="step">2</span>Fabric &amp; pattern</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="fabRollWidth">Fabric roll width <span data-unit-small>(cm)</span></label>
+          <div class="input-wrap"><input id="fabRollWidth" type="number" value="137" min="0" step="0.1" /></div>
+        </div>
+        <div class="field">
+          <label for="fabRepeat">Pattern repeat <span data-unit-small>(cm)</span></label>
+          <div class="input-wrap"><input id="fabRepeat" type="number" value="0" min="0" step="0.1" /></div>
+        </div>
+        <div class="field" data-fullness-field>
+          <label for="fabFullness">Fullness ratio</label>
+          <div class="input-wrap"><input id="fabFullness" type="number" value="2" min="1" step="0.1" /></div>
+        </div>
+        <div class="field" data-panels-field hidden>
+          <label for="fabPanels">Number of panels</label>
+          <div class="input-wrap"><input id="fabPanels" type="number" value="1" min="1" step="1" /></div>
+        </div>
+        <div class="field">
+          <label for="fabAllowance">Hem &amp; heading allowance <span data-unit-small>(cm)</span></label>
+          <div class="input-wrap"><input id="fabAllowance" type="number" value="25" min="0" step="0.1" /></div>
+        </div>
+      </div>
     </div>
-    <div class="field">
-      <label id="fabric-drop-label" for="fabric-drop">Finished drop <span data-unit-big>(m)</span></label>
-      <input id="fabric-drop" type="number" inputmode="decimal" min="0" step="0.01" value="2.4" />
-    </div>
-  </div>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="fabric-roll-width">Fabric roll width <span data-unit-small>(cm)</span></label>
-      <input id="fabric-roll-width" type="number" inputmode="decimal" min="0" step="0.1" value="137" />
-    </div>
-    <div class="field">
-      <label for="fabric-repeat">Pattern repeat <span data-unit-small>(cm)</span></label>
-      <input id="fabric-repeat" type="number" inputmode="decimal" min="0" step="0.1" value="0" />
-    </div>
-  </div>
+    <button class="calc-cta" id="calculateFabric" type="button">Calculate fabric</button>
+  </section>
 
-  <div class="calc__field-row">
-    <div class="field" data-fullness-field>
-      <label for="fabric-fullness">Fullness ratio</label>
-      <input id="fabric-fullness" type="number" inputmode="decimal" min="1" step="0.1" value="2" />
-      <span class="hint">2× is standard for a gathered look; 1.5× is flatter and more minimal.</span>
+  <aside class="result-card">
+    <div class="result-head"><h2>Fabric needed</h2><span class="status">Live estimate</span></div>
+    <div class="primary-result"><span>Total fabric</span><strong id="fabTotal" aria-live="polite">13.25 m</strong></div>
+    <div class="result-grid">
+      <div class="result-stat"><span>Widths / panels</span><b id="fabWidths">5</b></div>
+      <div class="result-stat"><span>Cut length</span><b id="fabCutLength">2.65 m</b></div>
     </div>
-    <div class="field" data-panels-field hidden>
-      <label for="fabric-panels">Number of panels</label>
-      <input id="fabric-panels" type="number" inputmode="numeric" min="1" step="1" value="1" />
-    </div>
-    <div class="field">
-      <label for="fabric-allowance">Hem &amp; heading allowance <span data-unit-small>(cm)</span></label>
-      <input id="fabric-allowance" type="number" inputmode="decimal" min="0" step="0.1" value="25" />
-    </div>
-  </div>
-
-  <p class="calc__error" id="fabric-error" role="alert" hidden></p>
-
-  <ResultPanel id="fabric-result" label="Fabric needed">
-    <span id="fabric-result-total">—</span>
-    <span class="calc__result-sub" id="fabric-result-detail"></span>
-  </ResultPanel>
-
-  <div class="calc__actions">
-    <button type="button" class="btn btn-secondary" id="fabric-copy">Copy result</button>
-    <button type="button" class="btn btn-secondary" id="fabric-reset">Reset</button>
-  </div>
+    <p class="result-note">Fullness and pattern repeat both increase how much fabric you need.</p>
+  </aside>
 </div>
 
-<style>
-  .calc__field-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--space-4);
-  }
-  .calc__error {
-    color: var(--color-error);
-    font-size: var(--text-sm);
-    font-weight: 600;
-  }
-  .calc__result-sub {
-    display: block;
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
-    font-weight: 400;
-    color: var(--color-text-muted);
-    margin-top: var(--space-1);
-  }
-  .calc__actions {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: var(--space-5);
-  }
-</style>
+<CalcShell label="Fabric needed" valueSelector="#fabTotal" />
 
 <script>
   const root = document.getElementById('fabric-calculator');
   if (root) {
-    const projectSelect = root.querySelector<HTMLSelectElement>('#fabric-project')!;
-    const unitSelect = root.querySelector<HTMLSelectElement>('#fabric-unit')!;
-    const widthInput = root.querySelector<HTMLInputElement>('#fabric-width')!;
-    const dropInput = root.querySelector<HTMLInputElement>('#fabric-drop')!;
-    const rollWidthInput = root.querySelector<HTMLInputElement>('#fabric-roll-width')!;
-    const repeatInput = root.querySelector<HTMLInputElement>('#fabric-repeat')!;
-    const fullnessInput = root.querySelector<HTMLInputElement>('#fabric-fullness')!;
-    const panelsInput = root.querySelector<HTMLInputElement>('#fabric-panels')!;
-    const allowanceInput = root.querySelector<HTMLInputElement>('#fabric-allowance')!;
-    const errorEl = root.querySelector<HTMLParagraphElement>('#fabric-error')!;
-    const resultTotal = root.querySelector<HTMLSpanElement>('#fabric-result-total')!;
-    const resultDetail = root.querySelector<HTMLSpanElement>('#fabric-result-detail')!;
-    const copyBtn = root.querySelector<HTMLButtonElement>('#fabric-copy')!;
-    const resetBtn = root.querySelector<HTMLButtonElement>('#fabric-reset')!;
-    const bigUnitLabels = root.querySelectorAll<HTMLElement>('[data-unit-big]');
-    const smallUnitLabels = root.querySelectorAll<HTMLElement>('[data-unit-small]');
-    const widthLabel = root.querySelector<HTMLLabelElement>('#fabric-width-label')!;
-    const dropLabel = root.querySelector<HTMLLabelElement>('#fabric-drop-label')!;
+    const v = (id: string) => parseFloat((root.querySelector(`#${id}`) as HTMLInputElement).value) || 0;
+    const projectSelect = root.querySelector<HTMLSelectElement>('#fabProject')!;
+    const unitSelect = root.querySelector<HTMLSelectElement>('#fabUnit')!;
+    const bigLabels = root.querySelectorAll<HTMLElement>('[data-unit-big]');
+    const smallLabels = root.querySelectorAll<HTMLElement>('[data-unit-small]');
+    const widthLabel = document.getElementById('fabWidthLabel')!;
+    const dropLabel = document.getElementById('fabDropLabel')!;
     const fullnessField = root.querySelector<HTMLElement>('[data-fullness-field]')!;
     const panelsField = root.querySelector<HTMLElement>('[data-panels-field]')!;
 
-    const defaults: Record<string, string> = {
-      'fabric-width': '3',
-      'fabric-drop': '2.4',
-      'fabric-roll-width': '137',
-      'fabric-repeat': '0',
-      'fabric-fullness': '2',
-      'fabric-panels': '1',
-      'fabric-allowance': '25',
-    };
-
     function updateLabels() {
       const metric = unitSelect.value === 'metric';
-      bigUnitLabels.forEach((el) => (el.textContent = metric ? '(m)' : '(ft)'));
-      smallUnitLabels.forEach((el) => (el.textContent = metric ? '(cm)' : '(in)'));
+      bigLabels.forEach((el) => (el.textContent = metric ? '(m)' : '(ft)'));
+      smallLabels.forEach((el) => (el.textContent = metric ? '(cm)' : '(in)'));
 
       const isCurtains = projectSelect.value === 'curtains';
       widthLabel.childNodes[0].textContent = isCurtains ? 'Track width ' : 'Panel width ';
@@ -148,40 +98,30 @@ import ResultPanel from '../ResultPanel.astro';
       const isCurtains = projectSelect.value === 'curtains';
       const smallToBig = metric ? 100 : 12;
 
-      const width = parseFloat(widthInput.value);
-      const drop = parseFloat(dropInput.value);
-      const rollWidth = parseFloat(rollWidthInput.value) / smallToBig;
-      const patternRepeat = parseFloat(repeatInput.value) / smallToBig;
-      const fullness = isCurtains ? parseFloat(fullnessInput.value) : 1;
-      const panels = isCurtains ? 1 : Math.max(parseFloat(panelsInput.value) || 1, 1);
-      const allowance = parseFloat(allowanceInput.value) / smallToBig;
+      const width = v('fabWidth');
+      const drop = v('fabDrop');
+      const rollWidth = v('fabRollWidth') / smallToBig;
+      const patternRepeat = v('fabRepeat') / smallToBig;
+      const fullness = isCurtains ? v('fabFullness') : 1;
+      const panels = isCurtains ? 1 : Math.max(v('fabPanels') || 1, 1);
+      const allowance = v('fabAllowance') / smallToBig;
 
-      const values = [width, drop, rollWidth, patternRepeat, fullness, allowance];
-      if (values.some((v) => Number.isNaN(v) || v < 0) || rollWidth <= 0 || width <= 0 || drop <= 0) {
-        errorEl.textContent = 'Please enter valid, positive numbers in every field.';
-        errorEl.hidden = false;
-        resultTotal.textContent = '—';
-        resultDetail.textContent = '';
-        return;
-      }
-      errorEl.hidden = true;
+      if (!rollWidth || !width || !drop) return;
 
+      const round6 = (n: number) => Math.round(n * 1e6) / 1e6;
       const totalWidthNeeded = width * fullness;
-      const widthsOfFabric = Math.max(Math.ceil(totalWidthNeeded / rollWidth), 1);
+      const widthsOfFabric = Math.max(Math.ceil(round6(totalWidthNeeded / rollWidth)), 1);
       const rawDrop = drop + allowance;
-      const cutDropLength = patternRepeat > 0 ? Math.ceil(rawDrop / patternRepeat) * patternRepeat : rawDrop;
+      const cutDropLength = patternRepeat > 0 ? Math.ceil(round6(rawDrop / patternRepeat)) * patternRepeat : rawDrop;
       const totalFabric = widthsOfFabric * cutDropLength * panels;
       const unitLabel = metric ? 'm' : 'ft';
 
-      resultTotal.textContent = `${totalFabric.toFixed(2)} ${unitLabel}`;
-      resultDetail.textContent = isCurtains
-        ? `${widthsOfFabric} width${widthsOfFabric === 1 ? '' : 's'} of fabric × ${cutDropLength.toFixed(2)} ${unitLabel} cut drop`
-        : `${panels} panel${panels === 1 ? '' : 's'} × ${cutDropLength.toFixed(2)} ${unitLabel} cut length`;
+      document.getElementById('fabTotal')!.textContent = `${totalFabric.toFixed(2)} ${unitLabel}`;
+      document.getElementById('fabWidths')!.textContent = String(isCurtains ? widthsOfFabric : panels);
+      document.getElementById('fabCutLength')!.textContent = `${cutDropLength.toFixed(2)} ${unitLabel}`;
     }
 
-    [widthInput, dropInput, rollWidthInput, repeatInput, fullnessInput, panelsInput, allowanceInput].forEach((input) => {
-      input.addEventListener('input', calculate);
-    });
+    root.querySelectorAll('input').forEach((el) => el.addEventListener('input', calculate));
     unitSelect.addEventListener('change', () => {
       updateLabels();
       calculate();
@@ -190,28 +130,7 @@ import ResultPanel from '../ResultPanel.astro';
       updateLabels();
       calculate();
     });
-
-    copyBtn.addEventListener('click', async () => {
-      const text = `${resultTotal.textContent} — ${resultDetail.textContent}`;
-      try {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
-      } catch {
-        // Clipboard API unavailable; silently ignore.
-      }
-    });
-
-    resetBtn.addEventListener('click', () => {
-      projectSelect.value = 'curtains';
-      unitSelect.value = 'metric';
-      Object.entries(defaults).forEach(([id, value]) => {
-        const el = root.querySelector<HTMLInputElement>(`#${id}`);
-        if (el) el.value = value;
-      });
-      updateLabels();
-      calculate();
-    });
+    document.getElementById('calculateFabric')?.addEventListener('click', calculate);
 
     updateLabels();
     calculate();

@@ -1,115 +1,87 @@
 ---
-import ResultPanel from '../ResultPanel.astro';
 import Callout from '../Callout.astro';
 ---
 
-<div class="calc" id="sitemap-validator">
-  <div class="field">
-    <label for="sitemap-mode">Input mode</label>
-    <select id="sitemap-mode">
-      <option value="paste" selected>Paste XML</option>
-      <option value="url">Fetch by URL</option>
-    </select>
-  </div>
-
-  <div id="sitemap-paste-fields" class="field">
-    <label for="sitemap-input">Sitemap XML</label>
-    <textarea id="sitemap-input" rows="12" class="sitemap-textarea"></textarea>
-  </div>
-
-  <div id="sitemap-url-fields" class="calc__field-row" hidden>
-    <div class="field">
-      <label for="sitemap-url">Sitemap URL</label>
-      <input id="sitemap-url" type="url" placeholder="https://example.com/sitemap.xml" />
+<div class="calc-shell" id="sitemap-validator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Input mode</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="sitemapMode">Mode</label>
+          <div class="input-wrap">
+            <select id="sitemapMode" style="border:0;flex:1">
+              <option value="paste" selected>Paste XML</option>
+              <option value="url">Fetch by URL</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <button type="button" class="btn btn-secondary" id="sitemap-fetch" hidden>Fetch &amp; validate</button>
 
-  <div class="calc__actions">
-    <button type="button" class="btn btn-secondary" id="sitemap-load-valid">Load valid example</button>
-    <button type="button" class="btn btn-secondary" id="sitemap-load-broken">Load broken example</button>
-    <button type="button" class="btn btn-secondary" id="sitemap-clear">Clear</button>
-  </div>
+    <div class="calc-block">
+      <h2><span class="step">2</span>Sitemap</h2>
+      <div id="sitemapPasteFields" class="field">
+        <label for="sitemapInput">Sitemap XML</label>
+        <div class="input-wrap" style="height:auto">
+          <textarea id="sitemapInput" rows="12" class="sitemap-textarea" style="border:0;outline:0;width:100%;padding:11px;background:transparent;font:inherit;color:inherit"></textarea>
+        </div>
+      </div>
 
-  <p class="calc__error" id="sitemap-fetch-error" role="alert" hidden></p>
+      <div id="sitemapUrlFields" class="field" hidden>
+        <label for="sitemapUrl">Sitemap URL</label>
+        <div class="input-wrap"><input id="sitemapUrl" type="url" placeholder="https://example.com/sitemap.xml" /></div>
+      </div>
 
-  <ResultPanel id="sitemap-result" label="Validation result">
-    <span id="sitemap-status">—</span>
-    <span class="calc__result-sub" id="sitemap-stats"></span>
-  </ResultPanel>
+      <button class="calc-cta" id="sitemapFetch" type="button" hidden>Fetch &amp; validate</button>
+      <p class="result-note" id="sitemapFetchError"></p>
 
-  <div id="sitemap-issues"></div>
+      <div class="tabs" style="margin-top:13px">
+        <button class="tab" id="sitemapLoadValid" type="button">Load valid example</button>
+        <button class="tab" id="sitemapLoadBroken" type="button">Load broken example</button>
+        <button class="tab" id="sitemapClear" type="button">Clear</button>
+      </div>
+    </div>
 
-  <Callout variant="note" title="Cross-origin fetching (CORS)">
-    <p>
-      Fetching a sitemap by URL relies on the target site allowing cross-origin requests, which
-      most sites don't. If the fetch fails, paste the sitemap XML directly instead — that always
-      works since it's checked entirely in your browser.
-    </p>
-  </Callout>
+    <Callout variant="note" title="Cross-origin fetching (CORS)">
+      <p>
+        Fetching a sitemap by URL relies on the target site allowing cross-origin requests, which
+        most sites don't. If the fetch fails, paste the sitemap XML directly instead.
+      </p>
+    </Callout>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Validation result</h2><span class="status" id="sitemapStatus">—</span></div>
+    <p class="result-note" id="sitemapStats"></p>
+    <div id="sitemapIssues"></div>
+  </aside>
 </div>
 
 <style>
-  .calc__field-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--space-4);
-  }
-  .calc__field-row[hidden] {
-    display: none;
-  }
-  .sitemap-textarea {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    background: var(--color-bg-subtle);
-  }
-  .calc__error {
-    color: var(--color-error);
-    font-size: var(--text-sm);
-    font-weight: 600;
-  }
-  .calc__result-sub {
-    display: block;
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
-    font-weight: 400;
-    color: var(--color-text-muted);
-    margin-top: var(--space-1);
-  }
-  .calc__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin: var(--space-4) 0;
-  }
-  #sitemap-issues {
-    margin-top: var(--space-4);
-  }
   .sitemap-issue-list {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 12px 0 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: 8px;
   }
   .sitemap-issue-list li {
-    font-size: var(--text-sm);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-sm);
-    border-left: 3px solid var(--color-error);
-    background: var(--color-bg-subtle);
+    font-size: 12.5px;
+    padding: 8px 11px;
+    border-radius: 8px;
+    border-left: 3px solid #dc2626;
+    background: var(--canvas);
   }
   .sitemap-issue-list li.warning {
-    border-left-color: var(--color-warning);
+    border-left-color: var(--warning);
   }
 </style>
 
 <script>
   const SITEMAP_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
   const CHANGEFREQ_VALUES = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'];
-  // Constrains month to 01-12 and day to 01-31 (not full calendar validation,
-  // e.g. Feb 30 still passes) — enough to catch clearly out-of-range values.
   const W3C_DATETIME_RE =
     /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01])(T([01]\d|2[0-3]):[0-5]\d(:[0-5]\d(\.\d+)?)?(Z|[+-]([01]\d|2[0-3]):[0-5]\d)?)?)?)?$/;
   const MAX_URLS = 50000;
@@ -246,19 +218,19 @@ import Callout from '../Callout.astro';
 
   const root = document.getElementById('sitemap-validator');
   if (root) {
-    const modeSelect = root.querySelector<HTMLSelectElement>('#sitemap-mode')!;
-    const pasteFields = root.querySelector<HTMLElement>('#sitemap-paste-fields')!;
-    const urlFields = root.querySelector<HTMLElement>('#sitemap-url-fields')!;
-    const fetchBtn = root.querySelector<HTMLButtonElement>('#sitemap-fetch')!;
-    const input = root.querySelector<HTMLTextAreaElement>('#sitemap-input')!;
-    const urlInput = root.querySelector<HTMLInputElement>('#sitemap-url')!;
-    const loadValidBtn = root.querySelector<HTMLButtonElement>('#sitemap-load-valid')!;
-    const loadBrokenBtn = root.querySelector<HTMLButtonElement>('#sitemap-load-broken')!;
-    const clearBtn = root.querySelector<HTMLButtonElement>('#sitemap-clear')!;
-    const fetchError = root.querySelector<HTMLParagraphElement>('#sitemap-fetch-error')!;
-    const statusEl = root.querySelector<HTMLSpanElement>('#sitemap-status')!;
-    const statsEl = root.querySelector<HTMLSpanElement>('#sitemap-stats')!;
-    const issuesEl = root.querySelector<HTMLDivElement>('#sitemap-issues')!;
+    const modeSelect = root.querySelector<HTMLSelectElement>('#sitemapMode')!;
+    const pasteFields = document.getElementById('sitemapPasteFields')!;
+    const urlFields = document.getElementById('sitemapUrlFields')!;
+    const fetchBtn = document.getElementById('sitemapFetch') as HTMLButtonElement;
+    const input = root.querySelector<HTMLTextAreaElement>('#sitemapInput')!;
+    const urlInput = root.querySelector<HTMLInputElement>('#sitemapUrl')!;
+    const loadValidBtn = document.getElementById('sitemapLoadValid')!;
+    const loadBrokenBtn = document.getElementById('sitemapLoadBroken')!;
+    const clearBtn = document.getElementById('sitemapClear')!;
+    const fetchError = document.getElementById('sitemapFetchError')!;
+    const statusEl = document.getElementById('sitemapStatus')!;
+    const statsEl = document.getElementById('sitemapStats')!;
+    const issuesEl = document.getElementById('sitemapIssues')!;
 
     function render() {
       const xml = input.value;
@@ -270,7 +242,7 @@ import Callout from '../Callout.astro';
       }
 
       const result = validateSitemap(xml);
-      statusEl.textContent = result.ok ? '✅ Valid sitemap' : '❌ Invalid sitemap';
+      statusEl.textContent = result.ok ? '✅ Valid' : '❌ Invalid';
       statsEl.textContent = `Type: ${result.stats.type} — ${result.stats.count} entries, ${result.stats.withLastmod} with <lastmod>`;
 
       const items = [
@@ -278,9 +250,8 @@ import Callout from '../Callout.astro';
         ...result.warnings.map((w) => ({ text: w, cls: 'warning' })),
       ];
 
-      if (items.length === 0) {
-        issuesEl.innerHTML = '';
-      } else {
+      issuesEl.innerHTML = '';
+      if (items.length > 0) {
         const list = document.createElement('ul');
         list.className = 'sitemap-issue-list';
         items.forEach((item) => {
@@ -289,7 +260,6 @@ import Callout from '../Callout.astro';
           if (item.cls) li.className = item.cls;
           list.appendChild(li);
         });
-        issuesEl.innerHTML = '';
         issuesEl.appendChild(list);
       }
     }
@@ -297,12 +267,12 @@ import Callout from '../Callout.astro';
     function updateModeVisibility() {
       const isPaste = modeSelect.value === 'paste';
       pasteFields.hidden = !isPaste;
-      loadValidBtn.hidden = !isPaste;
-      loadBrokenBtn.hidden = !isPaste;
-      clearBtn.hidden = !isPaste;
+      (loadValidBtn as HTMLElement).hidden = !isPaste;
+      (loadBrokenBtn as HTMLElement).hidden = !isPaste;
+      (clearBtn as HTMLElement).hidden = !isPaste;
       urlFields.hidden = isPaste;
       fetchBtn.hidden = isPaste;
-      fetchError.hidden = true;
+      fetchError.textContent = '';
     }
 
     modeSelect.addEventListener('change', updateModeVisibility);
@@ -324,7 +294,7 @@ import Callout from '../Callout.astro';
     fetchBtn.addEventListener('click', async () => {
       const url = urlInput.value.trim();
       if (!url) return;
-      fetchError.hidden = true;
+      fetchError.textContent = '';
       try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
@@ -336,7 +306,6 @@ import Callout from '../Callout.astro';
       } catch {
         fetchError.textContent =
           'This site blocks cross-origin requests (CORS), or the URL could not be reached. Paste the sitemap XML directly instead.';
-        fetchError.hidden = false;
       }
     });
 

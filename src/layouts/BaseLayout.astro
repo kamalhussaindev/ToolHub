@@ -3,6 +3,9 @@ import '../styles/global.css';
 import Seo from '../components/Seo.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+import MobileUI from '../components/MobileUI.astro';
+import { icon } from '../data/icons';
 
 export interface Props {
   title: string;
@@ -31,5 +34,60 @@ const { title, description, canonicalPath, jsonLd, noindex } = Astro.props;
       <slot />
     </main>
     <Footer />
+    <SearchOverlay />
+    <MobileUI />
+
+    <script define:vars={{ heartIcon: icon('heart') }} is:inline>
+      const FAVS_KEY = 'toolhub-favs';
+
+      function readFavs() {
+        try {
+          return new Set(JSON.parse(localStorage.getItem(FAVS_KEY) || '[]'));
+        } catch {
+          return new Set();
+        }
+      }
+      function writeFavs(favs) {
+        try {
+          localStorage.setItem(FAVS_KEY, JSON.stringify([...favs]));
+        } catch {
+          // localStorage unavailable (private browsing, etc.) — skip persistence.
+        }
+      }
+      function updateFavNav() {
+        const favNav = document.getElementById('favNav');
+        if (!favNav) return;
+        const count = readFavs().size;
+        favNav.innerHTML = heartIcon + (count ? `<span style="position:absolute;top:-4px;right:-4px;background:#ef476f;color:#fff;font-size:9px;font-weight:800;border-radius:999px;min-width:15px;height:15px;display:grid;place-items:center;padding:0 3px">${count}</span>` : '');
+      }
+
+      document.addEventListener('click', (e) => {
+        const favBtn = e.target.closest('[data-fav]');
+        if (!favBtn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const id = favBtn.dataset.fav;
+        const favs = readFavs();
+        if (favs.has(id)) {
+          favs.delete(id);
+          favBtn.classList.remove('active');
+          window.__toolhubToast?.('Removed from favorites');
+        } else {
+          favs.add(id);
+          favBtn.classList.add('active');
+          window.__toolhubToast?.('Saved to favorites');
+        }
+        writeFavs(favs);
+        updateFavNav();
+      });
+
+      // Reflect current favorite state on load (fav buttons render server-side
+      // without knowledge of this device's localStorage).
+      const favs = readFavs();
+      document.querySelectorAll('[data-fav]').forEach((el) => {
+        if (favs.has(el.dataset.fav)) el.classList.add('active');
+      });
+      updateFavNav();
+    </script>
   </body>
 </html>

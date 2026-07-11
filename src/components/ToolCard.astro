@@ -1,6 +1,7 @@
 ---
 import type { Tool } from '../data/tools';
 import { getCluster } from '../data/clusters';
+import { icon } from '../data/icons';
 
 export interface Props {
   tool: Tool;
@@ -10,50 +11,45 @@ const { tool } = Astro.props;
 const cluster = getCluster(tool.cluster);
 const isLive = tool.status === 'live';
 const href = `/${tool.cluster}/${tool.slug}/`;
+const style = `--tool:${cluster?.color ?? '#5567f2'};--tool-soft:${cluster?.soft ?? '#eef0ff'}`;
 ---
 
-{isLive ? (
-  <a class="tool-card" href={href} style={`--card-accent: ${cluster?.accent ?? 'var(--color-primary)'}`}>
-    <h3>{tool.title}</h3>
-    <p>{tool.intro}</p>
-  </a>
-) : (
-  <div class="tool-card tool-card--disabled" style={`--card-accent: ${cluster?.accent ?? 'var(--color-primary)'}`} aria-disabled="true">
-    <h3>{tool.title} <span class="badge">Coming soon</span></h3>
-    <p>{tool.intro}</p>
+<article class={`tool-card ${isLive ? '' : 'tool-card--disabled'}`} style={style} aria-disabled={isLive ? undefined : 'true'}>
+  <div class="top">
+    <div class="tool-ico" set:html={icon(tool.icon)} />
+    {isLive && (
+      <button class="fav" data-fav={tool.slug} aria-label={`Save ${tool.title} to favorites`} type="button" set:html={icon('heart')} />
+    )}
   </div>
-)}
+  {tool.popular && isLive && <span class="popular-label">Popular</span>}
+  <h3>
+    {isLive ? <a class="tool-card__link" href={href}>{tool.title}</a> : tool.title}
+  </h3>
+  <p>{tool.intro}</p>
+  <div class="tool-meta">
+    {isLive ? <span class="badge">{cluster?.name}</span> : <span class="badge">Coming soon</span>}
+    {isLive && <span class="open-circle">→</span>}
+  </div>
+</article>
 
 <style>
   .tool-card {
-    display: block;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-top: 3px solid var(--card-accent);
-    border-radius: var(--radius-lg);
-    padding: var(--space-5);
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    position: relative;
   }
-  a.tool-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-    text-decoration: none;
+  .tool-card__link {
+    position: static;
   }
-  .tool-card h3 {
-    font-size: var(--text-lg);
-    margin-bottom: var(--space-2);
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
+  .tool-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
   }
-  .tool-card p {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    margin: 0;
+  .tool-card .fav {
+    position: relative;
+    z-index: 2;
   }
   .tool-card--disabled {
     opacity: 0.65;
-    cursor: default;
   }
 </style>

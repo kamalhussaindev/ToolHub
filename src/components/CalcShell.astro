@@ -1,0 +1,35 @@
+---
+export interface Props {
+  label: string; // e.g. "Tiles needed"
+  valueSelector: string; // CSS selector of the element whose text to mirror, e.g. "#tilesResult"
+}
+
+const { label, valueSelector } = Astro.props;
+---
+
+<div class="mobile-result-fab" data-fab-source={valueSelector}>
+  <span><small>{label}</small><b data-fab-value>—</b></span>
+  <button type="button" data-fab-jump>View result</button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-fab-source]').forEach((fab) => {
+    const selector = fab.dataset.fabSource;
+    if (!selector) return;
+    const source = document.querySelector(selector);
+    const valueEl = fab.querySelector<HTMLElement>('[data-fab-value]');
+    const jumpBtn = fab.querySelector<HTMLButtonElement>('[data-fab-jump]');
+
+    if (source && valueEl) {
+      const sync = () => {
+        valueEl.textContent = source.textContent;
+      };
+      sync();
+      new MutationObserver(sync).observe(source, { childList: true, characterData: true, subtree: true });
+    }
+
+    jumpBtn?.addEventListener('click', () => {
+      document.querySelector('.result-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+</script>

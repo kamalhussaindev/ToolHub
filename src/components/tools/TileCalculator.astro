@@ -1,186 +1,113 @@
 ---
-import ResultPanel from '../ResultPanel.astro';
+import CalcShell from '../CalcShell.astro';
 ---
 
-<div class="calc" id="tile-calculator">
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="tile-unit">Units</label>
-      <select id="tile-unit">
-        <option value="metric">Metric (m / cm)</option>
-        <option value="imperial">Imperial (ft / in)</option>
-      </select>
+<div class="calc-shell" id="tile-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Area to be tiled</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="roomL">Room length</label>
+          <div class="input-wrap">
+            <input id="roomL" type="number" value="4" min="0" step="0.1" />
+            <select id="roomLUnit" aria-label="Room length unit"><option value="m">m</option><option value="ft">ft</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="roomW">Room width</label>
+          <div class="input-wrap">
+            <input id="roomW" type="number" value="3.6" min="0" step="0.1" />
+            <select id="roomWUnit" aria-label="Room width unit"><option value="m">m</option><option value="ft">ft</option></select>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="tile-room-length">Room length <span data-unit-big>(m)</span></label>
-      <input id="tile-room-length" type="number" inputmode="decimal" min="0" step="0.01" value="4" />
+    <div class="calc-block">
+      <h2><span class="step">2</span>Tile requirements</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="tileL">Tile length</label>
+          <div class="input-wrap">
+            <input id="tileL" type="number" value="60" min="0" />
+            <select id="tileLUnit" aria-label="Tile length unit"><option value="cm">cm</option><option value="in">in</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="tileW">Tile width</label>
+          <div class="input-wrap">
+            <input id="tileW" type="number" value="60" min="0" />
+            <select id="tileWUnit" aria-label="Tile width unit"><option value="cm">cm</option><option value="in">in</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="waste">Waste factor</label>
+          <div class="input-wrap">
+            <input id="waste" type="number" value="10" min="0" />
+            <select aria-hidden="true" tabindex="-1"><option>%</option></select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="perBox">Tiles per box</label>
+          <div class="input-wrap">
+            <input id="perBox" type="number" value="5" min="1" />
+            <select aria-hidden="true" tabindex="-1"><option>tiles</option></select>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="field">
-      <label for="tile-room-width">Room width <span data-unit-big>(m)</span></label>
-      <input id="tile-room-width" type="number" inputmode="decimal" min="0" step="0.01" value="3" />
-    </div>
-  </div>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="tile-width">Tile width <span data-unit-small>(cm)</span></label>
-      <input id="tile-width" type="number" inputmode="decimal" min="0" step="0.1" value="30" />
-    </div>
-    <div class="field">
-      <label for="tile-height">Tile height <span data-unit-small>(cm)</span></label>
-      <input id="tile-height" type="number" inputmode="decimal" min="0" step="0.1" value="30" />
-    </div>
-  </div>
+    <button class="calc-cta" id="calculateTile" type="button">Calculate tiles</button>
+  </section>
 
-  <div class="calc__field-row">
-    <div class="field">
-      <label for="tile-per-box">Tiles per box</label>
-      <input id="tile-per-box" type="number" inputmode="numeric" min="1" step="1" value="10" />
+  <aside class="result-card">
+    <div class="result-head"><h2>Materials needed</h2><span class="status">Live estimate</span></div>
+    <div class="primary-result"><span>Tiles required</span><strong id="tilesResult" aria-live="polite">44</strong></div>
+    <div class="result-grid">
+      <div class="result-stat"><span>Boxes to buy</span><b id="boxesResult">9</b></div>
+      <div class="result-stat"><span>Total area</span><b id="areaResult">14.4 m²</b></div>
+      <div class="result-stat"><span>Waste area</span><b id="wasteResult">1.44 m²</b></div>
+      <div class="result-stat"><span>Extra tiles</span><b id="extraResult">1</b></div>
     </div>
-    <div class="field">
-      <label for="tile-waste">Waste allowance (%)</label>
-      <input id="tile-waste" type="number" inputmode="numeric" min="0" max="50" step="1" value="10" />
-      <span class="hint">10% covers most straight-lay jobs; use 15–20% for diagonal or herringbone layouts.</span>
-    </div>
-  </div>
-
-  <p class="calc__error" id="tile-error" role="alert" hidden></p>
-
-  <ResultPanel id="tile-result" label="Tiles needed">
-    <span id="tile-result-tiles">—</span>
-    <span class="calc__result-sub" id="tile-result-boxes"></span>
-  </ResultPanel>
-
-  <div class="calc__actions">
-    <button type="button" class="btn btn-secondary" id="tile-copy">Copy result</button>
-    <button type="button" class="btn btn-secondary" id="tile-reset">Reset</button>
-  </div>
+    <p class="result-note">This estimate rounds tile and box quantities up to whole units.</p>
+  </aside>
 </div>
 
-<style>
-  .calc__field-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--space-4);
-  }
-  .calc__error {
-    color: var(--color-error);
-    font-size: var(--text-sm);
-    font-weight: 600;
-  }
-  .calc__result-sub {
-    display: block;
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
-    font-weight: 400;
-    color: var(--color-text-muted);
-    margin-top: var(--space-1);
-  }
-  .calc__actions {
-    display: flex;
-    gap: var(--space-3);
-    margin-top: var(--space-5);
-  }
-</style>
+<CalcShell label="Tiles needed" valueSelector="#tilesResult" />
 
 <script>
   const root = document.getElementById('tile-calculator');
   if (root) {
-    const unitSelect = root.querySelector<HTMLSelectElement>('#tile-unit')!;
-    const roomLength = root.querySelector<HTMLInputElement>('#tile-room-length')!;
-    const roomWidth = root.querySelector<HTMLInputElement>('#tile-room-width')!;
-    const tileWidth = root.querySelector<HTMLInputElement>('#tile-width')!;
-    const tileHeight = root.querySelector<HTMLInputElement>('#tile-height')!;
-    const tilePerBox = root.querySelector<HTMLInputElement>('#tile-per-box')!;
-    const waste = root.querySelector<HTMLInputElement>('#tile-waste')!;
-    const errorEl = root.querySelector<HTMLParagraphElement>('#tile-error')!;
-    const resultTiles = root.querySelector<HTMLSpanElement>('#tile-result-tiles')!;
-    const resultBoxes = root.querySelector<HTMLSpanElement>('#tile-result-boxes')!;
-    const copyBtn = root.querySelector<HTMLButtonElement>('#tile-copy')!;
-    const resetBtn = root.querySelector<HTMLButtonElement>('#tile-reset')!;
-    const bigUnitLabels = root.querySelectorAll<HTMLElement>('[data-unit-big]');
-    const smallUnitLabels = root.querySelectorAll<HTMLElement>('[data-unit-small]');
+    const v = (id: string) => parseFloat((root.querySelector(`#${id}`) as HTMLInputElement).value) || 0;
+    const unit = (id: string) => (root.querySelector(`#${id}`) as HTMLSelectElement).value;
+    const roomFactor = (id: string) => (unit(id) === 'ft' ? 0.3048 : 1);
+    const tileFactor = (id: string) => (unit(id) === 'in' ? 0.0254 : 0.01);
 
-    const defaults: Record<string, string> = {
-      'tile-room-length': '4',
-      'tile-room-width': '3',
-      'tile-width': '30',
-      'tile-height': '30',
-      'tile-per-box': '10',
-      'tile-waste': '10',
-    };
+    const ids = ['roomL', 'roomW', 'tileL', 'tileW', 'waste', 'perBox', 'roomLUnit', 'roomWUnit', 'tileLUnit', 'tileWUnit'];
 
-    function updateUnitLabels() {
-      const metric = unitSelect.value === 'metric';
-      bigUnitLabels.forEach((el) => (el.textContent = metric ? '(m)' : '(ft)'));
-      smallUnitLabels.forEach((el) => (el.textContent = metric ? '(cm)' : '(in)'));
+    function calculateTile() {
+      const area = v('roomL') * roomFactor('roomLUnit') * v('roomW') * roomFactor('roomWUnit');
+      const tileArea = v('tileL') * tileFactor('tileLUnit') * v('tileW') * tileFactor('tileWUnit');
+      const waste = v('waste') / 100;
+      const raw = tileArea ? (area * (1 + waste)) / tileArea : 0;
+      // Round off floating-point noise (e.g. 14.4*1.1/0.36 = 44.00000000000001)
+      // before ceiling, so a result that's mathematically a whole number
+      // doesn't get bumped up to the next one.
+      const tiles = Math.ceil(Math.round(raw * 1e6) / 1e6);
+      const per = Math.max(1, v('perBox'));
+      const boxes = Math.ceil(tiles / per);
+
+      const tilesResult = document.getElementById('tilesResult')!;
+      tilesResult.textContent = tiles.toLocaleString();
+      document.getElementById('boxesResult')!.textContent = boxes.toLocaleString();
+      document.getElementById('areaResult')!.textContent = area.toFixed(2) + ' m²';
+      document.getElementById('wasteResult')!.textContent = (area * waste).toFixed(2) + ' m²';
+      document.getElementById('extraResult')!.textContent = (boxes * per - tiles).toLocaleString();
     }
 
-    function calculate() {
-      const metric = unitSelect.value === 'metric';
-      const length = parseFloat(roomLength.value);
-      const width = parseFloat(roomWidth.value);
-      const tw = parseFloat(tileWidth.value);
-      const th = parseFloat(tileHeight.value);
-      const perBox = parseFloat(tilePerBox.value);
-      const wastePct = parseFloat(waste.value);
-
-      const values = [length, width, tw, th, perBox, wastePct];
-      if (values.some((v) => Number.isNaN(v) || v < 0) || perBox <= 0 || tw <= 0 || th <= 0) {
-        errorEl.textContent = 'Please enter valid, positive numbers in every field.';
-        errorEl.hidden = false;
-        resultTiles.textContent = '—';
-        resultBoxes.textContent = '';
-        return;
-      }
-      errorEl.hidden = true;
-
-      const roomArea = length * width;
-      const tileArea = metric ? (tw * th) / 10000 : (tw * th) / 144;
-      if (tileArea <= 0) return;
-
-      const baseTiles = roomArea / tileArea;
-      const totalTiles = Math.ceil(baseTiles * (1 + wastePct / 100));
-      const boxes = Math.ceil(totalTiles / perBox);
-
-      const unitLabel = metric ? 'm²' : 'ft²';
-      resultTiles.textContent = `${totalTiles} tiles (${roomArea.toFixed(2)} ${unitLabel})`;
-      resultBoxes.textContent = `≈ ${boxes} box${boxes === 1 ? '' : 'es'} of ${perBox}`;
-    }
-
-    [roomLength, roomWidth, tileWidth, tileHeight, tilePerBox, waste].forEach((input) => {
-      input.addEventListener('input', calculate);
-    });
-    unitSelect.addEventListener('change', () => {
-      updateUnitLabels();
-      calculate();
-    });
-
-    copyBtn.addEventListener('click', async () => {
-      const text = `${resultTiles.textContent} — ${resultBoxes.textContent}`;
-      try {
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = 'Copied!';
-        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
-      } catch {
-        // Clipboard API unavailable; silently ignore.
-      }
-    });
-
-    resetBtn.addEventListener('click', () => {
-      unitSelect.value = 'metric';
-      Object.entries(defaults).forEach(([id, value]) => {
-        const el = root.querySelector<HTMLInputElement>(`#${id}`);
-        if (el) el.value = value;
-      });
-      updateUnitLabels();
-      calculate();
-    });
-
-    updateUnitLabels();
-    calculate();
+    ids.forEach((id) => root.querySelector(`#${id}`)?.addEventListener('input', calculateTile));
+    document.getElementById('calculateTile')?.addEventListener('click', calculateTile);
+    calculateTile();
   }
 </script>
