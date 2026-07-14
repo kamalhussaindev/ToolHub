@@ -1,0 +1,282 @@
+---
+import Callout from '../Callout.astro';
+import AdSlot from '../AdSlot.astro';
+---
+
+<div class="calc-shell" id="gpa-percentage-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Your GPA / CGPA</h2>
+      <div class="field">
+        <label for="gpaValue">GPA or CGPA</label>
+        <div class="input-wrap">
+          <input
+            id="gpaValue"
+            type="number"
+            inputmode="decimal"
+            step="0.01"
+            placeholder="e.g. 3.6"
+            aria-describedby="gpaHint"
+          />
+        </div>
+        <p class="field-hint" id="gpaHint" role="alert" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div class="calc-block">
+      <h2><span class="step">2</span>Conversion method</h2>
+      <div class="radio-group" role="radiogroup" aria-label="Conversion method">
+        <label class="radio-field">
+          <input type="radio" name="gpaMethod" value="scale4" checked />
+          <span>
+            <b>US / Canada — 4.0 scale</b>
+            <small>Percentage = (GPA ÷ 4.0) × 100</small>
+          </span>
+        </label>
+        <label class="radio-field">
+          <input type="radio" name="gpaMethod" value="cbse" />
+          <span>
+            <b>India (CBSE) — ×9.5</b>
+            <small>Percentage = CGPA × 9.5</small>
+          </span>
+        </label>
+        <label class="radio-field">
+          <input type="radio" name="gpaMethod" value="simple" />
+          <span>
+            <b>Simple / direct — ×10</b>
+            <small>Percentage = CGPA × 10</small>
+          </span>
+        </label>
+        <label class="radio-field">
+          <input type="radio" name="gpaMethod" value="vtu" />
+          <span>
+            <b>Deduction method (VTU-style)</b>
+            <small>Percentage = (CGPA − 0.75) × 10</small>
+          </span>
+        </label>
+        <label class="radio-field radio-field--custom">
+          <input type="radio" name="gpaMethod" value="custom" />
+          <span>
+            <b>Custom multiplier</b>
+            <small>Percentage = CGPA × your multiplier</small>
+          </span>
+          <div class="input-wrap radio-field__input">
+            <input
+              id="gpaCustomMultiplier"
+              type="number"
+              inputmode="decimal"
+              step="0.01"
+              min="0.01"
+              placeholder="e.g. 9.5"
+              disabled
+              aria-label="Custom multiplier"
+            />
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <Callout variant="note" title="Not sure which method to use?">
+      <p>
+        Check your transcript or your university's official grading policy first — some schools
+        publish their own exact conversion rule. Use "Custom multiplier" to match it precisely.
+      </p>
+    </Callout>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Percentage</h2><span class="status">Live</span></div>
+    <div class="primary-result">
+      <span id="gpaResultLabel">Enter your GPA to see the percentage</span>
+      <strong id="gpaResultValue" aria-live="polite">—</strong>
+    </div>
+    <button class="calc-cta" id="gpaCopy" type="button">Copy result</button>
+    <AdSlot slot="gpa-percentage-sidebar" variant="sidebar" />
+  </aside>
+</div>
+
+<style>
+  .field-hint {
+    min-height: 16px;
+    margin: 6px 2px 0;
+    font-size: 11.5px;
+    color: var(--color-error, #dc2626);
+  }
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .radio-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    padding: 11px 13px;
+    cursor: pointer;
+    transition: 0.16s;
+  }
+  .radio-field:has(input:checked) {
+    border-color: var(--brand);
+    background: var(--brand-soft);
+  }
+  .radio-field:has(input:focus-visible) {
+    box-shadow: 0 0 0 3px rgba(83, 104, 243, 0.18);
+  }
+  .radio-field input[type='radio'] {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--brand);
+  }
+  .radio-field span {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+  }
+  .radio-field b {
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--ink);
+  }
+  .radio-field small {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+  .radio-field--custom {
+    flex-wrap: wrap;
+  }
+  .radio-field__input {
+    flex-basis: 100%;
+    height: 38px;
+    margin-top: 2px;
+  }
+  .radio-field__input input:disabled {
+    opacity: 0.5;
+  }
+</style>
+
+<script>
+  type Method = 'scale4' | 'cbse' | 'simple' | 'vtu' | 'custom';
+
+  const root = document.getElementById('gpa-percentage-calculator');
+  if (root) {
+    const gpaInput = root.querySelector<HTMLInputElement>('#gpaValue')!;
+    const hint = root.querySelector<HTMLElement>('#gpaHint')!;
+    const methodRadios = root.querySelectorAll<HTMLInputElement>('input[name="gpaMethod"]');
+    const customInput = root.querySelector<HTMLInputElement>('#gpaCustomMultiplier')!;
+    const resultLabel = document.getElementById('gpaResultLabel')!;
+    const resultValue = document.getElementById('gpaResultValue')!;
+    const copyBtn = document.getElementById('gpaCopy') as HTMLButtonElement;
+
+    function activeMethod(): Method {
+      return (Array.from(methodRadios).find((r) => r.checked)?.value ?? 'scale4') as Method;
+    }
+
+    function range(method: Method) {
+      return method === 'scale4' ? { min: 0, max: 4 } : { min: 0, max: 10 };
+    }
+
+    function methodLabel(method: Method, multiplier: number): string {
+      switch (method) {
+        case 'scale4':
+          return '4.0 scale';
+        case 'cbse':
+          return '×9.5 (CBSE) scale';
+        case 'simple':
+          return '×10 (simple) scale';
+        case 'vtu':
+          return 'deduction (VTU-style) scale';
+        case 'custom':
+          return `×${multiplier} custom scale`;
+      }
+    }
+
+    function calculate() {
+      const method = activeMethod();
+      customInput.disabled = method !== 'custom';
+
+      hint.textContent = '';
+      const raw = gpaInput.value.trim();
+      const { min, max } = range(method);
+
+      if (raw === '') {
+        resultLabel.textContent = 'Enter your GPA to see the percentage';
+        resultValue.textContent = '—';
+        return;
+      }
+
+      const gpa = parseFloat(raw);
+      if (Number.isNaN(gpa)) {
+        hint.textContent = 'Enter a valid number.';
+        resultLabel.textContent = 'Enter your GPA to see the percentage';
+        resultValue.textContent = '—';
+        return;
+      }
+
+      if (gpa < min || gpa > max) {
+        hint.textContent = `Enter a GPA between ${min} and ${max} for this method.`;
+        resultLabel.textContent = 'Enter your GPA to see the percentage';
+        resultValue.textContent = '—';
+        return;
+      }
+
+      let multiplier = 0;
+      if (method === 'custom') {
+        multiplier = parseFloat(customInput.value);
+        if (Number.isNaN(multiplier) || multiplier <= 0) {
+          hint.textContent = 'Enter a valid multiplier greater than 0.';
+          resultLabel.textContent = 'Enter your GPA to see the percentage';
+          resultValue.textContent = '—';
+          return;
+        }
+      }
+
+      let percentage: number;
+      switch (method) {
+        case 'scale4':
+          percentage = (gpa / 4) * 100;
+          break;
+        case 'cbse':
+          percentage = gpa * 9.5;
+          break;
+        case 'simple':
+          percentage = gpa * 10;
+          break;
+        case 'vtu':
+          percentage = (gpa - 0.75) * 10;
+          break;
+        case 'custom':
+          percentage = gpa * multiplier;
+          break;
+      }
+
+      percentage = Math.max(0, Math.round(percentage * 10) / 10);
+      const gpaLabel = method === 'scale4' ? 'GPA' : 'CGPA';
+
+      resultValue.textContent = `${percentage.toFixed(1)}%`;
+      resultLabel.textContent = `${gpa} ${gpaLabel} on the ${methodLabel(method, multiplier)} = ${percentage.toFixed(1)}%`;
+    }
+
+    gpaInput.addEventListener('input', calculate);
+    customInput.addEventListener('input', calculate);
+    methodRadios.forEach((radio) => radio.addEventListener('change', calculate));
+
+    copyBtn.addEventListener('click', async () => {
+      const value = resultValue.textContent ?? '';
+      if (!value || value === '—') return;
+      try {
+        await navigator.clipboard.writeText(value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    calculate();
+  }
+</script>

@@ -29,6 +29,8 @@ export interface Tool {
   icon: string; // key into src/data/icons.ts
   group: string; // sub-group label shown on the category page (e.g. "Materials")
   popular?: boolean; // featured in the homepage "Most popular tools" grid
+  articleHtml?: string; // full-fidelity HTML article body (heading structure that doesn't fit howToUse/howItWorks/examples). When set, ToolShell renders it verbatim instead of those fields.
+  extraJsonLd?: Record<string, unknown>[]; // additional JSON-LD blocks beyond the auto-generated WebApplication schema
 }
 
 export const tools: Tool[] = [
@@ -754,20 +756,127 @@ export const tools: Tool[] = [
     slug: 'cgpa-to-percentage',
     title: 'CGPA to Percentage Calculator',
     cluster: 'academic',
-    h1: 'CGPA to Percentage Calculator',
-    metaTitle: 'CGPA to Percentage Calculator — All Scales',
-    metaDescription: 'Convert CGPA to percentage using the correct formula for your grading scale.',
+    h1: 'CGPA to Percentage Calculator – Convert Your CGPA in Seconds',
+    metaTitle: 'CGPA to Percentage Calculator – Convert CGPA Fast',
+    metaDescription:
+      'Free CGPA to percentage calculator with x9.5, x10, deduction & 4.0-scale GPA methods. Convert your CGPA or GPA to a percentage instantly for study abroad, scholarships & jobs.',
     primaryKeyword: 'cgpa to percentage calculator',
-    keywords: ['cgpa to percentage', 'cgpa to percentage calculator'],
-    intro: 'Convert your CGPA to a percentage using the scale your institution actually uses.',
-    component: '',
+    keywords: ['cgpa to percentage calculator', 'cgpa to percentage', 'gpa to percentage calculator', 'convert cgpa to percentage'],
+    intro:
+      'Enter your CGPA or GPA, choose your school\'s conversion method, and get an instant percentage — no manual math required.',
+    component: 'GpaToPercentageCalculator',
     howToUse: [],
     howItWorks: '',
-    faqs: [],
-    related: ['sgpa-to-percentage', 'marks-percentage-calculator'],
-    status: 'coming-soon',
+    faqs: [
+      {
+        q: 'What is the formula for CGPA to percentage?',
+        a: "It depends on your scale. For a 4.0 scale, Percentage = (GPA ÷ 4.0) × 100. For the Indian 10-point scale, the common rule is Percentage = CGPA × 9.5, though some universities use ×10 or a deduction method. Always match the formula to your school's system.",
+      },
+      {
+        q: 'Should I multiply my CGPA by 9.5 or 10?',
+        a: "Use ×9.5 if your board follows the CBSE standard, and ×10 only if your university specifically uses the direct method (some newer schemes do). They give different results, so check your institution's official rule before choosing.",
+      },
+      {
+        q: 'What percentage is a 3.5 GPA?',
+        a: "On a 4.0 scale, a 3.5 GPA equals 87.5%. It's widely considered a strong, above-average result for both admissions and employers.",
+      },
+      {
+        q: 'What is a 3.0 GPA in percentage?',
+        a: "A 3.0 GPA on a 4.0 scale converts to 75%. This is often the minimum many universities ask for in Master's or MBA applications.",
+      },
+      {
+        q: 'Why does my university subtract a number before multiplying?',
+        a: 'Some universities, like VTU, use a deduction method — for example (CGPA − 0.75) × 10 — because their internal grade boundaries sit slightly higher than the standard scale, and the subtraction realigns the result to national norms.',
+      },
+      {
+        q: 'Is CGPA to percentage conversion accepted by every university?',
+        a: "No. The conversion isn't universal — different countries and institutions use different scales and formulas. Always check the specific requirements of the university or organization you're applying to.",
+      },
+    ],
+    related: ['tile-calculator'],
+    status: 'live',
     icon: 'cap',
     group: 'Grades',
+    popular: true,
+    articleHtml: `
+      <p>You worked hard for your grades, but the moment you apply somewhere new, they suddenly
+      look wrong. A university abroad wants a percentage. A scholarship form has no box for a
+      CGPA out of 10. An employer's portal rejects your number outright. Your record is exactly
+      the same — it's just written in a language the other side doesn't read, and a rushed guess
+      can quietly misrepresent years of work on the one form that matters.</p>
+      <p>This CGPA to percentage calculator fixes that in seconds. Enter your CGPA (or a 4.0-scale
+      GPA), pick the conversion method your school uses, and get the percentage that admissions
+      committees, scholarship boards, and recruiters expect — no manual math, no wrong formula, no
+      second-guessing before a deadline.</p>
+
+      <h2>What Does "CGPA to Percentage" Mean?</h2>
+      <p>CGPA (Cumulative Grade Point Average) is a single number that sums up your academic
+      performance across all semesters, most often on a 10-point scale in India — the US and
+      Canada use a similar 4.0-point average, usually just called GPA. A percentage expresses
+      that same performance out of 100. Converting between them simply re-expresses your grades
+      in the format a particular institution or country uses, so your record can be compared
+      fairly against everyone else's.</p>
+
+      <h2>How to Use the CGPA to Percentage Calculator</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Type your CGPA or GPA into the input box above (decimals are fine — enter 3.65, not just 3).</li>
+        <li>Choose your conversion method with the radio buttons: the 4.0 scale for US/Canada, ×9.5 for CBSE, a simple ×10, or the deduction method your university uses.</li>
+        <li>Read your percentage instantly — no calculate button, it updates as you type or switch methods.</li>
+        <li>Use the "Copy result" button to paste the number straight into your application or resume.</li>
+      </ol>
+
+      <h2>The Formula Behind It</h2>
+      <p>There isn't one universal formula — the right one depends on your grading system. This tool covers the four most common:</p>
+      <ul>
+        <li><strong>4.0 scale (US / Canada):</strong> Percentage = (GPA ÷ 4.0) × 100</li>
+        <li><strong>CBSE / standard 10-point (India):</strong> Percentage = CGPA × 9.5</li>
+        <li><strong>Simple / direct 10-point:</strong> Percentage = CGPA × 10</li>
+        <li><strong>Deduction method (e.g. VTU):</strong> Percentage = (CGPA − 0.75) × 10</li>
+      </ul>
+      <p>In the 4.0 formula, <em>GPA</em> is your grade average and <em>4.0</em> is the maximum on
+      that scale. On the 10-point systems, the multiplier (9.5, 10, or a deduction step) is set by
+      the board or university to match its own grading calibration — which is why the same CGPA
+      can produce different percentages at different institutions.</p>
+
+      <h3>Different scales and edge cases</h3>
+      <p>Some universities publish their own official rule that overrides these — for example,
+      Mumbai University uses (CGPA × 7.1) + 11, and GTU uses (CGPA − 0.5) × 10. If the place
+      you're applying to lists an exact method, always use theirs, or the "Custom multiplier"
+      option, and treat the calculator as a fast, reliable estimate rather than a legal
+      document.</p>
+
+      <h2>Worked Example</h2>
+      <p>Say your GPA is 3.6 on a 4.0 scale and a university in India asks for a percentage.</p>
+      <p>Percentage = (3.6 ÷ 4.0) × 100 = 0.9 × 100 = 90%</p>
+      <p>So a 3.6 GPA converts to a 90% equivalent. Now compare a 10-point score: an 8.0 CGPA
+      becomes 8.0 × 9.5 = 76% under the CBSE rule, but 8.0 × 10 = 80% under a simple ×10, and
+      (8.0 − 0.75) × 10 = 72.5% under the VTU deduction method. Same score, three different
+      answers — which is exactly why picking the right method matters.</p>
+
+      <h2>Quick Reference Table</h2>
+      <table>
+        <thead>
+          <tr><th scope="col">CGPA / GPA</th><th scope="col">×9.5 (CBSE)</th><th scope="col">×10 (Simple)</th><th scope="col">(CGPA−0.75)×10 (VTU)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>10.0 / 4.0</td><td>95%</td><td>100%</td><td>92.5%</td></tr>
+          <tr><td>9.0</td><td>85.5%</td><td>90%</td><td>82.5%</td></tr>
+          <tr><td>8.0</td><td>76%</td><td>80%</td><td>72.5%</td></tr>
+          <tr><td>7.0</td><td>66.5%</td><td>70%</td><td>62.5%</td></tr>
+          <tr><td>6.0</td><td>57%</td><td>60%</td><td>52.5%</td></tr>
+          <tr><td>5.0</td><td>47.5%</td><td>50%</td><td>42.5%</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Using the wrong method's formula.</strong> Applying a ×10 rule when your university uses ×9.5 or a deduction method produces a wrong number. Confirm which one your institution uses first.</li>
+        <li><strong>Assuming one universal formula exists.</strong> There isn't one. Countries, boards, and even individual universities differ.</li>
+        <li><strong>Mixing up the 4.0 and 10-point scales.</strong> A 4.0-scale GPA and a 10-point CGPA are completely different inputs — don't feed one into the other's formula.</li>
+        <li><strong>Ignoring an official conversion.</strong> If your university provides its own rule, a general formula won't match — and theirs is the one they'll accept.</li>
+      </ul>
+    `,
   },
   {
     slug: 'sgpa-to-percentage',

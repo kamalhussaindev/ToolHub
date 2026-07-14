@@ -18,6 +18,7 @@ const related = getRelated(tool.slug);
 
 const tocItems = [
   { href: '#calculator-heading', label: 'Calculator' },
+  ...(tool.articleHtml ? [{ href: '#article-heading', label: 'Full guide' }] : []),
   ...(tool.howToUse.length > 0 ? [{ href: '#how-to-use-heading', label: 'How to use it' }] : []),
   ...(tool.howItWorks ? [{ href: '#how-it-works-heading', label: 'Formula and explanation' }] : []),
   ...(tool.examples && tool.examples.length > 0 ? [{ href: '#examples-heading', label: 'Examples' }] : []),
@@ -57,6 +58,10 @@ const tocItems = [
 
     <div class="content-layout">
       <article class="content-card">
+        {tool.articleHtml && (
+          <div class="tool-article" id="article-heading" set:html={tool.articleHtml} />
+        )}
+
         {tool.howToUse.length > 0 && (
           <>
             <h2 id="how-to-use-heading">How to use the {tool.title.toLowerCase()}</h2>
@@ -142,6 +147,42 @@ const tocItems = [
   }
   .cat-tool h3 {
     text-decoration: none;
+  }
+
+  /* tool.articleHtml is injected via set:html, so Astro's scoped-style
+     attribute never reaches its children — these rules must stay :global(). */
+  .tool-article :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: var(--space-5) 0;
+    overflow-x: auto;
+    display: block;
+  }
+  .tool-article :global(th),
+  .tool-article :global(td) {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .tool-article :global(th) {
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .tool-article :global(ul),
+  .tool-article :global(ol) {
+    padding-left: 1.3em;
+  }
+  .tool-article :global(a) {
+    color: var(--brand);
+    text-decoration: underline;
+  }
+  .tool-article :global(h2) {
+    margin-top: var(--space-8);
+  }
+  .tool-article :global(h3) {
+    margin-top: var(--space-6);
   }
 </style>
 

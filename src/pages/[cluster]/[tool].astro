@@ -16,6 +16,7 @@ import HijriDateConverter from '../../components/tools/HijriDateConverter.astro'
 import UuidGenerator from '../../components/tools/UuidGenerator.astro';
 import SlugGenerator from '../../components/tools/SlugGenerator.astro';
 import SitemapValidator from '../../components/tools/SitemapValidator.astro';
+import GpaToPercentageCalculator from '../../components/tools/GpaToPercentageCalculator.astro';
 
 // Astro (vanilla) components, rendered with no client directive.
 const astroComponentMap = {
@@ -30,6 +31,7 @@ const astroComponentMap = {
   UuidGenerator,
   SlugGenerator,
   SitemapValidator,
+  GpaToPercentageCalculator,
 } as const;
 
 // Preact islands — these are JS-heavy converters that need client:visible to

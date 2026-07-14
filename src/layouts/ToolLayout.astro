@@ -26,13 +26,15 @@ const webApplicationJsonLd = {
     priceCurrency: 'USD',
   },
 };
+
+const jsonLdBlocks = [webApplicationJsonLd, ...(tool.extraJsonLd ?? [])];
 ---
 
 <BaseLayout
   title={tool.metaTitle}
   description={tool.metaDescription}
   canonicalPath={canonicalPath}
-  jsonLd={webApplicationJsonLd}
+  jsonLd={jsonLdBlocks}
 >
   <ToolShell tool={tool} cluster={cluster}>
     <slot name="tool" slot="tool" />
