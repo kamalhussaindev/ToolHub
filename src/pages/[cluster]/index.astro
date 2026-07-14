@@ -19,6 +19,10 @@ const allClusters = getSortedClusters();
 const groups = [...new Set(clusterTools.map((t) => t.group))];
 const canonicalPath = `/${cluster.slug}/`;
 
+// No live tools yet — this hub is just "coming soon" placeholders, so keep
+// it reachable for visitors but out of Google's index until real content exists.
+const noindex = !clusterTools.some((t) => t.status === 'live');
+
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -45,6 +49,7 @@ const searchIndex = clusterTools.map((t) => ({
   description={cluster.description}
   canonicalPath={canonicalPath}
   jsonLd={jsonLd}
+  noindex={noindex}
 >
   <section class="page-hero">
     <div class="shell">
