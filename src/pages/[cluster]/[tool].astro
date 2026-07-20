@@ -17,6 +17,12 @@ import UuidGenerator from '../../components/tools/UuidGenerator.astro';
 import SlugGenerator from '../../components/tools/SlugGenerator.astro';
 import SitemapValidator from '../../components/tools/SitemapValidator.astro';
 import GpaToPercentageCalculator from '../../components/tools/GpaToPercentageCalculator.astro';
+import SgpaToPercentageCalculator from '../../components/tools/SgpaToPercentageCalculator.astro';
+import MarksPercentageCalculator from '../../components/tools/MarksPercentageCalculator.astro';
+import AttendanceCalculator from '../../components/tools/AttendanceCalculator.astro';
+import DogAgeCalculator from '../../components/tools/DogAgeCalculator.astro';
+import FlamesCalculator from '../../components/tools/FlamesCalculator.astro';
+import AbvCalculator from '../../components/tools/AbvCalculator.astro';
 
 // Astro (vanilla) components, rendered with no client directive.
 const astroComponentMap = {
@@ -32,6 +38,12 @@ const astroComponentMap = {
   SlugGenerator,
   SitemapValidator,
   GpaToPercentageCalculator,
+  SgpaToPercentageCalculator,
+  MarksPercentageCalculator,
+  AttendanceCalculator,
+  DogAgeCalculator,
+  FlamesCalculator,
+  AbvCalculator,
 } as const;
 
 // Preact islands — these are JS-heavy converters that need client:visible to

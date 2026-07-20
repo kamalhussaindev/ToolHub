@@ -1,0 +1,143 @@
+---
+import Callout from '../Callout.astro';
+---
+
+<div class="calc-shell" id="attendance-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Your classes</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="attClassesAttended">Classes attended</label>
+          <div class="input-wrap"><input id="attClassesAttended" type="number" inputmode="numeric" min="0" step="1" placeholder="e.g. 60" /></div>
+        </div>
+        <div class="field">
+          <label for="attClassesTotal">Total classes held</label>
+          <div class="input-wrap"><input id="attClassesTotal" type="number" inputmode="numeric" min="0" step="1" placeholder="e.g. 80" /></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-block">
+      <h2><span class="step">2</span>Required percentage</h2>
+      <div class="field">
+        <label for="attRequired">Your college's minimum (%)</label>
+        <div class="input-wrap"><input id="attRequired" type="number" inputmode="numeric" min="1" max="99" step="1" value="75" /></div>
+      </div>
+      <p class="field-hint" id="attHint" role="alert" aria-live="polite"></p>
+    </div>
+
+    <Callout variant="note" title="Only count held classes">
+      <p>Leave out cancelled sessions — your total should only include classes that actually took place.</p>
+    </Callout>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Attendance</h2><span class="status">Live</span></div>
+    <div class="primary-result">
+      <span id="attResultLabel">Enter your classes to see your attendance</span>
+      <strong id="attResultValue" aria-live="polite">—</strong>
+    </div>
+    <p class="result-note" id="attProjection"></p>
+    <button class="calc-cta" id="attCopy" type="button">Copy result</button>
+  </aside>
+</div>
+
+<style>
+  .field-hint {
+    min-height: 16px;
+    margin: 10px 2px 0;
+    font-size: 11.5px;
+    color: var(--color-error, #dc2626);
+  }
+</style>
+
+<script>
+  const root = document.getElementById('attendance-calculator');
+  if (root) {
+    const attendedInput = root.querySelector<HTMLInputElement>('#attClassesAttended')!;
+    const totalInput = root.querySelector<HTMLInputElement>('#attClassesTotal')!;
+    const requiredInput = root.querySelector<HTMLInputElement>('#attRequired')!;
+    const hint = root.querySelector<HTMLElement>('#attHint')!;
+    const resultLabel = document.getElementById('attResultLabel')!;
+    const resultValue = document.getElementById('attResultValue')!;
+    const projection = document.getElementById('attProjection')!;
+    const copyBtn = document.getElementById('attCopy') as HTMLButtonElement;
+
+    function reset(message: string) {
+      resultLabel.textContent = message;
+      resultValue.textContent = '—';
+      projection.textContent = '';
+    }
+
+    function calculate() {
+      hint.textContent = '';
+      const attendedRaw = attendedInput.value.trim();
+      const totalRaw = totalInput.value.trim();
+      const requiredRaw = requiredInput.value.trim();
+
+      if (attendedRaw === '' || totalRaw === '') {
+        reset('Enter your classes to see your attendance');
+        return;
+      }
+
+      const attended = parseFloat(attendedRaw);
+      const total = parseFloat(totalRaw);
+      const required = parseFloat(requiredRaw);
+
+      if (Number.isNaN(attended) || Number.isNaN(total) || Number.isNaN(required)) {
+        hint.textContent = 'Enter valid numbers.';
+        reset('Enter your classes to see your attendance');
+        return;
+      }
+      if (total <= 0) {
+        hint.textContent = 'Total classes must be greater than 0.';
+        reset('Enter your classes to see your attendance');
+        return;
+      }
+      if (attended < 0 || attended > total) {
+        hint.textContent = 'Classes attended can\'t be negative or exceed the total.';
+        reset('Enter your classes to see your attendance');
+        return;
+      }
+      if (required <= 0 || required >= 100) {
+        hint.textContent = 'Enter a required percentage between 1 and 99.';
+        reset('Enter your classes to see your attendance');
+        return;
+      }
+
+      const currentPct = (attended / total) * 100;
+      resultValue.textContent = `${currentPct.toFixed(1)}%`;
+      resultLabel.textContent = `${attended} / ${total} classes = ${currentPct.toFixed(1)}%`;
+
+      const r = required / 100;
+      const skip = Math.floor((attended - r * total) / r);
+
+      if (skip >= 0) {
+        projection.textContent =
+          skip === 0
+            ? `You're exactly at ${required}% — missing even one more class will drop you below it.`
+            : `You can miss up to ${skip} more class${skip === 1 ? '' : 'es'} and stay at or above ${required}%.`;
+      } else {
+        const mustAttend = Math.ceil((r * total - attended) / (1 - r));
+        projection.textContent = `You're below ${required}%. Attend the next ${mustAttend} class${mustAttend === 1 ? '' : 'es'} in a row to reach it.`;
+      }
+    }
+
+    [attendedInput, totalInput, requiredInput].forEach((el) => el.addEventListener('input', calculate));
+
+    copyBtn.addEventListener('click', async () => {
+      const value = resultValue.textContent ?? '';
+      if (!value || value === '—') return;
+      try {
+        await navigator.clipboard.writeText(value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    calculate();
+  }
+</script>

@@ -1,0 +1,237 @@
+---
+import Callout from '../Callout.astro';
+---
+
+<div class="calc-shell" id="marks-percentage-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Your marks</h2>
+      <div class="marks-rows" id="marksRows">
+        <div class="marks-row" data-row>
+          <div class="field">
+            <label>Obtained marks</label>
+            <div class="input-wrap"><input type="number" class="marks-obtained" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 68" /></div>
+          </div>
+          <div class="field">
+            <label>Total marks</label>
+            <div class="input-wrap"><input type="number" class="marks-total" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 80" /></div>
+          </div>
+          <button type="button" class="marks-remove" aria-label="Remove this subject" disabled>&times;</button>
+        </div>
+      </div>
+      <button type="button" class="marks-add" id="marksAddRow">+ Add another subject</button>
+      <p class="field-hint" id="marksHint" role="alert" aria-live="polite"></p>
+    </div>
+
+    <Callout variant="note" title="Multiple subjects add up, they don't average">
+      <p>
+        With more than one row, the tool totals all obtained marks and all total marks first, then
+        divides — it never averages the individual subject percentages, which would be wrong when
+        subjects carry different maximums.
+      </p>
+    </Callout>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Percentage</h2><span class="status">Live</span></div>
+    <div class="primary-result">
+      <span id="marksResultLabel">Enter your marks to see the percentage</span>
+      <strong id="marksResultValue" aria-live="polite">—</strong>
+    </div>
+    <button class="calc-cta" id="marksCopy" type="button">Copy result</button>
+  </aside>
+</div>
+
+<style>
+  .marks-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  /* Rows beyond the first are injected via innerHTML at runtime, so they never
+     receive Astro's scoped-style attribute — these rules must stay :global()
+     to reach dynamically-added rows the same as the server-rendered first one. */
+  :global(.marks-row) {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+  :global(.marks-row .field) {
+    flex: 1;
+    min-width: 0;
+  }
+  :global(.marks-remove) {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line-strong);
+    border-radius: 9px;
+    background: #fff;
+    color: #8a92a1;
+    font-size: 18px;
+    line-height: 1;
+    transition: 0.16s;
+  }
+  :global(.marks-remove:hover:not(:disabled)) {
+    border-color: #f3b4c0;
+    background: #fff5f6;
+    color: #d1435a;
+  }
+  :global(.marks-remove:disabled) {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .marks-add {
+    margin-top: 12px;
+    width: 100%;
+    height: 42px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 9px;
+    background: #fafbfc;
+    color: var(--brand);
+    font-weight: 650;
+    font-size: 13px;
+  }
+  .marks-add:hover {
+    background: var(--brand-soft);
+    border-color: #b9c0ff;
+  }
+  .field-hint {
+    min-height: 16px;
+    margin: 10px 2px 0;
+    font-size: 11.5px;
+    color: var(--color-error, #dc2626);
+  }
+</style>
+
+<script>
+  const root = document.getElementById('marks-percentage-calculator');
+  if (root) {
+    const rowsEl = root.querySelector<HTMLElement>('#marksRows')!;
+    const addBtn = root.querySelector<HTMLButtonElement>('#marksAddRow')!;
+    const hint = root.querySelector<HTMLElement>('#marksHint')!;
+    const resultLabel = document.getElementById('marksResultLabel')!;
+    const resultValue = document.getElementById('marksResultValue')!;
+    const copyBtn = document.getElementById('marksCopy') as HTMLButtonElement;
+
+    function rowTemplate(): HTMLDivElement {
+      const row = document.createElement('div');
+      row.className = 'marks-row';
+      row.setAttribute('data-row', '');
+      row.innerHTML = `
+        <div class="field">
+          <label>Obtained marks</label>
+          <div class="input-wrap"><input type="number" class="marks-obtained" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 68" /></div>
+        </div>
+        <div class="field">
+          <label>Total marks</label>
+          <div class="input-wrap"><input type="number" class="marks-total" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 80" /></div>
+        </div>
+        <button type="button" class="marks-remove" aria-label="Remove this subject">&times;</button>
+      `;
+      return row;
+    }
+
+    function syncRemoveButtons() {
+      const rows = rowsEl.querySelectorAll<HTMLElement>('[data-row]');
+      rows.forEach((row) => {
+        const btn = row.querySelector<HTMLButtonElement>('.marks-remove')!;
+        btn.disabled = rows.length <= 1;
+      });
+    }
+
+    function calculate() {
+      hint.textContent = '';
+      const rows = Array.from(rowsEl.querySelectorAll<HTMLElement>('[data-row]'));
+      let sumObtained = 0;
+      let sumTotal = 0;
+      let anyFilled = false;
+      let error = '';
+
+      for (const row of rows) {
+        const obtainedInput = row.querySelector<HTMLInputElement>('.marks-obtained')!;
+        const totalInput = row.querySelector<HTMLInputElement>('.marks-total')!;
+        const obtainedRaw = obtainedInput.value.trim();
+        const totalRaw = totalInput.value.trim();
+
+        if (obtainedRaw === '' && totalRaw === '') continue; // skip a fully empty row
+        anyFilled = true;
+
+        const obtained = parseFloat(obtainedRaw);
+        const total = parseFloat(totalRaw);
+
+        if (obtainedRaw === '' || totalRaw === '') {
+          error = 'Fill in both obtained and total marks for each subject.';
+          break;
+        }
+        if (Number.isNaN(obtained) || Number.isNaN(total)) {
+          error = 'Enter valid numbers.';
+          break;
+        }
+        if (total <= 0) {
+          error = 'Total marks must be greater than 0.';
+          break;
+        }
+        if (obtained < 0) {
+          error = 'Obtained marks can\'t be negative.';
+          break;
+        }
+        if (obtained > total) {
+          error = 'Obtained marks can\'t exceed total marks.';
+          break;
+        }
+
+        sumObtained += obtained;
+        sumTotal += total;
+      }
+
+      if (error) {
+        hint.textContent = error;
+        resultLabel.textContent = 'Enter your marks to see the percentage';
+        resultValue.textContent = '—';
+        return;
+      }
+
+      if (!anyFilled || sumTotal === 0) {
+        resultLabel.textContent = 'Enter your marks to see the percentage';
+        resultValue.textContent = '—';
+        return;
+      }
+
+      const percentage = Math.round((sumObtained / sumTotal) * 1000) / 10;
+      resultValue.textContent = `${percentage.toFixed(1)}%`;
+      resultLabel.textContent = `${sumObtained} / ${sumTotal} marks = ${percentage.toFixed(1)}%`;
+    }
+
+    rowsEl.addEventListener('input', calculate);
+    rowsEl.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.marks-remove');
+      if (!btn || btn.disabled) return;
+      btn.closest('[data-row]')?.remove();
+      syncRemoveButtons();
+      calculate();
+    });
+
+    addBtn.addEventListener('click', () => {
+      const row = rowTemplate();
+      rowsEl.appendChild(row);
+      syncRemoveButtons();
+      row.querySelector<HTMLInputElement>('.marks-obtained')?.focus();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const value = resultValue.textContent ?? '';
+      if (!value || value === '—') return;
+      try {
+        await navigator.clipboard.writeText(value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    syncRemoveButtons();
+    calculate();
+  }
+</script>

@@ -1,0 +1,136 @@
+---
+import Callout from '../Callout.astro';
+---
+
+<div class="calc-shell" id="dog-age-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Your dog</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="dogAge">Age (years)</label>
+          <div class="input-wrap"><input id="dogAge" type="number" inputmode="decimal" min="0" max="30" step="0.1" placeholder="e.g. 5 or 0.5" /></div>
+        </div>
+        <div class="field">
+          <label for="dogSize">Size</label>
+          <div class="input-wrap">
+            <select id="dogSize" style="border:0;flex:1">
+              <option value="small">Small (up to ~20 lb)</option>
+              <option value="medium" selected>Medium (~21–50 lb)</option>
+              <option value="large">Large (~51–90 lb)</option>
+              <option value="giant">Giant (90+ lb)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <p class="field-hint" id="dogHint" role="alert" aria-live="polite"></p>
+    </div>
+
+    <Callout variant="note" title="Not the ×7 myth">
+      <p>
+        This uses the AKC size-adjusted model: ≈15 human years for year one, +9 for year two, then
+        +4 to +7 per year after depending on size — not a flat multiplier.
+      </p>
+    </Callout>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Human years</h2><span class="status">Live</span></div>
+    <div class="primary-result">
+      <span id="dogResultLabel">Enter your dog's age to see the equivalent</span>
+      <strong id="dogResultValue" aria-live="polite">—</strong>
+    </div>
+    <p class="result-note" id="dogStage"></p>
+    <button class="calc-cta" id="dogCopy" type="button">Copy result</button>
+  </aside>
+</div>
+
+<style>
+  .field-hint {
+    min-height: 16px;
+    margin: 10px 2px 0;
+    font-size: 11.5px;
+    color: var(--color-error, #dc2626);
+  }
+</style>
+
+<script>
+  type Size = 'small' | 'medium' | 'large' | 'giant';
+
+  const RATE: Record<Size, number> = { small: 4, medium: 5, large: 6, giant: 7 };
+  const SENIOR_ONSET: Record<Size, number> = { small: 10, medium: 8, large: 7, giant: 6 };
+
+  const root = document.getElementById('dog-age-calculator');
+  if (root) {
+    const ageInput = root.querySelector<HTMLInputElement>('#dogAge')!;
+    const sizeSelect = root.querySelector<HTMLSelectElement>('#dogSize')!;
+    const hint = root.querySelector<HTMLElement>('#dogHint')!;
+    const resultLabel = document.getElementById('dogResultLabel')!;
+    const resultValue = document.getElementById('dogResultValue')!;
+    const stage = document.getElementById('dogStage')!;
+    const copyBtn = document.getElementById('dogCopy') as HTMLButtonElement;
+
+    function humanYears(age: number, size: Size): number {
+      if (age <= 1) return 15 * age;
+      if (age <= 2) return 15 + 9 * (age - 1);
+      return 24 + RATE[size] * (age - 2);
+    }
+
+    function lifeStage(age: number, size: Size): string {
+      if (age < 1) return 'Puppy';
+      if (age < SENIOR_ONSET[size]) return 'Adult';
+      return 'Senior';
+    }
+
+    function calculate() {
+      hint.textContent = '';
+      const raw = ageInput.value.trim();
+      const size = sizeSelect.value as Size;
+
+      if (raw === '') {
+        resultLabel.textContent = 'Enter your dog\'s age to see the equivalent';
+        resultValue.textContent = '—';
+        stage.textContent = '';
+        return;
+      }
+
+      const age = parseFloat(raw);
+      if (Number.isNaN(age)) {
+        hint.textContent = 'Enter a valid number.';
+        resultLabel.textContent = 'Enter your dog\'s age to see the equivalent';
+        resultValue.textContent = '—';
+        stage.textContent = '';
+        return;
+      }
+      if (age < 0 || age > 30) {
+        hint.textContent = 'Enter an age between 0 and 30 years.';
+        resultLabel.textContent = 'Enter your dog\'s age to see the equivalent';
+        resultValue.textContent = '—';
+        stage.textContent = '';
+        return;
+      }
+
+      const years = Math.round(humanYears(age, size));
+      resultValue.textContent = `${years} years`;
+      resultLabel.textContent = `${age}-year-old ${size} dog ≈ ${years} human years`;
+      stage.textContent = `Life stage: ${lifeStage(age, size)}`;
+    }
+
+    ageInput.addEventListener('input', calculate);
+    sizeSelect.addEventListener('change', calculate);
+
+    copyBtn.addEventListener('click', async () => {
+      const value = resultValue.textContent ?? '';
+      if (!value || value === '—') return;
+      try {
+        await navigator.clipboard.writeText(value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    calculate();
+  }
+</script>

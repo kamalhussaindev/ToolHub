@@ -1,0 +1,100 @@
+---
+import Callout from '../Callout.astro';
+---
+
+<div class="calc-shell" id="sgpa-percentage-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>Your SGPA</h2>
+      <div class="field">
+        <label for="sgpaValue">SGPA (out of 10)</label>
+        <div class="input-wrap">
+          <input id="sgpaValue" type="number" inputmode="decimal" step="0.01" min="0" max="10" placeholder="e.g. 8.42" aria-describedby="sgpaHint" />
+        </div>
+        <p class="field-hint" id="sgpaHint" role="alert" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <Callout variant="note" title="Standard AICTE formula">
+      <p>
+        This uses Percentage = (SGPA × 10) − 7.5, the standard most Indian universities follow.
+        Some institutions publish their own rule — use theirs if it differs.
+      </p>
+    </Callout>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Percentage</h2><span class="status">Live</span></div>
+    <div class="primary-result">
+      <span id="sgpaResultLabel">Enter your SGPA to see the percentage</span>
+      <strong id="sgpaResultValue" aria-live="polite">—</strong>
+    </div>
+    <button class="calc-cta" id="sgpaCopy" type="button">Copy result</button>
+  </aside>
+</div>
+
+<style>
+  .field-hint {
+    min-height: 16px;
+    margin: 6px 2px 0;
+    font-size: 11.5px;
+    color: var(--color-error, #dc2626);
+  }
+</style>
+
+<script>
+  const root = document.getElementById('sgpa-percentage-calculator');
+  if (root) {
+    const input = root.querySelector<HTMLInputElement>('#sgpaValue')!;
+    const hint = root.querySelector<HTMLElement>('#sgpaHint')!;
+    const resultLabel = document.getElementById('sgpaResultLabel')!;
+    const resultValue = document.getElementById('sgpaResultValue')!;
+    const copyBtn = document.getElementById('sgpaCopy') as HTMLButtonElement;
+
+    function calculate() {
+      hint.textContent = '';
+      const raw = input.value.trim();
+
+      if (raw === '') {
+        resultLabel.textContent = 'Enter your SGPA to see the percentage';
+        resultValue.textContent = '—';
+        return;
+      }
+
+      const sgpa = parseFloat(raw);
+      if (Number.isNaN(sgpa)) {
+        hint.textContent = 'Enter a valid number.';
+        resultLabel.textContent = 'Enter your SGPA to see the percentage';
+        resultValue.textContent = '—';
+        return;
+      }
+
+      if (sgpa < 0 || sgpa > 10) {
+        hint.textContent = 'Enter an SGPA between 0 and 10.';
+        resultLabel.textContent = 'Enter your SGPA to see the percentage';
+        resultValue.textContent = '—';
+        return;
+      }
+
+      const percentage = Math.max(0, Math.round((sgpa * 10 - 7.5) * 10) / 10);
+      resultValue.textContent = `${percentage.toFixed(1)}%`;
+      resultLabel.textContent = `${sgpa} SGPA = ${percentage.toFixed(1)}%`;
+    }
+
+    input.addEventListener('input', calculate);
+
+    copyBtn.addEventListener('click', async () => {
+      const value = resultValue.textContent ?? '';
+      if (!value || value === '—') return;
+      try {
+        await navigator.clipboard.writeText(value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    calculate();
+  }
+</script>

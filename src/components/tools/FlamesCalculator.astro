@@ -1,0 +1,146 @@
+---
+---
+
+<div class="calc-shell" id="flames-calculator">
+  <section class="calc-card">
+    <div class="calc-block">
+      <h2><span class="step">1</span>The two names</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="flamesName1">First name</label>
+          <div class="input-wrap"><input id="flamesName1" type="text" placeholder="e.g. Rahul" /></div>
+        </div>
+        <div class="field">
+          <label for="flamesName2">Second name</label>
+          <div class="input-wrap"><input id="flamesName2" type="text" placeholder="e.g. Anjali" /></div>
+        </div>
+      </div>
+      <p class="field-hint" id="flamesHint" role="alert" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <aside class="result-card">
+    <div class="result-head"><h2>Result</h2><span class="status">Live</span></div>
+    <div class="primary-result">
+      <span id="flamesResultLabel">Enter both names to see your result</span>
+      <strong id="flamesResultValue" aria-live="polite">—</strong>
+    </div>
+    <p class="result-note" id="flamesCount"></p>
+    <button class="calc-cta" id="flamesCopy" type="button">Copy result</button>
+  </aside>
+</div>
+
+<style>
+  .field-hint {
+    min-height: 16px;
+    margin: 10px 2px 0;
+    font-size: 11.5px;
+    color: var(--color-error, #dc2626);
+  }
+</style>
+
+<script>
+  const MEANINGS: Record<string, string> = {
+    F: 'Friends',
+    L: 'Lovers',
+    A: 'Affectionate',
+    M: 'Marriage',
+    E: 'Enemy',
+    S: 'Siblings',
+  };
+
+  const root = document.getElementById('flames-calculator');
+  if (root) {
+    const name1Input = root.querySelector<HTMLInputElement>('#flamesName1')!;
+    const name2Input = root.querySelector<HTMLInputElement>('#flamesName2')!;
+    const hint = root.querySelector<HTMLElement>('#flamesHint')!;
+    const resultLabel = document.getElementById('flamesResultLabel')!;
+    const resultValue = document.getElementById('flamesResultValue')!;
+    const countEl = document.getElementById('flamesCount')!;
+    const copyBtn = document.getElementById('flamesCopy') as HTMLButtonElement;
+
+    function normalize(name: string): string[] {
+      return name.toLowerCase().replace(/[^a-z]/g, '').split('');
+    }
+
+    function cancelCommonLetters(a: string[], b: string[]): { left1: string[]; left2: string[] } {
+      const left1 = [...a];
+      const left2 = [...b];
+      for (let i = left1.length - 1; i >= 0; i--) {
+        const idx = left2.indexOf(left1[i]);
+        if (idx !== -1) {
+          left1.splice(i, 1);
+          left2.splice(idx, 1);
+        }
+      }
+      return { left1, left2 };
+    }
+
+    function flamesLetter(count: number): string {
+      let letters = ['F', 'L', 'A', 'M', 'E', 'S'];
+      let start = 0;
+      while (letters.length > 1) {
+        const removeIndex = (start + count - 1) % letters.length;
+        letters.splice(removeIndex, 1);
+        start = removeIndex % letters.length;
+      }
+      return letters[0];
+    }
+
+    function calculate() {
+      hint.textContent = '';
+      const raw1 = name1Input.value;
+      const raw2 = name2Input.value;
+
+      if (raw1.trim() === '' || raw2.trim() === '') {
+        resultLabel.textContent = 'Enter both names to see your result';
+        resultValue.textContent = '—';
+        countEl.textContent = '';
+        return;
+      }
+
+      const letters1 = normalize(raw1);
+      const letters2 = normalize(raw2);
+
+      if (letters1.length === 0 || letters2.length === 0) {
+        hint.textContent = 'Enter names using letters.';
+        resultLabel.textContent = 'Enter both names to see your result';
+        resultValue.textContent = '—';
+        countEl.textContent = '';
+        return;
+      }
+
+      const { left1, left2 } = cancelCommonLetters(letters1, letters2);
+      const count = left1.length + left2.length;
+
+      if (count === 0) {
+        resultValue.textContent = 'Soulmates';
+        resultLabel.textContent = 'Every letter cancelled out — a rare perfect match!';
+        countEl.textContent = '';
+        return;
+      }
+
+      const letter = flamesLetter(count);
+      resultValue.textContent = `${letter} — ${MEANINGS[letter]}`;
+      resultLabel.textContent = `${count} leftover letters`;
+      countEl.textContent = `Counted ${count} letters around F-L-A-M-E-S to land on ${letter}.`;
+    }
+
+    name1Input.addEventListener('input', calculate);
+    name2Input.addEventListener('input', calculate);
+
+    copyBtn.addEventListener('click', async () => {
+      const value = resultValue.textContent ?? '';
+      if (!value || value === '—') return;
+      try {
+        await navigator.clipboard.writeText(value);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => (copyBtn.textContent = 'Copy result'), 1500);
+      } catch {
+        // Clipboard API unavailable; silently ignore.
+      }
+    });
+
+    calculate();
+  }
+</script>
