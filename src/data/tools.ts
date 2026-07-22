@@ -1572,29 +1572,29 @@ export const tools: Tool[] = [
   },
 
   // ---------------------------------------------------------------------
-  // Cluster 3 (extension) — Image compression, grouped under Developer
-  // Tools since it's the same "client-side file utility" pattern as the
-  // XML/YAML/JSON converters, UUID generator, etc.
+  // Cluster 7 — Image Tools. Each target size gets its own dedicated page
+  // (content sourced from the compress-image-to-*.md files) instead of one
+  // shared multi-option tool, so each URL matches an exact search query.
   // ---------------------------------------------------------------------
   {
     slug: 'compress-image-to-kb',
     title: 'Compress Image to KB',
-    cluster: 'developer',
-    h1: 'Compress Image to KB – Reduce Photo Size to 50KB, 200KB or Any Target',
-    metaTitle: 'Compress Image to KB – 50KB, 200KB & Custom Sizes',
+    cluster: 'image',
+    h1: 'Compress Image to KB – Enter Any Exact Size You Need',
+    metaTitle: 'Compress Image to Any KB Size – Custom Image Compressor',
     metaDescription:
-      'Free image compressor. Reduce photo size in KB to 50KB, 200KB, 1MB or any custom target for job portals, government forms and exam uploads. JPG, PNG & WebP.',
+      'Free custom image compressor. Enter any exact size from 1KB up — no presets, no guessing. Fast, private, runs entirely in your browser. JPG, PNG & WebP.',
     primaryKeyword: 'compress image to kb',
-    keywords: ['compress image to kb', 'image compressor', 'reduce image size in kb', 'compress photo to 50kb', 'compress image to 200kb'],
+    keywords: ['compress image to kb', 'custom image size compressor', 'compress image to any kb', 'reduce image size in kb'],
     intro:
-      'Upload any image, pick a target — 50KB, 200KB, 1MB, or your own custom number — and download a compressed version that fits, entirely in your browser.',
+      'Upload any image and type the exact KB size your form needs — from 1KB up to whatever you want. No presets, no guessing, just your number, and it\'s fast because everything runs right here in your browser.',
     component: 'CompressImageToKb',
     howToUse: [],
     howItWorks: '',
     faqs: [
       {
-        q: 'How do I compress an image to 50KB?',
-        a: 'Upload your image, select the 50KB preset (or enter 50 in the custom field), and download the result. The tool finds the highest quality that fits under 50KB automatically.',
+        q: 'How do I compress an image to an exact KB size?',
+        a: 'Upload your image, type the exact number of KB you need in the box, and download the result. The tool finds the highest quality that fits under your target automatically.',
       },
       {
         q: 'Can I compress an image without losing quality?',
@@ -1602,7 +1602,7 @@ export const tools: Tool[] = [
       },
       {
         q: 'How do I reduce photo size in KB for a government form?',
-        a: "Check the form's exact limit, enter it as your custom target, and compress. If the form also specifies pixel dimensions, resize to those dimensions first for the best quality at that file size.",
+        a: "Check the form's exact limit, enter it as your target, and compress. If the form also specifies pixel dimensions, resize to those dimensions first for the best quality at that file size.",
       },
       {
         q: 'Why is my image still too large after compressing?',
@@ -1617,19 +1617,19 @@ export const tools: Tool[] = [
         a: "Only if it needs to. The tool reduces quality first, and scales dimensions only when quality reduction alone can't reach your target.",
       },
     ],
-    related: ['uuid-generator', 'slug-generator', 'sitemap-validator'],
+    related: ['reduce-photo-size-in-kb', 'compress-image-to-50kb', 'compress-image-to-200kb'],
     status: 'live',
     icon: 'code',
-    group: 'Images',
+    group: 'Compressors',
     popular: true,
     articleHtml: `
       <p>The upload button rejects you. "File must be under 50KB." Your photo is 4MB straight off a
       phone camera, the form won't budge, and the application deadline is tonight. It's a small
       technical wall standing between you and a job portal, an exam registration, a visa form, or a
       college admission — and there's no obvious way over it.</p>
-      <p>This image compressor gets you past it in seconds. Pick a target — 50KB, 200KB, 1MB — or
-      type in the exact size the form demands, and the tool shrinks your photo to fit while keeping
-      it as sharp as the limit allows. No signup, no watermark, no guessing at quality sliders until
+      <p>This image compressor gets you past it in seconds. Type in the exact size your form
+      demands — anything from 1KB up — and the tool shrinks your photo to fit while keeping it as
+      sharp as the limit allows. No signup, no watermark, no guessing at quality sliders until
       something finally works.</p>
 
       <h2>What Does "Compress Image to KB" Mean?</h2>
@@ -1643,10 +1643,19 @@ export const tools: Tool[] = [
       <h3>Step-by-step</h3>
       <ol>
         <li>Upload your image, or drag and drop it into the box above (JPG, JPEG, PNG, and WebP are supported).</li>
-        <li>Choose your target size — a preset (50KB, 200KB, 1MB) or select "Custom" and type any size you need.</li>
+        <li>Type the exact size you need in KB — anything from 1KB upward, whatever your form demands.</li>
         <li>The tool compresses your image to fit the target and shows you the before and after size.</li>
         <li>Download your compressed image, ready to upload wherever it's needed.</li>
       </ol>
+      <p>Looking for a common preset instead of typing a number? Try the
+      <a href="/image/reduce-photo-size-in-kb/">general compressor</a> with 50KB, 200KB and 1000KB
+      presets, or one of the dedicated pages for
+      <a href="/image/compress-image-to-20kb/">20KB</a>,
+      <a href="/image/compress-image-to-50kb/">50KB</a>,
+      <a href="/image/compress-image-to-100kb/">100KB</a>,
+      <a href="/image/compress-image-to-200kb/">200KB</a>,
+      <a href="/image/compress-image-to-500kb/">500KB</a>, or
+      <a href="/image/compress-image-to-1mb/">1MB</a>.</p>
 
       <h2>The Compression Settings Behind It</h2>
       <p>Three things determine how small an image can get:</p>
@@ -1706,6 +1715,821 @@ export const tools: Tool[] = [
         <li><strong>Over-compressing when you don't need to.</strong> If the limit is 200KB, don't compress to 50KB — you're throwing away quality for nothing.</li>
         <li><strong>Compressing an already-compressed image repeatedly.</strong> Each pass discards more detail permanently. Always start from the original file.</li>
         <li><strong>Uploading sensitive ID documents to a tool you don't trust.</strong> Check how your file is handled before submitting passports, IDs, or certificates.</li>
+      </ul>
+    `,
+  },
+  {
+    slug: 'reduce-photo-size-in-kb',
+    title: 'Reduce Photo Size in KB',
+    cluster: 'image',
+    h1: 'Reduce Photo Size in KB – 50KB, 200KB, 1000KB or Custom',
+    metaTitle: 'Reduce Photo Size in KB – Free Online Compressor',
+    metaDescription:
+      'Reduce photo size in KB free — pick 50KB, 200KB, 1000KB or a custom target. Fast, private image compressor for job portals, exam forms and visa applications.',
+    primaryKeyword: 'reduce photo size in kb',
+    keywords: ['reduce photo size in kb', 'reduce image size in kb', 'photo size reducer', 'image compressor kb'],
+    intro:
+      'Upload your photo, pick 50KB, 200KB, 1000KB, or set a custom target, and download a resized version that fits — no signup, entirely in your browser.',
+    component: 'ReducePhotoSizeInKb',
+    howToUse: [],
+    howItWorks: '',
+    faqs: [
+      {
+        q: 'How do I reduce photo size in KB?',
+        a: 'Upload your photo, select a preset (50KB, 200KB, or 1000KB) or choose Custom and type any size, then download the result. The tool finds the highest quality that fits under your target automatically.',
+      },
+      {
+        q: 'What is the best KB size for a photo?',
+        a: '50KB is standard for exam and ID photos, 200KB works well for job portals and resumes, and 1000KB (1MB) is a safe, near-original-quality size for email and web use.',
+      },
+      {
+        q: 'Can I reduce a photo to an exact size my form requires?',
+        a: 'Yes — select "Custom" and enter the precise KB number your form specifies. The tool targets that exact size rather than a rounded preset.',
+      },
+      {
+        q: 'Does reducing photo size in KB blur the image?',
+        a: 'Only at very small targets on detailed photos. At 50KB and above, most portrait and document photos stay sharp at normal viewing sizes.',
+      },
+      {
+        q: 'Will reducing the KB size change my photo dimensions?',
+        a: 'Only if needed. The tool reduces quality first, and only scales pixel dimensions down when quality reduction alone cannot reach your target.',
+      },
+      {
+        q: 'Is this different from the custom KB compressor?',
+        a: 'Same underlying compression, different starting point — this page gives you quick presets for the most common targets, while the custom tool skips straight to typing your own exact number.',
+      },
+    ],
+    related: ['compress-image-to-kb', 'compress-image-to-50kb', 'compress-image-to-200kb'],
+    status: 'live',
+    icon: 'code',
+    group: 'Compressors',
+    popular: true,
+    articleHtml: `
+      <p>Every form has its own idea of "small enough." One portal wants 50KB, the next wants
+      200KB, and a third just says "under 1MB" and leaves you guessing. Rather than fighting a
+      quality slider for each one separately, pick the number and let the tool do the rest.</p>
+      <p>This is the general-purpose photo size reducer: choose a common preset — 50KB, 200KB, or
+      1000KB — or set your own custom target, and get a compressed photo that fits, with as much
+      quality kept as the limit allows.</p>
+
+      <h2>What Does "Reduce Photo Size in KB" Mean?</h2>
+      <p>Reducing a photo's size in kilobytes means shrinking its file size — how much data it
+      takes up on disk — down to a specific limit, while keeping the picture recognisable and
+      usable. It's not the same as resizing the photo's pixel dimensions, though the two are
+      related: sometimes shrinking the file size also means shrinking the dimensions, and
+      sometimes quality reduction alone is enough.</p>
+
+      <h2>How to Use the Photo Size Reducer</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Upload your photo, or drag and drop it into the box above (JPG, JPEG, PNG, and WebP supported).</li>
+        <li>Pick a preset — 50KB, 200KB, or 1000KB — or select Custom and type the exact size your form needs.</li>
+        <li>The tool compresses your photo to fit and reports the before and after size.</li>
+        <li>Download the result and upload it wherever it's needed.</li>
+      </ol>
+
+      <h2>Explanation — How It Works</h2>
+      <p>The tool searches for the highest quality that still fits your chosen target, rather than
+      applying one fixed setting. It compresses at a trial quality, measures the result, and
+      compares it to your target — lowering quality if the file is too big, raising it if there's
+      room to spare. By repeatedly halving the search range, it converges on the best fit quickly,
+      landing just under your target so no available quality goes to waste.</p>
+      <p>If quality reduction alone can't reach a very small target, the tool also scales down the
+      pixel dimensions, since a huge photo crushed to a tiny file size looks far worse than the
+      same photo resized first and then compressed lightly.</p>
+
+      <h2>Quick Reference</h2>
+      <table>
+        <thead>
+          <tr><th scope="col">Target</th><th scope="col">Typical Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>50 KB</td><td>Exam portals, ID photos, profile pictures</td></tr>
+          <tr><td>200 KB</td><td>Job portals, resumes, visa forms</td></tr>
+          <tr><td>1000 KB</td><td>Website images, email attachments</td></tr>
+          <tr><td>Custom</td><td>Any exact limit your form specifies</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Guessing instead of checking the exact limit.</strong> If your form states a precise number, use Custom rather than rounding to the nearest preset.</li>
+        <li><strong>Ignoring pixel dimension requirements.</strong> Many forms specify both a KB limit and exact dimensions — check both.</li>
+        <li><strong>Compressing a PNG photograph.</strong> Convert to JPEG first for a much smaller result at the same quality.</li>
+        <li><strong>Re-compressing an already-compressed file.</strong> Each pass discards more detail permanently — always start from the original.</li>
+      </ul>
+    `,
+  },
+  {
+    slug: 'compress-image-to-20kb',
+    title: 'Compress Image to 20KB',
+    cluster: 'image',
+    h1: 'Compress Image to 20KB – The Strictest Upload Limit, Solved',
+    metaTitle: 'Compress Image to 20KB – Free Signature & Photo Tool',
+    metaDescription:
+      'Compress image to 20KB free for SSC, IBPS, Railway and NEET signature uploads. Reduce photo size to 20KB instantly — JPG, PNG & WebP, no signup.',
+    primaryKeyword: 'compress image to 20kb',
+    keywords: ['compress image to 20kb', 'compress signature to 20kb', 'reduce signature size to 20kb', 'image compressor 20kb'],
+    intro:
+      'Upload your signature or photo and this tool compresses it to 20KB or below in one step — the tightest exam-portal limit, handled automatically.',
+    component: 'CompressImageTo20Kb',
+    howToUse: [],
+    howItWorks: '',
+    faqs: [
+      {
+        q: 'How do I compress an image to 20KB?',
+        a: 'Upload the image, select the 20KB target, and download the result. The tool reduces quality and, where needed, pixel dimensions to fit under 20KB automatically.',
+      },
+      {
+        q: 'Why do exam forms require signatures under 20KB?',
+        a: 'Recruitment bodies like SSC and IBPS process millions of uploads per cycle. Small, uniform file sizes keep their databases and verification systems manageable.',
+      },
+      {
+        q: 'Will my image look bad at 20KB?',
+        a: 'A signature or simple graphic will stay perfectly clear. A detailed photograph will show visible softening — 20KB is a very demanding target for photographic content.',
+      },
+      {
+        q: 'My file is still above 20KB after compressing. What now?',
+        a: 'Crop tighter and reduce the pixel dimensions, then compress again. Dimension reduction is far more effective than quality reduction at this size.',
+      },
+      {
+        q: 'What format should I use for a 20KB signature?',
+        a: "JPEG. It compresses high-contrast images like signatures efficiently, and it's the format most Indian exam portals require.",
+      },
+    ],
+    related: ['compress-image-to-50kb', 'compress-image-to-100kb', 'compress-image-to-200kb', 'compress-image-to-kb'],
+    status: 'live',
+    icon: 'code',
+    group: 'By target size',
+    articleHtml: `
+      <p>A 20KB limit is the one that breaks people. You've already compressed the file twice,
+      it's still 60KB, and the form keeps rejecting it. This is almost always a signature upload —
+      and signature limits are the tightest in the entire application process, stricter than the
+      photo limits everybody worries about.</p>
+      <p>This tool compresses your image to 20KB or below in one step. Drop the file, and download
+      something the portal will actually accept — without the trial-and-error loop of guessing at
+      quality sliders.</p>
+
+      <h2>Who Requires a 20KB Image?</h2>
+      <p>20KB is almost exclusively a <strong>signature</strong> requirement, and it's where most
+      rejections happen because candidates focus on the photo and forget the signature entirely.</p>
+      <ul>
+        <li><strong>SSC (CGL, CHSL, MTS, GD)</strong> — signature must be 10KB to 20KB, at 4.0 cm × 2.0 cm</li>
+        <li><strong>Railway RRB (NTPC, Group D)</strong> — signature 10KB to 20KB</li>
+        <li><strong>IBPS and SBI banking exams</strong> — signature 10KB to 20KB</li>
+        <li><strong>UPPSC and several state PSCs</strong> — signature 10KB to 30KB</li>
+        <li><strong>NEET (NTA)</strong> — signature as small as 4KB to 30KB</li>
+        <li><strong>Website thumbnails and icons</strong> — where every kilobyte affects page load</li>
+      </ul>
+      <p>The pattern is consistent: a phone photo of a signature comes out at 2–5MB, and it needs
+      to end up under 20KB. That's a reduction of more than 100:1.</p>
+
+      <h2>How to Use the Compressor</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Upload your signature or image (JPG, JPEG, PNG, and WebP supported).</li>
+        <li>The tool compresses to fit 20KB automatically and shows the before and after size.</li>
+        <li>Download and upload it to your form.</li>
+      </ol>
+
+      <h2>Explanation — How It Works</h2>
+      <p>At 20KB, the tool has to work harder than at any other target, and understanding why
+      helps you get a usable result.</p>
+      <p>The compressor starts by testing a quality level, measuring the output size, and
+      comparing it to 20KB. Too big, it lowers quality and retries; comfortably under, it raises
+      quality to recover detail. It narrows the range repeatedly until it finds the highest
+      quality that still fits — so the output lands just below 20KB, not far beneath it, because
+      every spare kilobyte is spent on clarity.</p>
+      <p>But here's the part that matters at this specific target: <strong>quality reduction alone
+      usually isn't enough</strong>. A 3000-pixel-wide photo simply contains too much data to
+      squeeze into 20KB without turning into a blocky mess. So the tool also reduces pixel
+      dimensions. This is not a compromise — it's the correct approach. A signature scaled to
+      around 240 × 80 pixels and compressed lightly looks dramatically better at 20KB than the
+      same signature left at full resolution and crushed by aggressive compression. Same file
+      size, completely different result.</p>
+      <p>That's why 20KB works fine for signatures and thumbnails but poorly for detailed
+      photographs. A signature is black ink on white paper — very little information to store. A
+      landscape photo at 20KB will visibly fall apart.</p>
+
+      <h2>Worked Example</h2>
+      <p>You photograph your signature with your phone. The file is 3.2MB at 4000 × 3000 pixels.</p>
+      <p>The tool crops to the signature area, scales it down to roughly 240 × 80 pixels, and
+      compresses at high quality — landing around 15–19KB. Because a signature is high-contrast
+      black on white, it stays crisp and perfectly legible.</p>
+      <p>Now try the same target with a detailed group photograph. Even after scaling, 20KB forces
+      heavy compression: faces soften, edges blur, and colour banding appears. The tool will still
+      hit the target, but the honest answer is that 20KB isn't meant for images like that.</p>
+
+      <h2>Getting a Clean Signature at 20KB</h2>
+      <ul>
+        <li>Sign on plain white paper with a <strong>blue or black ink pen</strong> — not pencil, not a gel pen that bleeds.</li>
+        <li>Photograph or scan in <strong>even lighting</strong>, with no shadow across the paper.</li>
+        <li><strong>Crop tightly</strong> to the signature before compressing. Empty white space wastes your kilobyte budget.</li>
+        <li>Check the required <strong>dimensions</strong> too — most portals specify pixels as well as KB.</li>
+      </ul>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Forgetting the signature entirely.</strong> Most candidates compress the photo perfectly and get rejected on the signature file.</li>
+        <li><strong>Compressing without cropping first.</strong> A tight crop is the single biggest quality win at this target.</li>
+        <li><strong>Using PNG for a signature photo.</strong> Convert to JPEG — it reaches small targets far more efficiently.</li>
+        <li><strong>Expecting a detailed photo to survive 20KB.</strong> If your form allows 50KB or 100KB, use that instead.</li>
+        <li><strong>Re-compressing an already-compressed file.</strong> Each pass permanently discards detail. Start from the original.</li>
+      </ul>
+    `,
+  },
+  {
+    slug: 'compress-image-to-50kb',
+    title: 'Compress Image to 50KB',
+    cluster: 'image',
+    h1: 'Compress Image to 50KB – The Government Exam Photo Standard',
+    metaTitle: 'Compress Image to 50KB – Free Exam Photo Compressor',
+    metaDescription:
+      'Compress image to 50KB free for SSC, Railway, IBPS and state PSC exam forms. Reduce photo size to 50KB instantly with correct dimensions — JPG, PNG, no signup.',
+    primaryKeyword: 'compress image to 50kb',
+    keywords: ['compress image to 50kb', 'reduce photo to 50kb', 'compress photo to 50kb', 'image compressor 50kb'],
+    intro:
+      "Upload your photo and this tool compresses it to 50KB or below automatically — the standard exam-portal photo limit for SSC, Railway, IBPS and more.",
+    component: 'CompressImageTo50Kb',
+    howToUse: [],
+    howItWorks: '',
+    faqs: [
+      {
+        q: 'How do I compress a photo to 50KB?',
+        a: 'Upload your photo and download the result. The tool automatically finds the best quality that fits under 50KB, resizing dimensions if needed.',
+      },
+      {
+        q: 'Which exams require a 50KB photo?',
+        a: "SSC (CGL, CHSL, MTS, GD), Railway RRB, IBPS and SBI banking exams, and many state PSCs all specify a photo between 20KB and 50KB. Always check your exam's official notification.",
+      },
+      {
+        q: 'Will my photo still look clear at 50KB?',
+        a: 'Yes, for a passport-style portrait. A head-and-shoulders photo on a plain background compresses very well at this size and stays sharp enough for verification.',
+      },
+      {
+        q: "Does compressing to 50KB change my photo's dimensions?",
+        a: 'Only if it needs to. If your form specifies pixel dimensions as well, resize to those dimensions first, then compress for the best result.',
+      },
+      {
+        q: 'My photo is under 50KB but the form still rejects it. Why?',
+        a: "Check the other requirements — pixel dimensions, white background, JPEG format, and whether your exam requires a name and date stamp on the photo.",
+      },
+    ],
+    related: ['compress-image-to-20kb', 'compress-image-to-100kb', 'compress-image-to-200kb', 'compress-image-to-kb'],
+    status: 'live',
+    icon: 'code',
+    group: 'By target size',
+    popular: true,
+    articleHtml: `
+      <p>You've studied for months. The application form is the easy part — until the photo
+      upload rejects your file for the fourth time. "Photograph must be between 20KB and 50KB."
+      Your passport photo from the studio is 2MB, and the deadline is closing.</p>
+      <p>This is the single most common upload limit in Indian government recruitment, and it
+      rejects a startling number of otherwise-complete applications every cycle. This tool
+      compresses your photo to 50KB or below in seconds, so the form accepts it the first time.</p>
+
+      <h2>Who Requires a 50KB Image?</h2>
+      <p>50KB is the standard photograph limit across most major recruitment boards:</p>
+      <ul>
+        <li><strong>SSC (CGL, CHSL, MTS, GD)</strong> — photo 20KB to 50KB, at 3.5 cm × 4.5 cm, white background</li>
+        <li><strong>Railway RRB (NTPC, Group D)</strong> — photo 20KB to 50KB, 3.5 cm × 4.5 cm</li>
+        <li><strong>IBPS and SBI banking exams</strong> — photo 20KB to 50KB, around 200 × 230 pixels</li>
+        <li><strong>UPPSC and many state PSCs</strong> — photo 20KB to 50KB, around 180 × 216 pixels</li>
+        <li><strong>Job application portals</strong> — profile photos with tight caps</li>
+        <li><strong>E-commerce listings and email attachments</strong> where speed matters</li>
+      </ul>
+      <p>Note the pattern: these boards almost always specify <strong>both</strong> a file size
+      range <em>and</em> exact pixel dimensions. Meeting one without the other still gets you
+      rejected.</p>
+
+      <h2>How to Use the Compressor</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Upload your photograph (JPG, JPEG, PNG, and WebP supported).</li>
+        <li>The tool compresses to fit 50KB automatically.</li>
+        <li>Review the before and after size the tool reports.</li>
+        <li>Download your compressed photo and upload it to the form.</li>
+      </ol>
+
+      <h2>Explanation — How It Works</h2>
+      <p>The tool finds the highest possible quality that still fits under 50KB, rather than
+      crushing your photo blindly.</p>
+      <p>It compresses at a trial quality level, measures the result, and compares it to your
+      50KB target. Too large, it steps the quality down; comfortably under, it steps back up to
+      recover detail. It halves the search range repeatedly until it converges on the best fit —
+      which is why your output lands just under 50KB rather than far below it. Every spare
+      kilobyte goes into keeping your face sharp.</p>
+      <p>Where quality reduction alone can't reach the target, the tool scales the pixel
+      dimensions down too. For a passport-style photo this is genuinely helpful: a portrait
+      doesn't need to be 4000 pixels wide, and reducing it to something near the required
+      dimensions before compressing produces a noticeably cleaner 50KB file than heavy compression
+      at full resolution.</p>
+      <p>50KB is a comfortable target for a head-and-shoulders portrait. There's little background
+      detail to preserve, the subject is centred and evenly lit, and the compression artifacts
+      that would ruin a landscape photo simply don't show up on a plain white background. This is
+      why exam boards chose it.</p>
+
+      <h2>Worked Example</h2>
+      <p>Your studio passport photo is 2.4MB at 1800 × 2400 pixels. SSC requires 20–50KB at
+      roughly 275 × 354 pixels.</p>
+      <p>The tool scales the image to the required dimensions and compresses at high quality,
+      landing somewhere around 40–48KB. Because the photo is a well-lit portrait on a plain
+      background, the result stays sharp enough to pass the portal's automated face-detection
+      checks.</p>
+      <p>If you skipped the resize and compressed the full 1800 × 2400 image straight to 50KB,
+      you'd get visible blocking around the eyes and hairline — the same file size, a much worse
+      photo.</p>
+
+      <h2>Meeting the Full Specification</h2>
+      <p>File size is only one of three things these portals check:</p>
+      <ul>
+        <li><strong>Dimensions</strong> — usually 3.5 cm × 4.5 cm, or roughly 200 × 230 to 275 × 354 pixels.</li>
+        <li><strong>Background</strong> — plain white or very light off-white. Coloured backgrounds get rejected.</li>
+        <li><strong>Format</strong> — JPEG or JPG only, in most cases.</li>
+      </ul>
+      <p>Some boards also require your name and the date the photo was taken printed at the
+      bottom. Check your exam's notification before compressing.</p>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Hitting 50KB but ignoring pixel dimensions.</strong> Portals check both, and automated scripts reject mismatches instantly.</li>
+        <li><strong>Using a selfie.</strong> Front cameras distort facial proportions and often fail face-matching checks.</li>
+        <li><strong>Scanning a printed photo.</strong> Scanning introduces colour shifts and noise. Ask your studio for the digital file.</li>
+        <li><strong>Compressing a PNG instead of converting it.</strong> JPEG reaches 50KB far more efficiently for photographs.</li>
+        <li><strong>Compressing the same file repeatedly.</strong> Each pass permanently loses detail — always start from the original.</li>
+      </ul>
+    `,
+  },
+  {
+    slug: 'compress-image-to-100kb',
+    title: 'Compress Image to 100KB',
+    cluster: 'image',
+    h1: 'Compress Image to 100KB – The Safe Size That Fits Almost Everywhere',
+    metaTitle: 'Compress Image to 100KB – Free Online Compressor',
+    metaDescription:
+      'Compress image to 100KB free — the safe size for JEE, NEET, UPSC signatures, scholarship portals and document scans. Keeps text readable. JPG, PNG, no signup.',
+    primaryKeyword: 'compress image to 100kb',
+    keywords: ['compress image to 100kb', 'reduce photo to 100kb', 'compress document to 100kb', 'image compressor 100kb'],
+    intro:
+      'Upload your image and this tool compresses it to 100KB or below automatically — the safe size that fits nearly every exam and application portal.',
+    component: 'CompressImageTo100Kb',
+    howToUse: [],
+    howItWorks: '',
+    faqs: [
+      {
+        q: 'How do I compress an image to 100KB?',
+        a: 'Upload your image and download the result. The tool finds the highest quality that fits under 100KB automatically.',
+      },
+      {
+        q: 'Is 100KB good enough for exam forms?',
+        a: 'For most it is — NTA exams like NEET and JEE typically allow 10KB to 200KB, so 100KB sits safely inside. But SSC and Railway cap photos at 50KB, so check your specific notification.',
+      },
+      {
+        q: 'Will text stay readable at 100KB?',
+        a: 'Yes, in most cases. 100KB is generally the smallest target where scanned documents and certificates keep their text sharp enough to read and verify.',
+      },
+      {
+        q: 'Should I use 100KB or 200KB?',
+        a: 'Use the largest size your form allows. If the limit is 200KB, choose 200KB for better quality. Choose 100KB when you need one file that fits multiple different portals.',
+      },
+      {
+        q: 'Does compressing to 100KB reduce image dimensions?',
+        a: 'Usually not. At 100KB most images fit through quality adjustment alone, so the pixel dimensions stay intact.',
+      },
+    ],
+    related: ['compress-image-to-50kb', 'compress-image-to-200kb', 'compress-image-to-20kb', 'compress-image-to-kb'],
+    status: 'live',
+    icon: 'code',
+    group: 'By target size',
+    articleHtml: `
+      <p>You're filling out three application forms and each one states a different limit. One
+      says under 200KB, another 10KB–100KB, a third just says "keep it small." Rather than making
+      a separate file for every portal, there's a size that clears nearly all of them at once.</p>
+      <p>100KB is that size. It sits inside the accepted range of almost every major exam and
+      application portal, while staying large enough that your photo still looks properly sharp.
+      This tool compresses to 100KB in one step — one file, ready for whichever form you open
+      next.</p>
+
+      <h2>Who Requires a 100KB Image?</h2>
+      <p>100KB is rarely a hard <em>maximum</em> — it's more often the comfortable middle of a
+      wider allowed range, which is exactly what makes it useful:</p>
+      <ul>
+        <li><strong>JEE Main</strong> — signature 10KB to 100KB</li>
+        <li><strong>UPSC Civil Services</strong> — signature 20KB to 100KB</li>
+        <li><strong>Post Office GDS</strong> — signature 20KB to 100KB</li>
+        <li><strong>NEET, GATE, CUET (NTA exams)</strong> — photos typically 10KB to 200KB, so 100KB sits safely inside</li>
+        <li><strong>College admission and scholarship portals</strong> — commonly cap around 100KB</li>
+        <li><strong>Website standard images</strong> — under 150KB is the general guideline for body and inline images</li>
+        <li><strong>Document scans</strong> — certificates and mark sheets where text must stay readable</li>
+      </ul>
+      <p>If your form allows anywhere from 10KB to 200KB, 100KB is the sensible choice:
+      comfortably inside the limit, with quality to spare.</p>
+
+      <h2>How to Use the Compressor</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Upload your image (JPG, JPEG, PNG, and WebP supported).</li>
+        <li>The tool compresses to fit 100KB automatically.</li>
+        <li>Check the reported before and after size.</li>
+        <li>Download your compressed file.</li>
+      </ol>
+
+      <h2>Explanation — How It Works</h2>
+      <p>The compressor searches for the highest quality that still fits your target rather than
+      applying a fixed setting.</p>
+      <p>It compresses at a trial quality, measures the file size, and compares it to 100KB. If
+      the result is over, it lowers quality; if it's well under, it raises quality to recover
+      detail. By repeatedly halving the search range it converges quickly on the best fit, landing
+      just below 100KB so no quality is wasted.</p>
+      <p>100KB is where this process starts to get comfortable. At 20KB the tool is fighting
+      physics and usually has to shrink dimensions aggressively. At 100KB, most portrait photos
+      and document scans fit through quality adjustment alone, with dimensions left intact. That's
+      a meaningful difference for anything containing text — a scanned certificate or mark sheet
+      stays readable at 100KB where it would blur badly at 20KB or 50KB.</p>
+      <p>For images with fine text or thin lines, this is the smallest target you should generally
+      aim for. Below it, the compression artifacts start landing directly on the strokes of
+      letters.</p>
+
+      <h2>Worked Example</h2>
+      <p>You have a scanned mark sheet at 3.1MB that a scholarship portal wants under 100KB.</p>
+      <p>The tool compresses at descending quality levels until the file fits — typically landing
+      around 92–98KB without touching the dimensions. Because the scan keeps its full pixel width,
+      the printed text stays sharp and legible, which matters when a human reviewer or an OCR
+      scanner has to read it.</p>
+      <p>Push that same scan to 20KB and the text would soften to the point of being hard to
+      verify. Same document, same tool — the target is what decides the outcome.</p>
+
+      <h2>Why 100KB Is the Practical Default</h2>
+      <ul>
+        <li><strong>It fits almost every range.</strong> Most portals that specify a range include 100KB inside it.</li>
+        <li><strong>Text stays readable.</strong> Critical for certificates, mark sheets, and ID documents.</li>
+        <li><strong>One file, many forms.</strong> Save yourself from maintaining a separate version per portal.</li>
+        <li><strong>Fast enough for web.</strong> Comfortably within page-speed guidelines for standard images.</li>
+      </ul>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Assuming 100KB clears every form.</strong> Some boards, like SSC and Railway, cap photos at 50KB. Always check the stated limit.</li>
+        <li><strong>Over-compressing when you have room.</strong> If the form allows 200KB, using it gives a better-looking file.</li>
+        <li><strong>Compressing text documents as PNG.</strong> For scans, JPEG at 100KB usually beats a heavily reduced PNG.</li>
+        <li><strong>Ignoring pixel dimension rules.</strong> Many portals specify dimensions alongside file size.</li>
+        <li><strong>Re-compressing an already-compressed file.</strong> Each pass loses detail permanently.</li>
+      </ul>
+    `,
+  },
+  {
+    slug: 'compress-image-to-200kb',
+    title: 'Compress Image to 200KB',
+    cluster: 'image',
+    h1: 'Compress Image to 200KB – For Job Portals, Resumes and Visa Forms',
+    metaTitle: 'Compress Image to 200KB – JPEG & Photo Compressor',
+    metaDescription:
+      'Compress image or JPEG to 200KB free for job portals, LinkedIn, UPSC, NEET and visa forms. Keeps photos sharp and professional. No signup, no watermark.',
+    primaryKeyword: 'compress image to 200kb',
+    keywords: ['compress image to 200kb', 'compress jpeg to 200kb', 'reduce photo to 200kb', 'image compressor 200kb'],
+    intro:
+      'Upload your photo and this tool compresses it to 200KB or below automatically — the professional standard for job portals, LinkedIn, and visa forms.',
+    component: 'CompressImageTo200Kb',
+    howToUse: [],
+    howItWorks: '',
+    faqs: [
+      {
+        q: 'How do I compress a JPEG to 200KB?',
+        a: 'Upload the JPEG and download the result. The tool finds the highest quality that fits under 200KB automatically.',
+      },
+      {
+        q: 'Will my photo lose quality at 200KB?',
+        a: "Barely any that you'd notice. At normal screen viewing sizes, a 200KB photo looks essentially identical to the original — this is the size where compression stops being visible.",
+      },
+      {
+        q: 'Which sites require images under 200KB?',
+        a: 'Job portals like Naukri, LinkedIn profile uploads, UPSC and NEET application forms, visa portals, and banking KYC uploads commonly use a 200KB limit.',
+      },
+      {
+        q: 'Is 200KB good enough for a professional profile photo?',
+        a: "Yes. 200KB keeps a headshot sharp and professional-looking on every device, and pre-compressing gives you better results than letting the platform do it.",
+      },
+      {
+        q: 'Should I compress to 200KB for my website images?',
+        a: "It's a good guideline for blog and content images. Hero and full-width images can go up to around 500KB if your site uses lazy loading and a CDN.",
+      },
+    ],
+    related: ['compress-image-to-100kb', 'compress-image-to-500kb', 'compress-image-to-50kb', 'compress-image-to-kb'],
+    status: 'live',
+    icon: 'code',
+    group: 'By target size',
+    popular: true,
+    articleHtml: `
+      <p>You're applying for a job, not entering a photo contest — but the profile picture still
+      has to clear the portal's 200KB cap, and the shot you actually look professional in is 4MB.
+      Compress it wrong and you show up to recruiters as a blurry, pixelated thumbnail.</p>
+      <p>200KB is the size where you don't have to make that trade-off. It's generous enough that
+      a good photo still looks like a good photo, and it's the most common professional upload
+      limit on the internet. This tool hits it precisely, keeping as much quality as the limit
+      allows.</p>
+
+      <h2>Who Requires a 200KB Image?</h2>
+      <p>200KB is the standard for professional and identity-related uploads:</p>
+      <ul>
+        <li><strong>Job portals</strong> — Naukri, Monster, and similar sites cap profile photos and resume attachments around 200KB</li>
+        <li><strong>LinkedIn and professional networks</strong> — profile images look sharper when you pre-optimise rather than letting the platform compress for you</li>
+        <li><strong>UPSC Civil Services</strong> — photograph 20KB to 200KB (some cycles allow up to 300KB)</li>
+        <li><strong>NEET (NTA)</strong> — passport photo and postcard photo, both 10KB to 200KB</li>
+        <li><strong>Visa and passport applications</strong> — many consular portals cap supporting images at 200KB</li>
+        <li><strong>Banking and financial forms</strong> — KYC document uploads</li>
+        <li><strong>Website blog images</strong> — under 200KB is the standard page-speed guideline for post images</li>
+      </ul>
+      <p>If you search "compress jpeg to 200kb," this is the same thing — JPEG is simply the
+      format most of these portals require, and it's what the tool outputs by default for
+      photographs.</p>
+
+      <h2>How to Use the Compressor</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Upload your image (JPG, JPEG, PNG, and WebP supported).</li>
+        <li>The tool compresses to fit 200KB automatically.</li>
+        <li>Compare the before and after size the tool reports.</li>
+        <li>Download and upload to your portal.</li>
+      </ol>
+
+      <h2>Explanation — How It Works</h2>
+      <p>Rather than applying a fixed compression setting, the tool searches for the best one.</p>
+      <p>It compresses at a trial quality level, measures the resulting file, and compares it
+      against 200KB. If the file overshoots, quality drops; if it lands well under, quality rises
+      to reclaim detail. The search range halves each round until it converges on the highest
+      quality that fits — which is why your output sits just below 200KB rather than far beneath
+      it.</p>
+      <p>200KB is where compression stops being a compromise. A typical 4MB smartphone photo
+      reduced to 200KB is roughly a 20:1 reduction, which sounds drastic but produces a file that
+      remains visually sharp at any normal viewing size. The data being discarded is detail your
+      eye doesn't register on a screen — subtle gradations in areas of similar colour, and
+      precision in the highest-frequency textures. For a headshot, a document photo, or a web
+      image, none of that is missed.</p>
+      <p>This is also why pre-compressing for social platforms is worth doing. LinkedIn and
+      Facebook re-compress whatever you upload. Giving them a clean, already-optimised 200KB file
+      generally produces a better final result than handing them a 4MB original and letting their
+      algorithm decide.</p>
+
+      <h2>Worked Example</h2>
+      <p>Your professional headshot is 4.2MB at 4000 × 3000 pixels, and the job portal caps
+      uploads at 200KB.</p>
+      <p>The tool searches down the quality scale, typically settling somewhere in the 60–75%
+      range, and scales the dimensions closer to 1200px wide. The output lands around 185–198KB.
+      On screen — which is the only place a recruiter will ever see it — it looks essentially
+      identical to the original.</p>
+      <p>Compare that with pushing the same photo to 20KB: fine texture disappears, edges blur,
+      and it reads as a low-effort upload. Same photo, same tool, very different impression.</p>
+
+      <h2>Why 200KB Is the Professional Sweet Spot</h2>
+      <ul>
+        <li><strong>Quality holds up.</strong> Faces stay sharp, colours stay natural.</li>
+        <li><strong>It clears most professional caps.</strong> Job portals, LinkedIn, visa forms, banking KYC.</li>
+        <li><strong>It loads fast.</strong> Well within web performance guidelines for content images.</li>
+        <li><strong>You control the compression.</strong> Better than letting a social platform re-encode your original.</li>
+      </ul>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Compressing far below the limit.</strong> If 200KB is allowed, don't submit 50KB. You're discarding quality for nothing.</li>
+        <li><strong>Uploading the raw original to social platforms.</strong> They'll re-compress it anyway, often worse than you would.</li>
+        <li><strong>Ignoring dimension requirements.</strong> Visa and exam portals frequently specify pixels alongside file size.</li>
+        <li><strong>Using PNG for a photograph.</strong> JPEG reaches 200KB with noticeably better quality for photographic content.</li>
+        <li><strong>Compressing repeatedly.</strong> Always start from the original file, not a previously compressed version.</li>
+      </ul>
+    `,
+  },
+  {
+    slug: 'compress-image-to-500kb',
+    title: 'Compress Image to 500KB',
+    cluster: 'image',
+    h1: 'Compress Image to 500KB – The Safe Size for Email and Web Images',
+    metaTitle: 'Compress Image to 500KB – Free Email & Web Compressor',
+    metaDescription:
+      'Compress image to 500KB free — the safe size for email attachments, website hero images and WordPress uploads. Clears every mail server. JPG, PNG, WebP.',
+    primaryKeyword: 'compress image to 500kb',
+    keywords: ['compress image to 500kb', 'reduce image to 500kb', 'compress photo for email', 'image compressor 500kb'],
+    intro:
+      'Upload your image and this tool compresses it to 500KB or below automatically — the safe ceiling for email attachments and website images.',
+    component: 'CompressImageTo500Kb',
+    howToUse: [],
+    howItWorks: '',
+    faqs: [
+      {
+        q: 'How do I compress an image to 500KB?',
+        a: 'Upload your image and download the result. The tool finds the highest quality that fits under 500KB, resizing dimensions where that gives a better outcome.',
+      },
+      {
+        q: 'Is 500KB small enough for email?',
+        a: 'Yes. 500KB per image clears virtually every mail server, including strict corporate and government systems that reject far smaller messages than personal accounts do.',
+      },
+      {
+        q: 'What size should website images be?',
+        a: 'Under 500KB is the common guideline for hero and full-width images, and under 200KB for standard content images. Resizing to your actual display width matters as much as compression.',
+      },
+      {
+        q: 'Will 500KB affect my image quality?',
+        a: 'Not noticeably. At 500KB a properly resized photo looks essentially identical to the original on any screen.',
+      },
+      {
+        q: 'Should I resize or compress for my website?',
+        a: 'Both, in that order. Resize to the width your site actually displays, then compress. Resizing first preserves much more quality at the same file size.',
+      },
+    ],
+    related: ['compress-image-to-200kb', 'compress-image-to-1mb', 'compress-image-to-100kb', 'compress-image-to-kb'],
+    status: 'live',
+    icon: 'code',
+    group: 'By target size',
+    articleHtml: `
+      <p>You attached the photos, hit send, and the email vanished. No bounce, no error — it just
+      never arrived. Or your website looks beautiful and loads like it's 2009, and the page speed
+      report is blaming your images.</p>
+      <p>Both problems share a fix. 500KB is the practical ceiling for images that need to travel
+      reliably: small enough to clear every mail server and keep pages fast, large enough that
+      nobody can tell you compressed anything. This tool hits it in one step.</p>
+
+      <h2>Who Needs Images Under 500KB?</h2>
+      <p>500KB is less about strict portal limits and more about things working reliably:</p>
+      <ul>
+        <li><strong>Corporate and government email</strong> — the caps that actually matter are far lower than Gmail's advertised 25MB. Many company and agency mail servers reject anything over 2–5MB per message, and you won't know until it silently fails.</li>
+        <li><strong>Website hero and header images</strong> — the general guideline is to keep full-width images under 500KB</li>
+        <li><strong>WordPress and Wix uploads</strong> — standard practice for large display images, especially with lazy loading and a CDN in place</li>
+        <li><strong>Portfolio and gallery pages</strong> — where several large images load on one page</li>
+        <li><strong>Client deliverables and reports</strong> — images embedded in documents or PDFs</li>
+        <li><strong>Newsletters and email marketing</strong> — where recipients on slow connections still need it to load</li>
+      </ul>
+      <p>The rule of thumb for email: if you're writing to anyone at a company or a government
+      agency, assume their limit is much stricter than yours. 500KB clears essentially every mail
+      server without question.</p>
+
+      <h2>How to Use the Compressor</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Upload your image, or several at once (JPG, JPEG, PNG, and WebP supported).</li>
+        <li>The tool compresses to fit 500KB automatically.</li>
+        <li>Review the reported size reduction.</li>
+        <li>Download and attach, or upload to your site.</li>
+      </ol>
+
+      <h2>Explanation — How It Works</h2>
+      <p>The tool searches for the highest quality that fits your target rather than guessing at a
+      setting.</p>
+      <p>It compresses at a trial quality, measures the output, and compares it to 500KB. Over the
+      limit, quality steps down; well under it, quality steps back up. The range halves each round
+      until it settles on the best fit just below your target — spending every available kilobyte
+      on image quality rather than leaving it unused.</p>
+      <p>At 500KB, something worth understanding happens: <strong>dimensions matter more than
+      quality</strong>. A 6000-pixel-wide photo from a DSLR contains enormous amounts of data, and
+      squeezing it to 500KB by quality alone means heavy compression across a huge canvas. Scaling
+      that same photo to 1920 pixels wide — which is all any screen actually displays — often
+      drops it under 500KB with barely any quality reduction at all. The tool handles this
+      automatically, but it's the reason a properly resized image at 500KB can look better than a
+      full-resolution one at 1MB.</p>
+      <p>For web use specifically, this is the single biggest speed win available. Most sites are
+      slow because they serve 4000px images into a 1200px container.</p>
+
+      <h2>Worked Example</h2>
+      <p>You have five holiday photos, each around 5MB, to email to a colleague at a corporate
+      address.</p>
+      <p>At full size that's a 25MB message — over the limit on most corporate servers, so it
+      either bounces or disappears. Compressed to 500KB each, the total drops to about 2.5MB. It
+      sends instantly, arrives reliably, and on any screen the photos look no different from the
+      originals.</p>
+      <p>For a website hero image: a 1.1MB, 5184 × 3456 original scaled to 1920 × 1280 and
+      compressed lands comfortably under 500KB while staying visibly sharp across a full-width
+      banner.</p>
+
+      <h2>Why 500KB Rather Than Larger</h2>
+      <ul>
+        <li><strong>Email actually arrives.</strong> Corporate and government servers reject far smaller messages than personal inboxes.</li>
+        <li><strong>Pages load fast.</strong> Google's page-speed scoring rewards it, and users on mobile data notice.</li>
+        <li><strong>Quality is genuinely unaffected.</strong> At normal viewing sizes there's no visible difference from the original.</li>
+        <li><strong>Multiple images per page or message.</strong> The saving compounds when you're sending or loading several.</li>
+      </ul>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Trusting the advertised email limit.</strong> Gmail says 25MB, but the recipient's server may cap at 2MB. Compress anyway.</li>
+        <li><strong>Uploading full-resolution photos to your site.</strong> A 4000px image in a 1200px container wastes bandwidth for zero visible benefit.</li>
+        <li><strong>Compressing without resizing first.</strong> At this target, reducing dimensions preserves far more quality than reducing quality alone.</li>
+        <li><strong>Using PNG for photographs.</strong> PNG files stay large; JPEG or WebP reach 500KB with better results.</li>
+        <li><strong>Forgetting metadata.</strong> Camera EXIF data adds size and can expose location information you may not want to share.</li>
+      </ul>
+    `,
+  },
+  {
+    slug: 'compress-image-to-1mb',
+    title: 'Compress Image to 1MB',
+    cluster: 'image',
+    h1: 'Compress Image to 1MB – Shrink Files While Keeping Full Quality',
+    metaTitle: 'Compress Image to 1MB – Free, No Visible Quality Loss',
+    metaDescription:
+      'Compress image to 1MB free while keeping full resolution and quality. Ideal for email, galleries, portfolios and cloud storage. JPG, PNG & WebP, no signup.',
+    primaryKeyword: 'compress image to 1mb',
+    keywords: ['compress image to 1mb', 'reduce image to 1mb', 'compress photo to 1mb', 'image compressor 1mb'],
+    intro:
+      'Upload your image and this tool compresses it to 1MB or below automatically, keeping full resolution — genuinely no visible quality loss.',
+    component: 'CompressImageTo1Mb',
+    howToUse: [],
+    howItWorks: '',
+    faqs: [
+      {
+        q: 'How do I compress an image to 1MB?',
+        a: 'Upload your image and download the result. The tool finds the highest quality that fits under 1MB, typically without changing your image dimensions.',
+      },
+      {
+        q: 'Will compressing to 1MB reduce my image quality?',
+        a: "Not visibly. At 1MB, JPEG compression discards only data the human eye can't perceive at normal viewing sizes, so the result looks identical to the original.",
+      },
+      {
+        q: 'Is 1MB small enough to email?',
+        a: 'For personal accounts like Gmail, Outlook, and Yahoo, yes — comfortably. If you\'re emailing a corporate or government address, compress to 500KB instead, since those servers often have much stricter limits.',
+      },
+      {
+        q: 'Does compressing to 1MB change my image dimensions?',
+        a: 'Usually not. At this target the file fits through quality adjustment alone, so your image stays at full resolution.',
+      },
+      {
+        q: 'Should I use 1MB or 500KB for my website?',
+        a: 'Use 500KB or less for most images. Reserve 1MB for prominent showcase or full-screen images, and only if your site uses lazy loading and a CDN.',
+      },
+    ],
+    related: ['compress-image-to-500kb', 'compress-image-to-200kb', 'compress-image-to-kb', 'reduce-photo-size-in-kb'],
+    status: 'live',
+    icon: 'code',
+    group: 'By target size',
+    articleHtml: `
+      <p>Sometimes the problem isn't a tiny upload cap — it's that your camera produces 8MB files
+      and something downstream can't cope. A form that stops at 1MB. A shared drive filling up. A
+      page with twenty photos on it. You need the file smaller, but this is a photo you actually
+      care about, and you don't want to visibly damage it.</p>
+      <p>1MB is the target where compression is effectively free. You get a file a fraction of its
+      original size with no visible quality loss whatsoever. This tool hits it in one step.</p>
+
+      <h2>When Do You Need 1MB?</h2>
+      <p>1MB is the "keep the quality" target, used where the constraint is real but not tight:</p>
+      <ul>
+        <li><strong>Personal email attachments</strong> — Gmail, Outlook, and Yahoo handle 1MB images comfortably, and you can send several per message</li>
+        <li><strong>Prominent website images</strong> — full-screen backgrounds and showcase photos where quality is the priority and a CDN handles delivery</li>
+        <li><strong>Application portals with generous caps</strong> — many university, immigration, and property forms allow up to 1MB or 2MB</li>
+        <li><strong>Photo galleries and portfolios</strong> — where the image is the product and detail matters</li>
+        <li><strong>Print-adjacent use</strong> — proofs and previews that need to survive being viewed large</li>
+        <li><strong>Cloud storage and shared drives</strong> — where thousands of untouched camera files quietly consume your quota</li>
+        <li><strong>Insurance and property claims</strong> — documentation photos where detail may need to be examined closely</li>
+      </ul>
+      <p>The common thread: you have room to work with, so there's no reason to sacrifice anything
+      visible.</p>
+
+      <h2>How to Use the Compressor</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Upload your image, or a batch (JPG, JPEG, PNG, and WebP supported).</li>
+        <li>The tool compresses to fit 1MB automatically.</li>
+        <li>Check the reported size reduction.</li>
+        <li>Download your compressed image.</li>
+      </ol>
+
+      <h2>Explanation — How It Works</h2>
+      <p>The tool finds the highest quality setting that still fits your target, rather than
+      applying one fixed level.</p>
+      <p>It compresses at a trial quality, measures the result, compares it to 1MB, and adjusts —
+      down if the file is too big, up if it's well under. Halving the search range each round, it
+      converges on the best fit and lands just below 1MB, so nothing is wasted.</p>
+      <p>At this target the search almost always terminates in the high-quality range. A typical
+      8MB camera photo reaching 1MB is an 8:1 reduction, which sounds significant but is well
+      within the range where JPEG discards only information the human eye cannot detect at normal
+      viewing distance — subtle variations within areas of similar colour, and precision in the
+      very finest textures. This is genuinely the compression sweet spot: substantial savings,
+      zero visible cost.</p>
+      <p>Because quality reduction alone gets there comfortably, the tool typically leaves your
+      pixel dimensions completely untouched at 1MB. Your image stays full resolution, so it can
+      still be viewed large, cropped, or zoomed without falling apart — which is exactly why you'd
+      choose this target over 200KB.</p>
+
+      <h2>Worked Example</h2>
+      <p>You have 40 photos from an event, averaging 8MB each — 320MB total, too much for a
+      shared drive folder or a series of emails.</p>
+      <p>Compressed to 1MB each, the set drops to 40MB: an 87% reduction. Open any single photo
+      side by side with its original at full screen and you won't reliably tell them apart. The
+      dimensions are unchanged, so they're still usable for anything from a slideshow to a large
+      print preview.</p>
+      <p>Compare that to compressing the same photos to 50KB. They'd fit anywhere, but they'd be
+      unusable for anything except thumbnails.</p>
+
+      <h2>Why Choose 1MB Over a Smaller Target</h2>
+      <ul>
+        <li><strong>Full resolution is preserved.</strong> Dimensions stay intact, so the image survives cropping and zooming.</li>
+        <li><strong>No visible quality cost.</strong> The discarded data genuinely isn't perceptible.</li>
+        <li><strong>Still a huge saving.</strong> An 8:1 or 10:1 reduction from a typical camera file.</li>
+        <li><strong>Right when the image is the point.</strong> Portfolios, galleries, claims documentation, and archives.</li>
+      </ul>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Skipping compression because the limit is generous.</strong> An 8MB photo serves no purpose over a 1MB one on screen — you're just wasting bandwidth and storage.</li>
+        <li><strong>Choosing 1MB when the form allows less.</strong> If the cap is 200KB, compressing to 1MB won't upload. Check the actual limit first.</li>
+        <li><strong>Using 1MB for standard website images.</strong> Too large for body content; under 200KB is the guideline there, with 1MB reserved for showcase images.</li>
+        <li><strong>Forgetting metadata.</strong> EXIF data adds file size and can embed GPS coordinates you may not want to publish.</li>
+        <li><strong>Keeping only the compressed copy.</strong> For photos you care about, archive the original before compressing.</li>
       </ul>
     `,
   },

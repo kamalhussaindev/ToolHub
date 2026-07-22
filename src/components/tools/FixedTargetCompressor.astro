@@ -1,9 +1,17 @@
 ---
 import Callout from '../Callout.astro';
 import AdSlot from '../AdSlot.astro';
+
+export interface Props {
+  targetKb: number;
+  targetLabel: string; // e.g. "20 KB" or "1 MB"
+  adSlot: string;
+}
+
+const { targetKb, targetLabel, adSlot } = Astro.props;
 ---
 
-<div class="calc-shell" id="compress-image-tool">
+<div class="calc-shell" id="fixed-target-tool" data-target-kb={targetKb} data-target-label={targetLabel}>
   <section class="calc-card">
     <div class="calc-block">
       <h2><span class="step">1</span>Upload your image</h2>
@@ -32,25 +40,18 @@ import AdSlot from '../AdSlot.astro';
     </div>
 
     <div class="calc-block">
-      <h2><span class="step">2</span>Exact target size</h2>
-      <div class="field">
-        <label for="customKb">Any size from 1KB up — you choose the exact number</label>
-        <div class="input-wrap radio-field__input" style="height:44px">
-          <input id="customKb" type="number" inputmode="numeric" min="1" step="1" value="200" placeholder="e.g. 150" aria-label="Target size in KB" />
-          <span class="input-suffix">KB</span>
-        </div>
-        <p class="field-hint" id="targetHint" role="alert" aria-live="polite"></p>
+      <h2><span class="step">2</span>Target size</h2>
+      <div class="target-badge">
+        This tool compresses straight to <b>{targetLabel}</b> or below — no other settings needed.
       </div>
     </div>
 
-    <button class="calc-cta" id="compressBtn" type="button" disabled>Compress image</button>
+    <button class="calc-cta" id="compressBtn" type="button" disabled>Compress to {targetLabel}</button>
 
     <Callout variant="info" title="Your image never leaves your device">
       <p>
         Compression runs entirely in your browser using the Canvas API — nothing is uploaded to a
-        server, which matters if you're compressing a passport photo, ID, or certificate. Enter
-        anything from 1KB to whatever your form demands; it's fast because there's no upload step
-        at all.
+        server, which matters if you're compressing a passport photo, ID, or certificate.
       </p>
     </Callout>
   </section>
@@ -68,7 +69,7 @@ import AdSlot from '../AdSlot.astro';
     <img id="resultPreview" class="result-preview" alt="Compressed image preview" hidden />
     <p class="result-note" id="resultNote"></p>
     <a class="calc-cta" id="downloadBtn" download="compressed.jpg" hidden>Download compressed image</a>
-    <AdSlot slot="compress-image-to-kb-sidebar" variant="sidebar" />
+    <AdSlot slot={adSlot} variant="sidebar" />
   </aside>
 </div>
 
@@ -137,17 +138,16 @@ import AdSlot from '../AdSlot.astro';
     font-size: 11.5px;
     color: var(--color-error, #dc2626);
   }
-  .radio-field__input {
-    position: relative;
+  .target-badge {
+    border: 1px solid var(--line-strong);
+    background: var(--brand-soft);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--ink);
   }
-  .input-suffix {
-    padding: 0 11px;
-    color: var(--muted);
-    font-size: 12px;
-    border-left: 1px solid var(--line);
-    height: 100%;
-    display: flex;
-    align-items: center;
+  .target-badge b {
+    color: var(--brand);
   }
   .calc-cta:disabled {
     opacity: 0.5;
@@ -173,8 +173,12 @@ import AdSlot from '../AdSlot.astro';
 <script>
   import { formatBytes, compressToTarget, isSupportedImage } from '../../lib/imageCompress';
 
-  const root = document.getElementById('compress-image-tool');
+  const root = document.getElementById('fixed-target-tool');
   if (root) {
+    const targetKb = parseFloat(root.dataset.targetKb ?? '200');
+    const targetLabel = root.dataset.targetLabel ?? `${targetKb} KB`;
+    const targetBytes = targetKb * 1024;
+
     const uploadZone = document.getElementById('uploadZone')!;
     const imageInput = document.getElementById('imageInput') as HTMLInputElement;
     const uploadEmpty = document.getElementById('uploadEmpty')!;
@@ -183,8 +187,6 @@ import AdSlot from '../AdSlot.astro';
     const previewName = document.getElementById('previewName')!;
     const previewSize = document.getElementById('previewSize')!;
     const uploadHint = document.getElementById('uploadHint')!;
-    const customKbInput = document.getElementById('customKb') as HTMLInputElement;
-    const targetHint = document.getElementById('targetHint')!;
     const compressBtn = document.getElementById('compressBtn') as HTMLButtonElement;
     const resultStatus = document.getElementById('resultStatus')!;
     const resultLabel = document.getElementById('resultLabel')!;
@@ -239,9 +241,6 @@ import AdSlot from '../AdSlot.astro';
       acceptFile(file);
     });
 
-    customKbInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && selectedFile) runCompression();
-    });
     compressBtn.addEventListener('click', () => runCompression());
 
     function resetResult() {
@@ -270,25 +269,17 @@ import AdSlot from '../AdSlot.astro';
 
     async function runCompression() {
       if (!selectedFile || isProcessing) return;
-      targetHint.textContent = '';
-      const targetKb = parseFloat(customKbInput.value);
-      if (!Number.isFinite(targetKb) || targetKb <= 0) {
-        targetHint.textContent = 'Enter a target size greater than 0.';
-        return;
-      }
-
-      const targetBytes = targetKb * 1024;
       isProcessing = true;
       compressBtn.disabled = true;
       resultStatus.textContent = 'Compressing…';
-      resultLabel.textContent = `Compressing to fit ${targetKb} KB…`;
+      resultLabel.textContent = `Compressing to fit ${targetLabel}…`;
 
       try {
         if (selectedFile.size <= targetBytes) {
           const url = URL.createObjectURL(selectedFile);
           showResult(selectedFile.size, selectedFile.size, url, true);
           resultStatus.textContent = 'Already small enough';
-          resultNote.textContent = `Your image is already under ${targetKb} KB — no compression needed.`;
+          resultNote.textContent = `Your image is already under ${targetLabel} — no compression needed.`;
         } else {
           const { blob, reachedTarget } = await compressToTarget(selectedFile, targetBytes);
           if (lastObjectUrl) URL.revokeObjectURL(lastObjectUrl);
@@ -298,7 +289,7 @@ import AdSlot from '../AdSlot.astro';
           resultStatus.textContent = reachedTarget ? 'Done' : 'Best effort';
           resultNote.textContent = reachedTarget
             ? ''
-            : `Couldn't fully reach ${targetKb} KB without shrinking the image too much — this is the smallest clean result we could produce.`;
+            : `Couldn't fully reach ${targetLabel} without shrinking the image too much — this is the smallest clean result we could produce.`;
         }
       } catch {
         resultStatus.textContent = 'Error';

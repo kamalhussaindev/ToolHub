@@ -113,6 +113,35 @@ export const clusters: Cluster[] = [
     icon: 'spark',
     order: 6,
   },
+  {
+    slug: 'image',
+    name: 'Image Tools',
+    tagline: 'Compress photos to an exact KB or MB target',
+    description:
+      'Shrink any photo to fit exam portals, job applications, visa forms, or email — pick an exact target and download instantly, entirely in your browser.',
+    color: '#e0863f',
+    soft: '#fdf1e7',
+    icon: 'code',
+    order: 7,
+    introHtml: `
+      <p>Upload forms rarely accept a photo the way your camera produces it. This cluster covers
+      every common size requirement in one place: dedicated tools for the exact limits that
+      <a href="/image/compress-image-to-20kb/">signature uploads</a>,
+      <a href="/image/compress-image-to-50kb/">exam photo portals</a>,
+      <a href="/image/compress-image-to-100kb/">scholarship and document scans</a>,
+      <a href="/image/compress-image-to-200kb/">job portals and visa forms</a>,
+      <a href="/image/compress-image-to-500kb/">email and website images</a>, and
+      <a href="/image/compress-image-to-1mb/">quality-preserving archives</a> actually ask for —
+      plus a <a href="/image/reduce-photo-size-in-kb/">general compressor</a> with adjustable
+      presets and a <a href="/image/compress-image-to-kb/">custom-size tool</a> for any exact
+      number your form demands.</p>
+      <p>Every tool compresses using the same binary-search method: it finds the highest JPEG
+      quality that still fits your target, and only reduces pixel dimensions when quality
+      reduction alone can't get there. Nothing is uploaded to a server — compression happens
+      entirely in your browser using the Canvas API, which matters if you're handling a passport
+      photo, ID, or signature.</p>
+    `,
+  },
 ];
 
 export function getCluster(slug: string): Cluster | undefined {
