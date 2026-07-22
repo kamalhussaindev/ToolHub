@@ -23,6 +23,7 @@ import AttendanceCalculator from '../../components/tools/AttendanceCalculator.as
 import DogAgeCalculator from '../../components/tools/DogAgeCalculator.astro';
 import FlamesCalculator from '../../components/tools/FlamesCalculator.astro';
 import AbvCalculator from '../../components/tools/AbvCalculator.astro';
+import CompressImageToKb from '../../components/tools/CompressImageToKb.astro';
 
 // Astro (vanilla) components, rendered with no client directive.
 const astroComponentMap = {
@@ -44,6 +45,7 @@ const astroComponentMap = {
   DogAgeCalculator,
   FlamesCalculator,
   AbvCalculator,
+  CompressImageToKb,
 } as const;
 
 // Preact islands — these are JS-heavy converters that need client:visible to

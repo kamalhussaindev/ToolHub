@@ -1570,6 +1570,145 @@ export const tools: Tool[] = [
       </ul>
     `,
   },
+
+  // ---------------------------------------------------------------------
+  // Cluster 3 (extension) — Image compression, grouped under Developer
+  // Tools since it's the same "client-side file utility" pattern as the
+  // XML/YAML/JSON converters, UUID generator, etc.
+  // ---------------------------------------------------------------------
+  {
+    slug: 'compress-image-to-kb',
+    title: 'Compress Image to KB',
+    cluster: 'developer',
+    h1: 'Compress Image to KB – Reduce Photo Size to 50KB, 200KB or Any Target',
+    metaTitle: 'Compress Image to KB – 50KB, 200KB & Custom Sizes',
+    metaDescription:
+      'Free image compressor. Reduce photo size in KB to 50KB, 200KB, 1MB or any custom target for job portals, government forms and exam uploads. JPG, PNG & WebP.',
+    primaryKeyword: 'compress image to kb',
+    keywords: ['compress image to kb', 'image compressor', 'reduce image size in kb', 'compress photo to 50kb', 'compress image to 200kb'],
+    intro:
+      'Upload any image, pick a target — 50KB, 200KB, 1MB, or your own custom number — and download a compressed version that fits, entirely in your browser.',
+    component: 'CompressImageToKb',
+    howToUse: [],
+    howItWorks: '',
+    faqs: [
+      {
+        q: 'How do I compress an image to 50KB?',
+        a: 'Upload your image, select the 50KB preset (or enter 50 in the custom field), and download the result. The tool finds the highest quality that fits under 50KB automatically.',
+      },
+      {
+        q: 'Can I compress an image without losing quality?',
+        a: 'Not entirely — reducing file size means discarding some data. But at moderate targets like 200KB, the loss is invisible at normal viewing sizes. Very small targets like 20KB will show visible softening on detailed photos.',
+      },
+      {
+        q: 'How do I reduce photo size in KB for a government form?',
+        a: "Check the form's exact limit, enter it as your custom target, and compress. If the form also specifies pixel dimensions, resize to those dimensions first for the best quality at that file size.",
+      },
+      {
+        q: 'Why is my image still too large after compressing?',
+        a: 'Usually the dimensions are too big for the target. Reduce the pixel width and height first, then compress again — this gives far better results than quality reduction alone.',
+      },
+      {
+        q: 'Which format is best for compressing to a small size?',
+        a: 'JPEG for photographs, since it compresses them most efficiently. Use PNG only when you need transparency or are working with graphics and text.',
+      },
+      {
+        q: 'Does compressing change my image dimensions?',
+        a: "Only if it needs to. The tool reduces quality first, and scales dimensions only when quality reduction alone can't reach your target.",
+      },
+    ],
+    related: ['uuid-generator', 'slug-generator', 'sitemap-validator'],
+    status: 'live',
+    icon: 'code',
+    group: 'Images',
+    popular: true,
+    articleHtml: `
+      <p>The upload button rejects you. "File must be under 50KB." Your photo is 4MB straight off a
+      phone camera, the form won't budge, and the application deadline is tonight. It's a small
+      technical wall standing between you and a job portal, an exam registration, a visa form, or a
+      college admission — and there's no obvious way over it.</p>
+      <p>This image compressor gets you past it in seconds. Pick a target — 50KB, 200KB, 1MB — or
+      type in the exact size the form demands, and the tool shrinks your photo to fit while keeping
+      it as sharp as the limit allows. No signup, no watermark, no guessing at quality sliders until
+      something finally works.</p>
+
+      <h2>What Does "Compress Image to KB" Mean?</h2>
+      <p>Compressing an image to a specific size in kilobytes means reducing the file's data
+      footprint until it fits under a required limit, while keeping the picture usable. The image
+      still looks like the same photo — what changes is how much detail and redundant data the file
+      stores internally. Portals set these limits so they can handle thousands of uploads without
+      running out of bandwidth or storage.</p>
+
+      <h2>How to Use the Image Compressor</h2>
+      <h3>Step-by-step</h3>
+      <ol>
+        <li>Upload your image, or drag and drop it into the box above (JPG, JPEG, PNG, and WebP are supported).</li>
+        <li>Choose your target size — a preset (50KB, 200KB, 1MB) or select "Custom" and type any size you need.</li>
+        <li>The tool compresses your image to fit the target and shows you the before and after size.</li>
+        <li>Download your compressed image, ready to upload wherever it's needed.</li>
+      </ol>
+
+      <h2>The Compression Settings Behind It</h2>
+      <p>Three things determine how small an image can get:</p>
+      <ul>
+        <li><strong>Quality level</strong> — how much fine detail the encoder keeps. Lower quality means a smaller file.</li>
+        <li><strong>Dimensions</strong> — the pixel width and height. A 4000px-wide photo carries far more data than an 800px one.</li>
+        <li><strong>Format</strong> — JPEG compresses photographs far more efficiently than PNG. PNG is better for graphics and transparency, but much larger for photos.</li>
+      </ul>
+
+      <h3>How it works</h3>
+      <p>Hitting an exact kilobyte target isn't a single calculation, and understanding the process
+      helps you get better results. When you set a target, the tool doesn't just pick one quality
+      setting and hope. It compresses your image at a given quality, measures the resulting file
+      size, and compares it to your target. If the file is still too big, it lowers the quality and
+      tries again; if it came out well under the limit, it raises the quality to recover detail. It
+      narrows in on the answer by repeatedly halving the search range — a binary search — until it
+      lands on the highest quality that still fits under your target. That's why the output is
+      usually just below your limit rather than far beneath it: the tool is deliberately spending
+      every available kilobyte on image quality.</p>
+      <p>If quality reduction alone can't reach the target, the tool reduces the pixel dimensions as
+      well. This matters more than most people realise. Compressing a huge photo to 20KB by quality
+      alone produces a blurry, blocky mess, whereas scaling it down to sensible dimensions first and
+      then compressing gives a much cleaner result at the same file size.</p>
+      <p>One honest caveat: no tool can shrink an image indefinitely without visible loss. A 20KB
+      target on a detailed, high-resolution photograph will show artifacts — that's physics, not a
+      flaw in the tool. If the result looks poor, reduce the dimensions before compressing, or ask
+      whether the form really needs that size.</p>
+
+      <h2>Worked Example</h2>
+      <p>Say you have a 4MB smartphone photo and a job portal that caps uploads at 200KB.</p>
+      <p>That's roughly a 20:1 reduction. The tool searches for the quality setting that lands just
+      under 200KB — typically somewhere in the 60–75% quality range for a photo that size — and if
+      needed scales the dimensions down from 4000px to something closer to 1200px wide. The result
+      stays visually sharp for a profile photo or form upload, because at normal viewing size the
+      discarded detail simply isn't visible.</p>
+      <p>Push the same photo to 20KB instead, and the difference becomes obvious: fine textures
+      soften and edges blur. Same tool, same method — the target is just far more demanding.</p>
+
+      <h2>Quick Reference Table</h2>
+      <table>
+        <thead>
+          <tr><th scope="col">Target Size</th><th scope="col">Typical Use</th><th scope="col">Expected Quality</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>20KB</td><td>Strict government forms, thumbnails</td><td>Noticeable softening on detailed photos</td></tr>
+          <tr><td>50KB</td><td>Exam portals, ID photos, profile pictures</td><td>Good for headshots and simple images</td></tr>
+          <tr><td>100KB</td><td>College admissions, document scans</td><td>Clear for most standard uses</td></tr>
+          <tr><td>200KB</td><td>Job portals, resumes, LinkedIn, visa forms</td><td>Sharp and professional</td></tr>
+          <tr><td>500KB–1MB</td><td>Website images, email attachments, reports</td><td>Near-original quality</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <ul>
+        <li><strong>Compressing a PNG photo instead of converting it.</strong> PNG is inefficient for photographs. Convert to JPEG first and hitting a small target becomes far easier with better results.</li>
+        <li><strong>Ignoring dimension limits.</strong> Many forms specify both a KB limit <em>and</em> pixel dimensions. Check for both before you upload.</li>
+        <li><strong>Over-compressing when you don't need to.</strong> If the limit is 200KB, don't compress to 50KB — you're throwing away quality for nothing.</li>
+        <li><strong>Compressing an already-compressed image repeatedly.</strong> Each pass discards more detail permanently. Always start from the original file.</li>
+        <li><strong>Uploading sensitive ID documents to a tool you don't trust.</strong> Check how your file is handled before submitting passports, IDs, or certificates.</li>
+      </ul>
+    `,
+  },
 ];
 
 export function getTool(slug: string): Tool | undefined {
