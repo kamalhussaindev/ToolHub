@@ -132,9 +132,8 @@ export const clusters: Cluster[] = [
       <a href="/image/compress-image-to-200kb/">job portals and visa forms</a>,
       <a href="/image/compress-image-to-500kb/">email and website images</a>, and
       <a href="/image/compress-image-to-1mb/">quality-preserving archives</a> actually ask for —
-      plus a <a href="/image/reduce-photo-size-in-kb/">general compressor</a> with adjustable
-      presets and a <a href="/image/compress-image-to-kb/">custom-size tool</a> for any exact
-      number your form demands.</p>
+      plus a <a href="/image/compress-image-to-kb/">custom-size tool</a> for any exact number your
+      form demands.</p>
       <p>Every tool compresses using the same binary-search method: it finds the highest JPEG
       quality that still fits your target, and only reduces pixel dimensions when quality
       reduction alone can't get there. Nothing is uploaded to a server — compression happens

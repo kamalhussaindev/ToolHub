@@ -1617,7 +1617,7 @@ export const tools: Tool[] = [
         a: "Only if it needs to. The tool reduces quality first, and scales dimensions only when quality reduction alone can't reach your target.",
       },
     ],
-    related: ['reduce-photo-size-in-kb', 'compress-image-to-50kb', 'compress-image-to-200kb'],
+    related: ['compress-image-to-50kb', 'compress-image-to-200kb', 'compress-image-to-100kb'],
     status: 'live',
     icon: 'code',
     group: 'Compressors',
@@ -1647,10 +1647,8 @@ export const tools: Tool[] = [
         <li>The tool compresses your image to fit the target and shows you the before and after size.</li>
         <li>Download your compressed image, ready to upload wherever it's needed.</li>
       </ol>
-      <p>Looking for a common preset instead of typing a number? Try the
-      <a href="/image/reduce-photo-size-in-kb/">general compressor</a> with 50KB, 200KB and 1000KB
-      presets, or one of the dedicated pages for
-      <a href="/image/compress-image-to-20kb/">20KB</a>,
+      <p>Looking for a common target instead of typing a number? Try one of the dedicated pages
+      for <a href="/image/compress-image-to-20kb/">20KB</a>,
       <a href="/image/compress-image-to-50kb/">50KB</a>,
       <a href="/image/compress-image-to-100kb/">100KB</a>,
       <a href="/image/compress-image-to-200kb/">200KB</a>,
@@ -1715,108 +1713,6 @@ export const tools: Tool[] = [
         <li><strong>Over-compressing when you don't need to.</strong> If the limit is 200KB, don't compress to 50KB — you're throwing away quality for nothing.</li>
         <li><strong>Compressing an already-compressed image repeatedly.</strong> Each pass discards more detail permanently. Always start from the original file.</li>
         <li><strong>Uploading sensitive ID documents to a tool you don't trust.</strong> Check how your file is handled before submitting passports, IDs, or certificates.</li>
-      </ul>
-    `,
-  },
-  {
-    slug: 'reduce-photo-size-in-kb',
-    title: 'Reduce Photo Size in KB',
-    cluster: 'image',
-    h1: 'Reduce Photo Size in KB – 50KB, 200KB, 1000KB or Custom',
-    metaTitle: 'Reduce Photo Size in KB – Free Online Compressor',
-    metaDescription:
-      'Reduce photo size in KB free — pick 50KB, 200KB, 1000KB or a custom target. Fast, private image compressor for job portals, exam forms and visa applications.',
-    primaryKeyword: 'reduce photo size in kb',
-    keywords: ['reduce photo size in kb', 'reduce image size in kb', 'photo size reducer', 'image compressor kb'],
-    intro:
-      'Upload your photo, pick 50KB, 200KB, 1000KB, or set a custom target, and download a resized version that fits — no signup, entirely in your browser.',
-    component: 'ReducePhotoSizeInKb',
-    howToUse: [],
-    howItWorks: '',
-    faqs: [
-      {
-        q: 'How do I reduce photo size in KB?',
-        a: 'Upload your photo, select a preset (50KB, 200KB, or 1000KB) or choose Custom and type any size, then download the result. The tool finds the highest quality that fits under your target automatically.',
-      },
-      {
-        q: 'What is the best KB size for a photo?',
-        a: '50KB is standard for exam and ID photos, 200KB works well for job portals and resumes, and 1000KB (1MB) is a safe, near-original-quality size for email and web use.',
-      },
-      {
-        q: 'Can I reduce a photo to an exact size my form requires?',
-        a: 'Yes — select "Custom" and enter the precise KB number your form specifies. The tool targets that exact size rather than a rounded preset.',
-      },
-      {
-        q: 'Does reducing photo size in KB blur the image?',
-        a: 'Only at very small targets on detailed photos. At 50KB and above, most portrait and document photos stay sharp at normal viewing sizes.',
-      },
-      {
-        q: 'Will reducing the KB size change my photo dimensions?',
-        a: 'Only if needed. The tool reduces quality first, and only scales pixel dimensions down when quality reduction alone cannot reach your target.',
-      },
-      {
-        q: 'Is this different from the custom KB compressor?',
-        a: 'Same underlying compression, different starting point — this page gives you quick presets for the most common targets, while the custom tool skips straight to typing your own exact number.',
-      },
-    ],
-    related: ['compress-image-to-kb', 'compress-image-to-50kb', 'compress-image-to-200kb'],
-    status: 'live',
-    icon: 'code',
-    group: 'Compressors',
-    popular: true,
-    articleHtml: `
-      <p>Every form has its own idea of "small enough." One portal wants 50KB, the next wants
-      200KB, and a third just says "under 1MB" and leaves you guessing. Rather than fighting a
-      quality slider for each one separately, pick the number and let the tool do the rest.</p>
-      <p>This is the general-purpose photo size reducer: choose a common preset — 50KB, 200KB, or
-      1000KB — or set your own custom target, and get a compressed photo that fits, with as much
-      quality kept as the limit allows.</p>
-
-      <h2>What Does "Reduce Photo Size in KB" Mean?</h2>
-      <p>Reducing a photo's size in kilobytes means shrinking its file size — how much data it
-      takes up on disk — down to a specific limit, while keeping the picture recognisable and
-      usable. It's not the same as resizing the photo's pixel dimensions, though the two are
-      related: sometimes shrinking the file size also means shrinking the dimensions, and
-      sometimes quality reduction alone is enough.</p>
-
-      <h2>How to Use the Photo Size Reducer</h2>
-      <h3>Step-by-step</h3>
-      <ol>
-        <li>Upload your photo, or drag and drop it into the box above (JPG, JPEG, PNG, and WebP supported).</li>
-        <li>Pick a preset — 50KB, 200KB, or 1000KB — or select Custom and type the exact size your form needs.</li>
-        <li>The tool compresses your photo to fit and reports the before and after size.</li>
-        <li>Download the result and upload it wherever it's needed.</li>
-      </ol>
-
-      <h2>Explanation — How It Works</h2>
-      <p>The tool searches for the highest quality that still fits your chosen target, rather than
-      applying one fixed setting. It compresses at a trial quality, measures the result, and
-      compares it to your target — lowering quality if the file is too big, raising it if there's
-      room to spare. By repeatedly halving the search range, it converges on the best fit quickly,
-      landing just under your target so no available quality goes to waste.</p>
-      <p>If quality reduction alone can't reach a very small target, the tool also scales down the
-      pixel dimensions, since a huge photo crushed to a tiny file size looks far worse than the
-      same photo resized first and then compressed lightly.</p>
-
-      <h2>Quick Reference</h2>
-      <table>
-        <thead>
-          <tr><th scope="col">Target</th><th scope="col">Typical Use</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>50 KB</td><td>Exam portals, ID photos, profile pictures</td></tr>
-          <tr><td>200 KB</td><td>Job portals, resumes, visa forms</td></tr>
-          <tr><td>1000 KB</td><td>Website images, email attachments</td></tr>
-          <tr><td>Custom</td><td>Any exact limit your form specifies</td></tr>
-        </tbody>
-      </table>
-
-      <h2>Common Mistakes to Avoid</h2>
-      <ul>
-        <li><strong>Guessing instead of checking the exact limit.</strong> If your form states a precise number, use Custom rather than rounding to the nearest preset.</li>
-        <li><strong>Ignoring pixel dimension requirements.</strong> Many forms specify both a KB limit and exact dimensions — check both.</li>
-        <li><strong>Compressing a PNG photograph.</strong> Convert to JPEG first for a much smaller result at the same quality.</li>
-        <li><strong>Re-compressing an already-compressed file.</strong> Each pass discards more detail permanently — always start from the original.</li>
       </ul>
     `,
   },
@@ -2453,7 +2349,7 @@ export const tools: Tool[] = [
         a: 'Use 500KB or less for most images. Reserve 1MB for prominent showcase or full-screen images, and only if your site uses lazy loading and a CDN.',
       },
     ],
-    related: ['compress-image-to-500kb', 'compress-image-to-200kb', 'compress-image-to-kb', 'reduce-photo-size-in-kb'],
+    related: ['compress-image-to-500kb', 'compress-image-to-200kb', 'compress-image-to-kb'],
     status: 'live',
     icon: 'code',
     group: 'By target size',
