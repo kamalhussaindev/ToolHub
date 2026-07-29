@@ -5,7 +5,7 @@ import preact from '@astrojs/preact';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'http://ogtoolser.com',
+  site: 'https://ogtoolser.com',
   output: 'static',
   prefetch: {
     prefetchAll: true,

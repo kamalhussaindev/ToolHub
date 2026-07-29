@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://toolhub-8hn.pages.dev/sitemap-index.xml
+Sitemap: https://ogtoolser.com/sitemap-index.xml
