@@ -16,7 +16,7 @@ const quickLinks = [
 
 <header class="topbar">
   <div class="shell nav">
-    <a class="brand" href="/"><span class="brand-mark" set:html={icon('grid')} /><span>Tool Hub</span></a>
+    <a class="brand" href="/"><img class="brand-logo" src="/logo-nav.png" width="36" height="36" alt="OG Toolser" /></a>
     <nav class="navlinks" aria-label="Categories">
       <button class="navlink" id="categoriesBtn" aria-expanded="false" aria-controls="mega">Categories <span>⌄</span></button>
       {quickLinks.map((link) => (
@@ -66,8 +66,9 @@ const quickLinks = [
   .update-inner a:hover {
     color: #fff;
   }
-  .brand span:last-child {
-    margin-left: 2px;
+  .brand-logo {
+    display: block;
+    border-radius: 10px;
   }
 </style>
 
