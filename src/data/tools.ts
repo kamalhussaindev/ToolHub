@@ -2443,6 +2443,13 @@ export function getLiveTools(): Tool[] {
   return tools.filter((t) => t.status === 'live');
 }
 
+// Tool counts shown to users (category cards, sidebar, "N tools in this
+// category") should only count tools that actually work — coming-soon
+// placeholders inflate the number without adding anything usable.
+export function getLiveToolsByCluster(clusterSlug: string): Tool[] {
+  return tools.filter((t) => t.cluster === clusterSlug && t.status === 'live');
+}
+
 export function getRelated(slug: string): Tool[] {
   const tool = getTool(slug);
   if (!tool) return [];

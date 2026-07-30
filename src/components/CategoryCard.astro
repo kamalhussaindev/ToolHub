@@ -1,6 +1,6 @@
 ---
 import type { Cluster } from '../data/clusters';
-import { getToolsByCluster } from '../data/tools';
+import { getLiveToolsByCluster } from '../data/tools';
 import { icon } from '../data/icons';
 
 export interface Props {
@@ -8,7 +8,7 @@ export interface Props {
 }
 
 const { cluster } = Astro.props;
-const clusterTools = getToolsByCluster(cluster.slug);
+const clusterTools = getLiveToolsByCluster(cluster.slug);
 const examples = clusterTools.slice(0, 3);
 ---
 

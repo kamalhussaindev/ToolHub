@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import { clusters, getCluster, getSortedClusters } from '../../data/clusters';
-import { getToolsByCluster } from '../../data/tools';
+import { getToolsByCluster, getLiveToolsByCluster } from '../../data/tools';
 import { icon } from '../../data/icons';
 
 export function getStaticPaths() {
@@ -15,6 +15,7 @@ export function getStaticPaths() {
 const { cluster: clusterSlug } = Astro.params;
 const cluster = getCluster(clusterSlug)!;
 const clusterTools = getToolsByCluster(cluster.slug);
+const liveToolCount = getLiveToolsByCluster(cluster.slug).length;
 const allClusters = getSortedClusters();
 const groups = [...new Set(clusterTools.map((t) => t.group))];
 const canonicalPath = `/${cluster.slug}/`;
@@ -60,7 +61,7 @@ const searchIndex = clusterTools.map((t) => ({
           <p>{cluster.description}</p>
         </div>
         <div class="category-count">
-          <strong>{clusterTools.length}</strong>
+          <strong>{liveToolCount}</strong>
           <span>tools in this category</span>
         </div>
       </div>
@@ -74,7 +75,7 @@ const searchIndex = clusterTools.map((t) => ({
         {allClusters.map((c) => (
           <a class={`side-link ${c.slug === cluster.slug ? 'active' : ''}`} href={`/${c.slug}/`}>
             <span>{c.name}</span>
-            <span>{getToolsByCluster(c.slug).length}</span>
+            <span>{getLiveToolsByCluster(c.slug).length}</span>
           </a>
         ))}
       </aside>
