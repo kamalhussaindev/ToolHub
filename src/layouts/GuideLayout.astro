@@ -22,6 +22,10 @@ const articleJsonLd = {
   headline: guide.h1,
   description: guide.metaDescription,
   url: new URL(canonicalPath, Astro.site).toString(),
+  author: { '@type': 'Organization', name: 'OG Toolser', url: new URL('/', Astro.site).toString() },
+  publisher: { '@type': 'Organization', name: 'OG Toolser', url: new URL('/', Astro.site).toString() },
+  datePublished: guide.datePublished,
+  dateModified: guide.lastReviewed ?? guide.datePublished,
 };
 ---
 
@@ -54,7 +58,7 @@ const articleJsonLd = {
 
     <FaqAccordion faqs={guide.faqs} />
 
-    {guide.lastReviewed && <DisclaimerNote lastReviewed={guide.lastReviewed} />}
+    {guide.showDisclaimer && guide.lastReviewed && <DisclaimerNote lastReviewed={guide.lastReviewed} />}
 
     {relatedGuides.length > 0 && (
       <section aria-labelledby="related-guides-heading">

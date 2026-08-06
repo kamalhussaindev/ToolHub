@@ -1,18 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 ---
 
 <BaseLayout
   title="Contact — OG Toolser"
-  description="Get in touch with the OG Toolser team."
+  description="Report a bug, suggest a tool, or flag an error in a calculation on OG Toolser."
   canonicalPath="/contact/"
 >
   <div class="container static-page">
+    <Breadcrumbs crumbs={[{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }]} />
     <h1>Contact</h1>
     <p>
       Spotted a bug, have a tool suggestion, or found an error in a calculation? We'd like to
-      hear about it — reach us at
-      <a href="mailto:hello@tool-hub.example">hello@tool-hub.example</a>.
+      hear about it — email <a href="mailto:hello@ogtoolser.com">hello@ogtoolser.com</a>.
+    </p>
+    <p>
+      When reporting a calculation error, please include the tool name and the exact input you
+      used — it helps us reproduce and fix the issue quickly. See our
+      <a href="/about/">correction policy</a> for how reports are handled.
     </p>
   </div>
 </BaseLayout>

@@ -1,0 +1,15 @@
+{
+  "name": "OG Toolser — Free Online Calculators & Converters",
+  "short_name": "OG Toolser",
+  "description": "Free, no-signup calculators and converters for home improvement, Islamic finance, developer tools, academics, and everyday life.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5869ef",
+  "icons": [
+    { "src": "/favicon-16.png", "sizes": "16x16", "type": "image/png" },
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/logo-nav.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

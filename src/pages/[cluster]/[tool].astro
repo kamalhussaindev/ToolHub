@@ -65,8 +65,9 @@ const astroComponentMap = {
 import XmlToJson from '../../components/tools/XmlToJson';
 import YamlToJson from '../../components/tools/YamlToJson';
 import JsonToXml from '../../components/tools/JsonToXml';
+import BankStatementConverter from '../../components/tools/BankStatementConverter';
 
-const PREACT_COMPONENTS = ['XmlToJson', 'YamlToJson', 'JsonToXml'];
+const PREACT_COMPONENTS = ['XmlToJson', 'YamlToJson', 'JsonToXml', 'BankStatementConverter'];
 
 export function getStaticPaths() {
   return getLiveTools().map((tool) => ({
@@ -87,6 +88,7 @@ const isPreact = PREACT_COMPONENTS.includes(tool.component);
       {tool.component === 'XmlToJson' && <XmlToJson client:visible />}
       {tool.component === 'YamlToJson' && <YamlToJson client:visible />}
       {tool.component === 'JsonToXml' && <JsonToXml client:visible />}
+      {tool.component === 'BankStatementConverter' && <BankStatementConverter client:visible />}
     </Fragment>
   ) : (
     <ToolComponent slot="tool" />

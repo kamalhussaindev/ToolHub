@@ -62,36 +62,19 @@ const guides = [
     title: 'UUID v4 vs v7: what changes?',
     desc: 'Random vs time-ordered identifiers, and when each one wins.',
     time: '3 min read',
-    href: '/developer/uuid-generator/',
+    href: '/guides/uuid-v4-vs-uuid-v7/',
   },
 ];
 
-const jsonLd = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'OG Toolser',
-    url: Astro.site,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${Astro.site}?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'OG Toolser',
-    url: Astro.site,
-  },
-];
+// Site-wide Organization + WebSite JSON-LD (including the sitelinks search
+// action) is emitted once, for every page, by Seo.astro — no need to repeat
+// it here.
 ---
 
 <BaseLayout
   title="OG Toolser — Free Online Tools & Calculators"
   description="Free, fast, no-signup calculators and converters for home improvement, Islamic finance, developers, students, and everyday life."
   canonicalPath="/"
-  jsonLd={jsonLd}
 >
   <section class="hero">
     <div class="shell hero-inner">

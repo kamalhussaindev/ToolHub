@@ -7,9 +7,39 @@ export interface Props {
   noindex?: boolean;
 }
 
+const SITE_NAME = 'OG Toolser';
+
 const { title, description, canonicalPath, jsonLd, noindex = false } = Astro.props;
 const canonicalUrl = new URL(canonicalPath, Astro.site);
-const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const socialImageUrl = new URL('/logo-nav.png', Astro.site);
+const pageJsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+
+// Organization + WebSite are the two site-wide graph entities Google's
+// structured-data docs recommend anchoring every page to. They're
+// self-contained (no invented ratings, authors, or profiles) and identical
+// on every page, so they're generated here once rather than per-template.
+const siteWideJsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: SITE_NAME,
+    url: new URL('/', Astro.site).toString(),
+    logo: new URL('/logo-nav.png', Astro.site).toString(),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: new URL('/', Astro.site).toString(),
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${new URL('/', Astro.site).toString()}?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  },
+];
+
+const jsonLdBlocks = [...siteWideJsonLd, ...pageJsonLdBlocks];
 ---
 
 <title>{title}</title>
@@ -17,13 +47,16 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 <link rel="canonical" href={canonicalUrl} />
 {noindex && <meta name="robots" content="noindex,follow" />}
 
+<meta property="og:site_name" content={SITE_NAME} />
 <meta property="og:type" content="website" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={socialImageUrl} />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImageUrl} />
 
 {jsonLdBlocks.map((block) => (
   <script type="application/ld+json" is:inline set:html={JSON.stringify(block)} />
