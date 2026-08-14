@@ -1,22 +1,90 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 ---
 
 <BaseLayout
   title="About — OG Toolser"
-  description="OG Toolser builds free, fast, no-signup calculators and converters for home improvement, finance, and everyday life."
+  description="What OG Toolser does, how calculator formulas are chosen and tested, our editorial and correction policy, and how to reach us."
   canonicalPath="/about/"
 >
   <div class="container static-page">
+    <Breadcrumbs crumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]} />
     <h1>About OG Toolser</h1>
-    <p>
-      OG Toolser builds free, fast, no-signup calculators and converters. Every tool runs entirely
-      in your browser — nothing you type is ever uploaded to a server — and every result updates
-      live as you type, with no page reloads.
+    <p class="lead">
+      OG Toolser builds free, no-signup calculators and converters for home improvement, Islamic
+      finance and calendar conversion, developer data formats, academic grading, everyday
+      questions, and document conversion. Every tool runs in your browser and shows a result the
+      moment you finish typing.
     </p>
+
+    <h2>What OG Toolser does</h2>
     <p>
-      We aim to combine accurate, well-researched calculations with a clean, distraction-free
-      interface, so you can get your answer and get on with your project.
+      Each tool on this site targets one specific, well-defined calculation or conversion —
+      such as converting CGPA to a percentage, working out tile quantities with waste allowance,
+      or calculating zakat against the nisab. We'd rather maintain a smaller set of tools that
+      work correctly than a large set we can't stand behind.
+    </p>
+
+    <h2>How we choose calculator formulas</h2>
+    <p>
+      Where a calculation has one broadly accepted method — like alcohol by volume from gravity
+      readings, or the AKC's size-adjusted dog-age model — we use that method and document the
+      formula on the tool's page. Where methods genuinely differ by institution or school of
+      thought (grade-to-percentage conversions, zakat nisab basis), we say so explicitly instead
+      of picking one silently, and where possible we let you choose the method or enter your own
+      multiplier. We don't invent formulas or present a single approach as universally official
+      when it isn't.
+    </p>
+
+    <h2>How tools are tested</h2>
+    <p>
+      Before a calculator is published, its formula is checked against hand-worked examples and,
+      where one exists, a documented reference method (e.g. the standard homebrew ABV formula, the
+      sitemaps.org protocol for the sitemap validator, or fast-xml-parser's documented conversion
+      convention for the XML/JSON tools). Converters and parsers are checked against edge cases —
+      empty input, malformed input, repeated elements, multi-document files — so errors are
+      reported clearly instead of failing silently. This is manual engineering review, not a
+      third-party audit or a formal QA program.
+    </p>
+
+    <h2>Editorial and review policy</h2>
+    <p>
+      Tool pages and guides are written and maintained by the <strong>OG Toolser Editorial
+      Team</strong>. We don't publish a named personal byline because the site isn't run by a
+      single individual, and we won't invent one. Pages that touch religious, financial, or
+      academic guidance (zakat, dog age, grade conversions) carry a visible "last reviewed" date
+      and a disclaimer distinguishing the calculation from professional, scholarly, or veterinary
+      advice — see each tool's FAQ and footer note for specifics and sources.
+    </p>
+
+    <h2>Correction and update policy</h2>
+    <p>
+      If a formula, conversion, or piece of copy is wrong, we fix it — corrections take priority
+      over new features. Content is revisited when we become aware of an error, a source changes
+      (e.g. an updated nisab convention or a new grading-scale rule from a university), or a
+      user reports a problem. We only change a page's "last reviewed" date when the underlying
+      content was meaningfully updated, not on a fixed schedule.
+    </p>
+
+    <h2>How to report an error</h2>
+    <p>
+      Spotted a wrong result, a broken link, or an outdated figure? Tell us on the
+      <a href="/contact/">contact page</a> with the tool name and the input you used — we read
+      every report.
+    </p>
+
+    <h2>Privacy approach</h2>
+    <p>
+      Every calculator and converter processes your input locally in your browser; we don't
+      operate a backend that receives what you type or upload. See the
+      <a href="/privacy/">Privacy Policy</a> for the full detail, including analytics and
+      advertising.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Questions, bug reports, or tool suggestions: see the <a href="/contact/">Contact page</a>.
     </p>
   </div>
 </BaseLayout>
@@ -25,5 +93,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .static-page {
     max-width: var(--tool-width);
     padding: var(--space-8) 0 var(--space-10);
+  }
+  .lead {
+    font-size: var(--text-lg, 17px);
+    color: var(--color-text-muted, #56606d);
+  }
+  .static-page h2 {
+    margin-top: var(--space-8, 32px);
   }
 </style>

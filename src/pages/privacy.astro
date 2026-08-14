@@ -1,23 +1,46 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 ---
 
 <BaseLayout
   title="Privacy Policy — OG Toolser"
-  description="How OG Toolser handles data, cookies, and advertising."
+  description="How OG Toolser handles data, cookies, files you upload, and advertising."
   canonicalPath="/privacy/"
 >
   <div class="container static-page">
+    <Breadcrumbs crumbs={[{ name: 'Home', path: '/' }, { name: 'Privacy', path: '/privacy/' }]} />
     <h1>Privacy Policy</h1>
     <p>
-      All calculations on OG Toolser run locally in your browser. Numbers, text, or files you enter
-      into a calculator or converter are never sent to our servers.
+      All calculations on OG Toolser run locally in your browser. Numbers and text you enter into
+      a calculator or converter are never sent to our servers — this site has no backend that
+      receives or stores what you type.
     </p>
+
+    <h2>Files you upload (Bank Statement Converter, image compression tools)</h2>
+    <p>
+      A small number of tools — the <a href="/finance/bank-statement-converter/">Bank Statement
+      Converter</a> and the <a href="/image/">image compression tools</a> — work with files you
+      choose from your device, rather than plain text. Those files are the same as any other
+      input on this site: read and processed entirely in your browser (using PDF.js for statements
+      and the Canvas API for images) and never transmitted to a server, because there is no server
+      endpoint on this site that accepts file uploads. Closing or reloading the tab discards
+      everything — nothing is retained after your session ends. The Bank Statement Converter
+      additionally limits uploads to 20MB and only reads the text layer of a PDF; see that tool's
+      own page for its full accuracy and limitations notes.
+    </p>
+
     <h2>Analytics</h2>
     <p>
-      We may use privacy-respecting analytics to understand which tools are useful, in aggregate
-      and without identifying individual visitors.
+      This site uses Google Analytics (gtag.js) to understand which tools are used, in aggregate.
+      Google Analytics uses cookies and may process standard web analytics data (such as
+      approximate location derived from IP address, device/browser type, and pages visited) under
+      Google's own privacy policy. It does not receive the content you type or upload into any
+      calculator, converter, or the Bank Statement Converter — those never leave your browser in
+      the first place, so there's nothing for analytics to capture. You can block or limit this
+      via your browser's tracking protection, an ad blocker, or Google's own opt-out tools.
     </p>
+
     <h2>Advertising</h2>
     <p>
       OG Toolser is supported by display advertising. Ad partners may use cookies to serve relevant

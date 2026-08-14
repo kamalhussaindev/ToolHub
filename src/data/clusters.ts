@@ -48,7 +48,9 @@ export const clusters: Cluster[] = [
       <a href="/guides/how-to-calculate-zakat/">how to calculate zakat</a> walks through the whole
       process step by step. For deeper scholarly guidance, established organizations such as the
       National Zakat Foundation and Islamic Relief Worldwide publish detailed further reading
-      alongside these tools.</p>
+      alongside these tools. For deeper reading, see
+      <a href="/guides/gold-vs-silver-nisab/">gold vs silver nisab</a> and
+      <a href="/guides/what-assets-are-zakatable/">what assets are zakatable</a>.</p>
     `,
   },
   {
@@ -77,7 +79,9 @@ export const clusters: Cluster[] = [
       <a href="/developer/slug-generator/">Slug Generator</a> handles accented Latin text cleanly,
       and the <a href="/developer/sitemap-validator/">Sitemap Validator</a> checks your XML against
       the sitemaps.org protocol before you submit it to Search Console. Every tool here runs
-      entirely client-side: nothing you paste is ever uploaded.</p>
+      entirely client-side: nothing you paste is ever uploaded. If you're deciding between random
+      and time-ordered identifiers, see <a href="/guides/uuid-v4-vs-uuid-v7/">UUID v4 vs UUID
+      v7</a>.</p>
     `,
   },
   {

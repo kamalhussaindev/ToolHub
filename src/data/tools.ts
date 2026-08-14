@@ -638,8 +638,8 @@ export const tools: Tool[] = [
         a: 'Yes. GUID is simply Microsoft\'s name for the same concept as a UUID. A v4 UUID and a "GUID" are the identical 128-bit value format.',
       },
       {
-        q: 'Are these UUIDs cryptographically random and safe to use as secrets?',
-        a: 'Yes — v4 UUIDs here are generated with crypto.randomUUID(), which draws from your browser\'s cryptographically secure random number generator, not Math.random().',
+        q: 'Are these UUIDs cryptographically random?',
+        a: 'The v4 UUIDs here are generated with crypto.randomUUID(), which draws from your browser\'s cryptographically secure random number generator, not Math.random() — so the 122 random bits are unpredictable. That said, treat a UUID as an identifier, not a secret: for session tokens, API keys, or password-reset links, use your framework\'s dedicated token generator instead, since UUIDs are conventionally logged and placed in URLs across tooling in ways real secrets shouldn\'t be. See our <a href="/guides/uuid-v4-vs-uuid-v7/">UUID v4 vs UUID v7 guide</a> for more.',
       },
       {
         q: 'How many UUIDs can I generate at once?',
@@ -1216,20 +1216,82 @@ export const tools: Tool[] = [
     slug: 'bank-statement-converter',
     title: 'Bank Statement Converter',
     cluster: 'finance',
-    h1: 'Bank Statement Converter',
+    h1: 'Bank Statement Converter — PDF to CSV',
     metaTitle: 'Bank Statement Converter — PDF to CSV/Excel',
-    metaDescription: 'Convert bank statement PDFs into clean CSV or Excel files for bookkeeping.',
+    metaDescription:
+      'Convert text-based bank statement PDFs into an editable transaction table and export to CSV. Processed entirely in your browser — no upload, no signup.',
     primaryKeyword: 'bank statement converter',
-    keywords: ['bank statement converter', 'pdf to csv bank statement', 'bank statement to excel'],
-    intro: 'Upload a bank statement PDF and export a clean, structured spreadsheet.',
-    component: '',
-    howToUse: [],
-    howItWorks: '',
-    faqs: [],
+    keywords: ['bank statement converter', 'pdf to csv bank statement', 'bank statement to excel', 'bank statement to csv'],
+    intro:
+      'Upload a text-based PDF bank statement to extract transactions into an editable table, then export a clean CSV for bookkeeping or spreadsheets.',
+    component: 'BankStatementConverter',
+    howToUse: [
+      'Upload a text-based PDF bank statement (drag and drop, or click to browse) — nothing is sent to a server.',
+      'Wait a moment while the tool reads every page and pulls out lines that look like transactions.',
+      'Review the extracted table: check each date, description, debit, credit, and balance.',
+      'Fix, add, or delete rows directly in the table — every field is editable.',
+      'Click "Download CSV" to save a clean file you can open in Excel, Google Sheets, or Numbers.',
+    ],
+    howItWorks:
+      'The tool reads your PDF locally using PDF.js, reconstructing each page\'s text into lines based on character position. It then scans those lines for a recognizable date followed by one or more currency-looking numbers, and treats the remaining text as the description. When two amounts are found, the first is treated as the transaction amount (debit if negative or in parentheses, credit otherwise) and the second as the running balance; when three or more are found, it assumes separate debit, credit, and balance columns. Because statement layouts vary by bank, this is a best-effort extraction, not a guaranteed-accurate one — that\'s why every row lands in an editable table for you to check before exporting.',
+    faqs: [
+      {
+        q: 'Is my bank statement uploaded anywhere?',
+        a: 'No. This site has no backend for file uploads — the PDF is read and parsed entirely in your browser using PDF.js, and the file never leaves your device.',
+      },
+      {
+        q: 'Does this work with scanned bank statements?',
+        a: 'No, not yet. This tool reads the text layer of a PDF directly. If your statement is a scanned image (no selectable text), it will find no text to extract — that requires OCR, which this tool doesn\'t currently support.',
+      },
+      {
+        q: 'Will this work with a password-protected PDF?',
+        a: 'No — encrypted PDFs can\'t be read here. Remove the password first (many banks let you download an unprotected copy, or you can use a PDF tool you trust) and then upload it again.',
+      },
+      {
+        q: 'Does it work with every bank\'s statement format?',
+        a: 'It\'s designed to handle common layouts — a date, a description, and one or more amount columns — but hasn\'t been tested against every bank in every country. Some statements will extract cleanly; others may need manual correction or row-by-row entry. Always review the table before relying on it.',
+      },
+      {
+        q: 'Can I export to Excel (.xlsx) directly?',
+        a: 'Export is currently CSV, which opens natively in Excel, Google Sheets, and Numbers with all columns intact — a true .xlsx download may be added later.',
+      },
+      {
+        q: 'What\'s the maximum file size?',
+        a: 'Up to 20MB. Larger statements may need to be split into fewer pages first.',
+      },
+    ],
     related: [],
-    status: 'coming-soon',
+    status: 'live',
     icon: 'wallet',
     group: 'Documents',
+    articleHtml: `
+      <h2>What this tool does</h2>
+      <p>Bank statements come as PDFs, but bookkeeping, budgeting, and reconciliation tools want rows
+      and columns. This converter reads a text-based PDF statement in your browser, pulls out
+      lines that look like transactions — date, description, and amount — and puts them in a table
+      you can correct and export as CSV.</p>
+
+      <h2>Supported files and limitations</h2>
+      <ul>
+        <li><strong>Text-based PDFs only.</strong> If you can select and copy text from the statement in a PDF viewer, it should work. Scanned photocopies or image-only PDFs have no text layer to read, and this tool doesn't perform OCR.</li>
+        <li><strong>Password-protected PDFs aren't supported.</strong> Remove the password before uploading.</li>
+        <li><strong>20MB file size limit.</strong> Very long statements may need to be split first.</li>
+        <li><strong>Layout varies by bank.</strong> The parser looks for a date plus nearby amounts on each line — most single-currency statements with a running balance column extract well, but unusual layouts (multi-currency, multi-line descriptions, non-Gregorian dates) may need manual fixes.</li>
+      </ul>
+
+      <h2>Privacy</h2>
+      <p>This site is a static build with no server-side component to receive uploads. Your PDF is
+      opened and parsed entirely on your device using the open-source PDF.js library; nothing is
+      transmitted anywhere. Closing the tab discards the data — nothing is stored beyond your
+      browser session.</p>
+
+      <h2>Accuracy and review</h2>
+      <p>Extraction is heuristic: it recognizes common patterns (a date, a description, one or two
+      amount columns, a balance) rather than understanding your specific bank's template. Always
+      check the extracted table against your original statement before using it for bookkeeping,
+      tax filing, or financial decisions — this tool speeds up data entry, it doesn't replace
+      checking your own numbers.</p>
+    `,
   },
 
   // ---------------------------------------------------------------------

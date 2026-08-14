@@ -2,6 +2,18 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import preact from '@astrojs/preact';
+import { getSortedClusters } from './src/data/clusters.ts';
+import { getLiveToolsByCluster } from './src/data/tools.ts';
+
+// Category hubs with zero live tools render with a noindex meta tag (see
+// src/pages/[cluster]/index.astro) so they stay reachable but out of
+// Google's index. The sitemap must not contradict that, so we exclude the
+// same paths here from the same data source rather than hardcoding them.
+const noindexClusterPaths = new Set(
+  getSortedClusters()
+    .filter((c) => getLiveToolsByCluster(c.slug).length === 0)
+    .map((c) => `/${c.slug}/`)
+);
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,5 +23,10 @@ export default defineConfig({
     prefetchAll: true,
     defaultStrategy: 'hover',
   },
-  integrations: [preact(), sitemap()],
+  integrations: [
+    preact(),
+    sitemap({
+      filter: (page) => !noindexClusterPaths.has(new URL(page).pathname),
+    }),
+  ],
 });
