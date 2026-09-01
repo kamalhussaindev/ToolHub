@@ -516,6 +516,7 @@ export const guides: Guide[] = [
     faqs: [],
     relatedTool: 'abv-calculator',
     relatedGuides: [],
+    datePublished: '2026-08-14', // per git history: guides.ts (this guide) first added 2026-08-14
   },
 ];
 
