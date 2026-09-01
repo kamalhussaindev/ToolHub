@@ -1,0 +1,25 @@
+# Cloudflare Pages headers config.
+# https://developers.cloudflare.com/pages/configuration/headers/
+#
+# Content-hashed static assets (filenames include a build hash, e.g.
+# /_astro/BaseLayout.DyJGVImc.css) are safe to cache for a year as immutable —
+# a content change always produces a new filename, so a stale cache can never
+# serve outdated content under the old URL.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Security headers, applied site-wide. No page on this site is meant to be
+# framed by another origin and no third-party script beyond Google's tag
+# (gtag.js/GA4) currently runs, so this stays intentionally conservative:
+# 'unsafe-inline' is required because the site relies on inline <script> and
+# scoped <style> tags throughout (Astro's default is:inline pattern) rather
+# than a nonce-based build step — tightening that further is a real option
+# but needs a code change across every inline script, not just config, so
+# it's called out as a manual follow-up rather than applied here.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'

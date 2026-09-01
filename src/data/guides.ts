@@ -66,6 +66,7 @@ export const guides: Guide[] = [
       <h2>Step 5: Calculate 2.5%</h2>
       <p>If your net zakatable wealth meets or exceeds the nisab, zakat due is simply:</p>
       <p><strong>Zakat = Net zakatable wealth × 2.5%</strong></p>
+      <p>Or skip the manual math — <a href="/islamic/zakat-calculator/">use the zakat calculator</a> to work out what you owe instantly from your own numbers.</p>
 
       <h2>Worked example</h2>
       <p>Suppose your zakatable assets — cash, savings, and gold — total $12,000, and you have
@@ -88,6 +89,14 @@ export const guides: Guide[] = [
       calculators that can serve as useful further reading alongside this guide.</p>
     `,
     faqs: [
+      {
+        q: 'How do you work out zakat?',
+        a: 'Add up your zakatable assets (cash, gold, silver, business inventory), subtract debts currently due, and if the result is at or above the nisab, multiply it by 2.5%.',
+      },
+      {
+        q: 'How to figure out zakat?',
+        a: 'Follow the five steps above: total your zakatable wealth, subtract what you currently owe, check the result against the nisab, confirm a full lunar year has passed, then take 2.5% of the net figure.',
+      },
       {
         q: 'What is the nisab for zakat?',
         a: 'The minimum wealth at which zakat becomes due: the value of 85g of gold or 595g of silver. If your net zakatable wealth stays at or above it for one lunar year, zakat is due.',
@@ -264,7 +273,7 @@ export const guides: Guide[] = [
     h1: 'UUID v4 vs UUID v7: Which Should You Use?',
     metaTitle: 'UUID v4 vs UUID v7 — Which Should You Use?',
     metaDescription:
-      'UUID v4 is fully random; UUID v7 embeds a sortable timestamp. Compare how each is generated, their database indexing trade-offs, and when to pick one over the other.',
+      'UUID v4 (uuidv4) is fully random, UUID v7 embeds a sortable timestamp — compare how each works, their database trade-offs, and when to pick one.',
     cluster: 'developer',
     intro:
       "Both UUID v4 and v7 give you a 128-bit unique identifier, but they're generated very differently — and that difference matters a lot for anything backed by a database index.",

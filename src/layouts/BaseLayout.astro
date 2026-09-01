@@ -30,6 +30,12 @@ const { title, description, canonicalPath, jsonLd, noindex } = Astro.props;
     <link rel="manifest" href="/site.webmanifest" />
     <Seo title={title} description={description} canonicalPath={canonicalPath} jsonLd={jsonLd} noindex={noindex} />
 
+    <!-- Warm the connection for Google's tag before the async script requests it,
+         so the gtag.js fetch and its first beacon don't pay the full DNS+TLS
+         round trip on top of the request itself. -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" />
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CB8E88BL7P" is:inline></script>
     <script is:inline>

@@ -15,6 +15,12 @@ const noindexClusterPaths = new Set(
     .map((c) => `/${c.slug}/`)
 );
 
+// Every URL's static HTML is in fact regenerated at this moment on every
+// production build/deploy, so stamping build time as <lastmod> is accurate —
+// not invented precision — and gives Google a real recrawl signal that was
+// previously missing from the sitemap entirely.
+const buildLastmod = new Date().toISOString();
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ogtoolser.com',
@@ -27,6 +33,7 @@ export default defineConfig({
     preact(),
     sitemap({
       filter: (page) => !noindexClusterPaths.has(new URL(page).pathname),
+      serialize: (item) => ({ ...item, lastmod: buildLastmod }),
     }),
   ],
 });

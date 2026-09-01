@@ -42,13 +42,20 @@ export const tools: Tool[] = [
     title: 'Tile Calculator',
     cluster: 'home-improvement',
     h1: 'Tile Calculator',
-    metaTitle: 'Tile Calculator — How Many Tiles Do You Need?',
+    metaTitle: 'Tile Room Calculator — How Many Floor Tiles Do You Need?',
     metaDescription:
-      'Calculate how many tiles and boxes you need for any floor or wall, with waste allowance built in. Works in m² and ft².',
+      'Free tile room calculator — work out how many floor or wall tiles and boxes you need, with waste allowance built in. Works in m² and ft².',
     primaryKeyword: 'tile calculator',
-    keywords: ['tile calculator', 'how many tiles do i need', 'tile quantity calculator', 'box of tiles calculator'],
+    keywords: [
+      'tile calculator',
+      'how many tiles do i need',
+      'tile quantity calculator',
+      'box of tiles calculator',
+      'tile room calculator',
+      'how many floor tiles do i need',
+    ],
     intro:
-      'Enter your area and tile size to find out exactly how many tiles — and how many boxes — to buy for your project.',
+      'Also called a tile room calculator, this tool works out exactly how many floor or wall tiles — and how many boxes — you need. Enter your area and tile size for an instant answer.',
     component: 'TileCalculator',
     howToUse: [
       'Choose your unit system (metric or imperial).',
@@ -64,6 +71,10 @@ export const tools: Tool[] = [
       { input: '120 ft² room, 12×12 in tiles, 8 per box, 10% waste', output: '≈ 132 tiles → 17 boxes' },
     ],
     faqs: [
+      {
+        q: 'How many floor tiles do I need?',
+        a: 'Divide your floor area by the area of one tile, then add a waste allowance (10% is typical) to cover cuts and breakages — this calculator does that instantly once you enter your room and tile dimensions.',
+      },
       {
         q: 'How much extra tile should I buy for waste?',
         a: 'A 10% allowance covers most straight-lay jobs. For diagonal, herringbone, or rooms with lots of corners and cuts, increase it to 15–20%.',
@@ -100,13 +111,21 @@ export const tools: Tool[] = [
     title: 'Paint Calculator',
     cluster: 'home-improvement',
     h1: 'Paint Calculator',
-    metaTitle: 'Paint Calculator — How Much Paint Do You Need?',
+    metaTitle: 'Wall Paint Calculator — How Much Paint Do I Need?',
     metaDescription:
-      'Work out how many litres or gallons of paint you need for a room, accounting for doors, windows, and number of coats.',
+      'Free wall paint calculator — work out how much paint you need to buy for any room, in litres or gallons, including doors, windows, and coats.',
     primaryKeyword: 'paint calculator',
-    keywords: ['paint calculator', 'how much paint do i need', 'paint coverage calculator', 'room paint calculator'],
+    keywords: [
+      'paint calculator',
+      'how much paint do i need',
+      'paint coverage calculator',
+      'room paint calculator',
+      'wall paint calculator',
+      'work out how much paint i need',
+      'how much paint will i need',
+    ],
     intro:
-      'Enter your wall dimensions and paint coverage to see exactly how much paint to buy, including doors, windows, and extra coats.',
+      'Also called a wall paint calculator, this tool helps you work out how much paint you need to buy — enter your wall dimensions and paint coverage to see the exact amount, including doors, windows, and extra coats.',
     component: 'PaintCalculator',
     howToUse: [
       'Choose metric or imperial units.',
@@ -122,6 +141,14 @@ export const tools: Tool[] = [
       { input: '48 ft wall perimeter, 8 ft height, 20 ft² openings, 2 coats, 350 ft²/gal coverage', output: '≈ 2.1 gallons' },
     ],
     faqs: [
+      {
+        q: 'How much paint do I need?',
+        a: 'It depends on your wall area and your paint\'s coverage rate. Enter your wall perimeter and height above, subtract doors and windows, and the calculator works out the litres or gallons required instantly.',
+      },
+      {
+        q: 'How do I work out how much paint I need without a calculator?',
+        a: 'Multiply wall perimeter by height to get the wall area, subtract door and window area, multiply by your number of coats, then divide by your paint\'s coverage rate (m²/L or ft²/gal) — this calculator automates exactly that.',
+      },
       {
         q: 'How many coats of paint do I actually need?',
         a: 'Two coats is standard for a color change or new drywall. One coat can work for a refresh in the same color; three coats may be needed for very dark-to-light transitions.',
@@ -319,11 +346,20 @@ export const tools: Tool[] = [
     h1: 'Zakat Calculator',
     metaTitle: 'Zakat Calculator 2026 — Calculate Your Zakat (2.5%)',
     metaDescription:
-      "Free zakat calculator. Add your cash, gold, silver and assets, set the nisab, and see the 2.5% zakat due. Silver or gold nisab, any currency.",
+      "Free Islamic zakat calculator — work out how much zakat you owe on cash, gold, silver and assets against the nisab. Silver or gold basis, any currency.",
     primaryKeyword: 'zakat calculator',
-    keywords: ['zakat calculator', 'zakat calculator gold', 'nisab calculator', 'zakat calculator 2026'],
+    keywords: [
+      'zakat calculator',
+      'zakat calculator gold',
+      'nisab calculator',
+      'zakat calculator 2026',
+      'islamic zakat calculator',
+      'zakat payment calculator',
+      'work out zakat',
+      'how to calculate zakat',
+    ],
     intro:
-      "Work out the zakat due on your wealth. Enter your assets and liabilities, choose a nisab basis, and the 2.5% is calculated instantly.",
+      "Work out the zakat due on your wealth with this free Islamic zakat payment calculator. Enter your assets and liabilities, choose a nisab basis, and see exactly how zakat is calculated — 2.5% instantly, no signup.",
     component: 'ZakatCalculator',
     howToUse: [
       'Enter your cash, savings, gold, silver, and other zakatable assets.',
@@ -338,6 +374,14 @@ export const tools: Tool[] = [
       { input: '$300 net wealth, silver nisab ≈ $500', output: 'Below nisab → $0 zakat due' },
     ],
     faqs: [
+      {
+        q: 'How do you work out zakat?',
+        a: 'Add up your zakatable assets (cash, gold, silver, business inventory), subtract debts currently due, and if the result is at or above the nisab, multiply it by 2.5% — this calculator does all three steps for you.',
+      },
+      {
+        q: 'How is zakat calculated?',
+        a: 'Zakat = (total zakatable assets − liabilities) × 2.5%, but only once your net wealth has stayed at or above the nisab threshold for a full lunar year.',
+      },
       {
         q: 'What is the nisab for zakat?',
         a: 'The minimum wealth at which zakat becomes due: the value of 85g of gold or 595g of silver. If your net zakatable wealth stays at or above it for one lunar year, zakat is due.',
@@ -423,12 +467,22 @@ export const tools: Tool[] = [
     title: 'Hijri Date Converter',
     cluster: 'islamic',
     h1: 'Hijri Date Converter',
-    metaTitle: 'Hijri Date Converter — Gregorian ⇄ Hijri (Umm al-Qura)',
+    metaTitle: 'Hijri to Gregorian Date Converter (Islamic Calendar)',
     metaDescription:
-      'Convert Gregorian to Hijri and Hijri to Gregorian instantly. Uses the Umm al-Qura calendar. Free, accurate, works both ways.',
+      'Convert Gregorian to Hijri (Islamic date) or Hijri to Gregorian (Miladi) instantly, using the Umm al-Qura calendar. Free, accurate, works both ways.',
     primaryKeyword: 'hijri date converter',
-    keywords: ['hijri date converter', 'gregorian to hijri', 'hijri to gregorian', 'islamic date converter'],
-    intro: 'Convert any date between the Hijri and Gregorian calendars, in either direction.',
+    keywords: [
+      'hijri date converter',
+      'gregorian to hijri',
+      'hijri to gregorian',
+      'islamic date converter',
+      'islamic date calculator',
+      'arabic date converter',
+      'hijri to miladi',
+      'convert hajj to gregorian',
+    ],
+    intro:
+      'Convert any date between the Hijri calendar — also called the Islamic date or Arabic date, with its Gregorian counterpart sometimes called the Miladi date — and the Gregorian calendar, in either direction.',
     component: 'HijriDateConverter',
     howToUse: [
       'Choose a direction: Gregorian to Hijri, or Hijri to Gregorian.',
@@ -441,6 +495,18 @@ export const tools: Tool[] = [
       {
         q: 'Which Hijri calendar does this use?',
         a: 'The Umm al-Qura calendar, widely used across the Muslim world.',
+      },
+      {
+        q: 'How do I convert a Hijri date to Gregorian?',
+        a: 'Select "Hijri → Gregorian" above, enter the day, month, and year (AH), and the matching Gregorian date appears instantly — no manual calculation needed.',
+      },
+      {
+        q: 'How do I convert Hajj dates to Gregorian?',
+        a: 'Hajj takes place in Dhu al-Hijjah, the 12th Hijri month. Select "Hijri → Gregorian" above, choose Dhu al-Hijjah as the month, enter the day (9 for the Day of Arafah, 10 for Eid al-Adha) and your Hijri year, to get the matching Gregorian date.',
+      },
+      {
+        q: 'What is an Islamic date or Arabic date?',
+        a: '"Islamic date" and "Arabic date" both usually refer to a date in the Hijri calendar — the lunar calendar used for Islamic religious observances like Ramadan and Hajj. "Miladi" is the Arabic term for the Gregorian (Christian-era) date.',
       },
       {
         q: 'Why is the date one day off from my country?',
@@ -615,10 +681,12 @@ export const tools: Tool[] = [
     cluster: 'developer',
     h1: 'UUID / GUID Generator',
     metaTitle: 'UUID v4 / GUID Generator — Bulk & Free',
-    metaDescription: 'Generate UUID v4 (also known as a GUID) online in bulk, with one click to copy. Cryptographically secure, works offline.',
+    metaDescription:
+      'Generate UUID v4 (uuidv4) or UUID v7 identifiers — also known as a GUID — online in bulk, with one click to copy. Cryptographically secure, works offline.',
     primaryKeyword: 'uuid generator',
-    keywords: ['uuid generator', 'guid generator', 'uuid v4 generator', 'guid generator online'],
-    intro: 'Generate UUID v4 identifiers — the same thing developers often call a GUID — individually or in bulk.',
+    keywords: ['uuid generator', 'guid generator', 'uuid v4 generator', 'guid generator online', 'uuidv4', 'uuidv4 uuidv7', 'what is uuidv4'],
+    intro:
+      'Generate UUID v4 (also written uuidv4) identifiers — the same thing developers often call a GUID — individually or in bulk, plus time-ordered UUID v7 values.',
     component: 'UuidGenerator',
     howToUse: [
       'Choose a version: v4 (random, default), v7 (time-ordered), or the all-zero nil UUID.',
@@ -633,6 +701,10 @@ export const tools: Tool[] = [
       { input: 'Version: v4, no hyphens, uppercase', output: 'e.g. 3FA85F6457174562B3FC2C963F66AFA6' },
     ],
     faqs: [
+      {
+        q: 'What is UUID v4?',
+        a: 'UUID v4 (also written "uuidv4") is a 128-bit unique identifier made of 122 random bits. This generator creates them with your browser\'s cryptographically secure crypto.randomUUID().',
+      },
       {
         q: 'Is a GUID the same as a UUID?',
         a: 'Yes. GUID is simply Microsoft\'s name for the same concept as a UUID. A v4 UUID and a "GUID" are the identical 128-bit value format.',
